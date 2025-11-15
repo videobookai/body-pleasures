@@ -2,10 +2,14 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
+import Link from 'next/link'
 import { Menu, X, ShoppingBag } from "lucide-react"
+import { useCart } from "@/components/cart-context"
 
-export function Navigation() {
+export function Navigation () {
   const [isOpen, setIsOpen] = useState(false)
+  const { items } = useCart()
+  const cartCount = items.reduce((s, i) => s + i.quantity, 0)
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
@@ -30,8 +34,15 @@ export function Navigation() {
             <a href="#contact" className="text-sm text-foreground/80 hover:text-foreground transition-colors">
               Contact
             </a>
-            <Button size="sm" variant="ghost">
-              <ShoppingBag className="h-4 w-4" />
+            <Button asChild size="sm" variant="ghost">
+              <Link href="/cart" className="relative">
+                <ShoppingBag className="h-4 w-4" />
+                {cartCount > 0 && (
+                  <span className="absolute -top-2 -right-2 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-semibold leading-none text-white bg-primary rounded-full">
+                    {cartCount}
+                  </span>
+                )}
+              </Link>
             </Button>
           </div>
 
