@@ -21,4 +21,85 @@
     50% { transform: translate(100px, -100px) scale(1.5); opacity: 0.3; }
     90% { opacity: 0.6; }
   }
-  
+  /* ============================
+ BRANDED n8n CHAT THEME
+============================ */
+
+/* Chat Button */
+#n8n-chat-launcher {
+  background: linear-gradient(135deg, #6B4E24, #D4A857) !important;
+  border: none !important;
+  box-shadow: 0 0 18px rgba(107, 78, 36, 0.5) !important;
+  width: 62px !important;
+  height: 62px !important;
+  border-radius: 50% !important;
+  animation: chatPulse 2s infinite ease-in-out;
+}
+
+/* Header */
+.n8n-chat-header {
+  background: linear-gradient(135deg, #6B4E24, #D4A857) !important;
+  color: #fff !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.4px !important;
+  padding: 14px 16px !important;
+  border-bottom: 2px solid #D4A857 !important;
+}
+
+/* Chat Window Background */
+.n8n-chat-container {
+  background: #FFF7EC !important; /* Soft Cream */
+  border: 2px solid #D4A857 !important;
+  border-radius: 16px !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25) !important;
+}
+
+/* User Messages */
+.n8n-chat-message--user {
+  background: #6B4E24 !important;
+  color: #fff !important;
+  border: 1px solid #D4A857 !important;
+  border-radius: 12px !important;
+}
+
+/* Bot Messages */
+.n8n-chat-message--bot {
+  background: #EFE9D9 !important;
+  color: #433315 !important;
+  border: 1px solid #D4A85755 !important;
+  border-radius: 12px !important;
+}
+
+/* Input Area Background */
+.n8n-chat-input-container {
+  background: #EFE9D9 !important;
+  border-top: 1px solid #D4A857 !important;
+}
+
+/* Input Field */
+.n8n-chat-input {
+  background: #ffffff !important;
+  border-color: #C8B79A !important;
+  border-radius: 8px !important;
+  color: #433315 !important;
+}
+
+/* Send Button */
+.n8n-chat-send-button {
+  background: #6B4E24 !important;
+  border: 1px solid #D4A857 !important;
+  color: #fff !important;
+  border-radius: 8px !important;
+}
+
+/* Typing Indicator */
+.n8n-chat-typing {
+  color: #6B4E24 !important;
+}
+
+/* Animations */
+@keyframes chatPulse {
+  0% { transform: scale(1); box-shadow: 0 0 10px rgba(107,78,36,0.4); }
+  50% { transform: scale(1.05); box-shadow: 0 0 22px rgba(212,168,87,0.7); }
+  100% { transform: scale(1); box-shadow: 0 0 10px rgba(107,78,36,0.4); }
+}

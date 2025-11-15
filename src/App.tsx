@@ -9,6 +9,10 @@ import CartSidebar from './components/CartSidebar';
 import Footer from './components/Footer';
 import { products as allProducts, Product } from './data/products';
 
+import N8NChat from './components/N8NChat';
+
+
+
 type Page = 'home' | 'shop' | 'about' | 'contact';
 
 function App() {
@@ -92,12 +96,11 @@ function App() {
         <Footer />
       </main>
 
-      <CartSidebar
-  isOpen={cartOpen}
-  cartItems={cart.map((item) => ({ ...item, quantity: 1 }))}
-  onClose={() => setCartOpen(false)}
-  onCheckout={checkout}
-/>
+      <CartSidebar isOpen={cartOpen} cartItems={cart.map((item) => ({ ...item, quantity: 1 }))} onClose={() => setCartOpen(false)} onCheckout={checkout} />
+      
+      
+      <N8NChat />
+
     </div>
   );
 }
