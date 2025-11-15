@@ -5,7 +5,27 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Mail, Phone, MapPin } from "lucide-react"
 
-export function ContactSection() {
+export function ContactSection () {
+  async function handleSubmit (e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    const form = e.currentTarget
+    const data = Object.fromEntries(new FormData(form).entries())
+
+    try {
+      const resp = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      })
+      if (!resp.ok) throw new Error('failed')
+      alert('Message sent — thank you!')
+      form.reset()
+    } catch (err) {
+      console.error(err)
+      alert('Failed to send message. Please try again later.')
+    }
+  }
+
   return (
     <section id="contact" className="py-24 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
@@ -60,19 +80,19 @@ export function ContactSection() {
 
           {/* Right side - Contact Form */}
           <div className="bg-card rounded-3xl p-8 shadow-lg">
-            <form className="space-y-6">
+            <form className="space-y-6" onSubmit={handleSubmit}>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="firstName" className="block text-sm font-medium mb-2">
                     First Name
                   </label>
-                  <Input id="firstName" placeholder="John" />
+                  <Input id="firstName" name="firstName" placeholder="John" />
                 </div>
                 <div>
                   <label htmlFor="lastName" className="block text-sm font-medium mb-2">
                     Last Name
                   </label>
-                  <Input id="lastName" placeholder="Doe" />
+                  <Input id="lastName" name="lastName" placeholder="Doe" />
                 </div>
               </div>
 
@@ -80,16 +100,15 @@ export function ContactSection() {
                 <label htmlFor="email" className="block text-sm font-medium mb-2">
                   Email
                 </label>
-                <Input id="email" type="email" placeholder="john@example.com" />
+                <Input id="email" name="email" type="email" placeholder="john@example.com" />
               </div>
 
               <div>
                 <label htmlFor="message" className="block text-sm font-medium mb-2">
                   Message
                 </label>
-                <Textarea id="message" placeholder="Tell us what you're looking for..." rows={6} />
+                <Textarea id="message" name="message" placeholder="Tell us what you're looking for..." rows={6} />
               </div>
-
               <Button type="submit" className="w-full" size="lg">
                 Send Message
               </Button>
