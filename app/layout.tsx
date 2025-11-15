@@ -2,6 +2,7 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Playfair_Display, Inter } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
+import { CartProvider } from "@/components/cart-context"
 import "./globals.css"
 
 const playfair = Playfair_Display({
@@ -38,7 +39,7 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
+export default function RootLayout ({
   children,
 }: Readonly<{
   children: React.ReactNode
@@ -46,8 +47,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} ${playfair.variable} font-sans antialiased`}>
-        {children}
-        <Analytics />
+        <CartProvider>
+          {children}
+          <Analytics />
+        </CartProvider>
       </body>
     </html>
   )
