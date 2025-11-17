@@ -21,19 +21,19 @@ type Product = {
 
 const PRODUCTS_FILE = 'products.json'
 
-export function listProducts(): Product[] {
+export function listProducts (): Product[] {
   return (readJSON<Product[]>(PRODUCTS_FILE) || [])
 }
 
-export function getProduct(id: string): Product | undefined {
+export function getProduct (id: string): Product | undefined {
   return listProducts().find((p) => p.id === id)
 }
 
-export function saveProducts(products: Product[]) {
+export function saveProducts (products: Product[]) {
   writeJSON(PRODUCTS_FILE, products)
 }
 
-export function upsertProduct(prod: Product) {
+export function upsertProduct (prod: Product) {
   const products = listProducts()
   const idx = products.findIndex((p) => p.id === prod.id)
   if (idx === -1) products.push(prod)
@@ -42,13 +42,13 @@ export function upsertProduct(prod: Product) {
   return prod
 }
 
-export function deleteProduct(id: string) {
+export function deleteProduct (id: string) {
   const products = listProducts().filter((p) => p.id !== id)
   saveProducts(products)
 }
 
 // Decrement stock for an ordered item. Returns array of low-stock alerts triggered.
-export async function decrementStock(productId: string, variantId: string | null, qty: number) {
+export async function decrementStock (productId: string, variantId: string | null, qty: number) {
   const products = listProducts()
   const pIdx = products.findIndex((p) => p.id === productId)
   if (pIdx === -1) throw new Error('product not found')
@@ -78,7 +78,7 @@ export async function decrementStock(productId: string, variantId: string | null
   throw new Error('product has no variants; implement variantless stock if needed')
 }
 
-export async function revertStock(productId: string, variantId: string | null, qty: number) {
+export async function revertStock (productId: string, variantId: string | null, qty: number) {
   const products = listProducts()
   const pIdx = products.findIndex((p) => p.id === productId)
   if (pIdx === -1) throw new Error('product not found')
@@ -96,7 +96,7 @@ export async function revertStock(productId: string, variantId: string | null, q
   throw new Error('product has no variants; implement variantless stock if needed')
 }
 
-async function triggerLowStockWebhook(payload: { product: Product; variant: Variant }) {
+async function triggerLowStockWebhook (payload: { product: Product; variant: Variant }) {
   try {
     const url = process.env.N8N_WEBHOOK_URL
     if (!url) {

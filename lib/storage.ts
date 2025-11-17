@@ -1,11 +1,11 @@
 import fs from 'fs'
 import path from 'path'
 
-function dataPath(name: string) {
+function dataPath (name: string) {
   return path.resolve(process.cwd(), 'data', name)
 }
 
-export function readJSON<T = any>(name: string): T {
+export function readJSON<T = any> (name: string): T {
   const p = dataPath(name)
   try {
     if (!fs.existsSync(p)) return {} as T
@@ -16,7 +16,7 @@ export function readJSON<T = any>(name: string): T {
   }
 }
 
-export function writeJSON<T = any>(name: string, data: T) {
+export function writeJSON<T = any> (name: string, data: T) {
   const p = dataPath(name)
   try {
     const dir = path.dirname(p)

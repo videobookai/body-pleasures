@@ -1,15 +1,45 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import Link from 'next/link'
 import { Menu, X, ShoppingBag } from "lucide-react"
-import { useCart } from "@/components/cart-context"
 
 export function Navigation () {
   const [isOpen, setIsOpen] = useState(false)
-  const { items } = useCart()
-  const cartCount = items.reduce((s, i) => s + i.quantity, 0)
+  const [cartCount, setCartCount] = useState(0)
+
+  const fetchCartCount = async () => {
+    try {
+      const res = await fetch('/api/cart')
+      if (!res.ok) return
+      const data = await res.json()
+      const items = data.items || []
+      const count = items.reduce((s: number, i: any) => s + (i.quantity || 0), 0)
+      setCartCount(count)
+    } catch (err) {
+      // ignore errors for now
+      console.error('Failed to fetch cart count', err)
+    }
+  }
+
+  useEffect(() => {
+    fetchCartCount()
+
+    const onFocus = () => fetchCartCount()
+    const onCartUpdated = () => fetchCartCount()
+
+    window.addEventListener('focus', onFocus)
+    window.addEventListener('cart-updated', onCartUpdated)
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') fetchCartCount()
+    })
+
+    return () => {
+      window.removeEventListener('focus', onFocus)
+      window.removeEventListener('cart-updated', onCartUpdated)
+    }
+  }, [])
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">

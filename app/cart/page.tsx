@@ -1,14 +1,70 @@
 "use client"
 
-import React from "react"
-import { useCart } from "@/components/cart-context"
+import React, { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
 
+type CartItem = {
+    id: string
+    productId?: string
+    name: string
+    price: number
+    quantity: number
+    image?: string
+}
+
 export default function CartPage () {
-    const { items, updateQuantity, removeItem, total } = useCart()
+    const [items, setItems] = useState<CartItem[]>([])
+    const [loading, setLoading] = useState(true)
+
+    const fetchCart = async () => {
+        setLoading(true)
+        try {
+            const res = await fetch('/api/cart')
+            if (!res.ok) throw new Error('Failed to fetch cart')
+            const data = await res.json()
+            setItems(data.items || [])
+        } catch (err) {
+            console.error('Error fetching cart', err)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    useEffect(() => {
+        fetchCart()
+    }, [])
+
+    const updateQuantity = async (id: string, quantity: number) => {
+        // optimistic UI: clamp quantity
+        const clamped = Math.max(1, quantity)
+        try {
+            const res = await fetch(`/api/cart/${encodeURIComponent(id)}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ quantity: clamped }),
+            })
+            if (!res.ok) throw new Error('Failed to update')
+            const updated = await res.json()
+            setItems((prev) => prev.map((it) => it.id === id ? { ...it, quantity: updated.quantity ?? clamped } : it))
+        } catch (err) {
+            console.error('Update quantity failed', err)
+        }
+    }
+
+    const removeItem = async (id: string) => {
+        try {
+            const res = await fetch(`/api/cart/${encodeURIComponent(id)}`, { method: 'DELETE' })
+            if (!res.ok) throw new Error('Failed to remove')
+            setItems((prev) => prev.filter((it) => it.id !== id))
+        } catch (err) {
+            console.error('Remove item failed', err)
+        }
+    }
+
+    const subtotal = items.reduce((s, it) => s + it.price * it.quantity, 0)
 
     return (
         <>
@@ -16,7 +72,9 @@ export default function CartPage () {
             <main className="max-w-4xl mx-auto py-24 px-4">
                 <h1 className="text-3xl font-serif mb-6">Your Cart</h1>
 
-                {items.length === 0 ? (
+                {loading ? (
+                    <div className="text-center py-16">Loading cart…</div>
+                ) : items.length === 0 ? (
                     <div className="text-center py-16">
                         <p className="mb-4">Your cart is empty.</p>
                         <Link href="/">
@@ -53,7 +111,7 @@ export default function CartPage () {
                         <div className="flex items-center justify-between border-t pt-4">
                             <div>
                                 <div className="text-sm text-muted-foreground">Total</div>
-                                <div className="text-2xl font-semibold">{`$${total.toFixed(2)}`}</div>
+                                <div className="text-2xl font-semibold">{`$${subtotal.toFixed(2)}`}</div>
                             </div>
                             <div className="flex gap-2">
                                 <Link href="/">

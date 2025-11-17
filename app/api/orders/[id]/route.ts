@@ -4,27 +4,29 @@ import { revertStock } from '@/lib/inventory'
 
 const ORDERS_FILE = 'orders.json'
 
-function listOrders() {
+function listOrders () {
   return (readJSON<any[]>(ORDERS_FILE) || [])
 }
 
-function saveOrders(orders: any[]) {
+function saveOrders (orders: any[]) {
   writeJSON(ORDERS_FILE, orders)
 }
 
-export async function GET(_req: Request, { params }: { params: { id: string } }) {
+export async function GET (_req: Request, context: any) {
+  const { params } = context || {}
   const orders = listOrders()
-  const o = orders.find((x) => x.id === params.id)
+  const o = orders.find((x) => x.id === params?.id)
   if (!o) return NextResponse.json({ error: 'not found' }, { status: 404 })
   return NextResponse.json(o)
 }
 
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST (req: Request, context: any) {
+  const { params } = context || {}
   // used to update order status (e.g., cancel) and revert stock when needed
   try {
     const body = await req.json()
     const orders = listOrders()
-    const idx = orders.findIndex((x) => x.id === params.id)
+    const idx = orders.findIndex((x) => x.id === params?.id)
     if (idx === -1) return NextResponse.json({ error: 'not found' }, { status: 404 })
     const order = orders[idx]
     const newStatus = body.status

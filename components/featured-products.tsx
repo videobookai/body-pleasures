@@ -3,7 +3,7 @@
 import React, { useState } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { useCart } from "@/components/cart-context"
+// use server-backed cart API instead of local cart context
 
 type Product = {
   id: string
@@ -35,9 +35,39 @@ const PRODUCTS: Product[] = [
 ]
 
 function ProductCard ({ product }: { product: Product }) {
-  const { addItem } = useCart()
   const [qty, setQty] = useState<number>(1)
   const [added, setAdded] = useState(false)
+  const [loading, setLoading] = useState(false)
+
+  const handleAdd = async () => {
+    setLoading(true)
+    try {
+      const res = await fetch('/api/cart', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          productId: product.id,
+          name: product.name,
+          price: product.price,
+          image: product.image,
+          quantity: qty,
+        }),
+      })
+
+      if (res.ok) {
+        // Dispatch custom event to notify nav to refresh cart count
+        window.dispatchEvent(new CustomEvent('cart-updated'))
+        // visual feedback
+        setAdded(true)
+        window.setTimeout(() => setAdded(false), 800)
+      }
+    } catch (err) {
+      console.error('Add to cart failed', err)
+      // Consider showing a toast in the future
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <Card className="overflow-hidden border-0 shadow-md hover:shadow-xl transition-all duration-300">
@@ -59,15 +89,11 @@ function ProductCard ({ product }: { product: Product }) {
             onChange={(e) => setQty(Math.max(1, Number(e.target.value || 1)))}
           />
           <Button
-            onClick={() => {
-              addItem({ id: product.id, name: product.name, price: product.price, image: product.image }, qty)
-              // visual feedback
-              setAdded(true)
-              window.setTimeout(() => setAdded(false), 800)
-            }}
+            onClick={() => handleAdd()}
+            disabled={loading}
             className={added ? 'scale-105 bg-primary/90 transform transition-all duration-300' : ''}
           >
-            {added ? 'Added ✓' : 'Add to cart'}
+            {added ? 'Added ✓' : loading ? 'Adding...' : 'Add to cart'}
           </Button>
         </div>
       </div>

@@ -4,19 +4,19 @@ import { decrementStock } from '@/lib/inventory'
 
 const ORDERS_FILE = 'orders.json'
 
-function listOrders() {
+function listOrders () {
   return (readJSON<any[]>(ORDERS_FILE) || [])
 }
 
-function saveOrders(orders: any[]) {
+function saveOrders (orders: any[]) {
   writeJSON(ORDERS_FILE, orders)
 }
 
-export async function GET() {
+export async function GET () {
   return NextResponse.json(listOrders())
 }
 
-export async function POST(req: Request) {
+export async function POST (req: Request) {
   try {
     const body = await req.json()
     const { items, customer, method } = body
