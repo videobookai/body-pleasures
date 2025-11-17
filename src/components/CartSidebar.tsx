@@ -1,7 +1,7 @@
 import React from "react";
 import { Product } from "../data/products";
 
-interface CartItem extends Product {
+export interface CartItem extends Product {
   quantity: number;
 }
 
@@ -10,6 +10,9 @@ interface Props {
   cartItems: CartItem[];
   onClose: () => void;
   onCheckout: () => void;
+  onIncrease: (id: number) => void;
+  onDecrease: (id: number) => void;
+  onRemove: (id: number | "ALL") => void;
 }
 
 export default function CartSidebar({
@@ -17,6 +20,9 @@ export default function CartSidebar({
   cartItems,
   onClose,
   onCheckout,
+  onIncrease,
+  onDecrease,
+  onRemove,
 }: Props) {
   const total = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
@@ -40,11 +46,29 @@ export default function CartSidebar({
         {cartItems.map((item) => (
           <div key={item.id} className="cart-item">
             <div className="cart-item-image">{item.emoji}</div>
+
             <div className="cart-item-info">
               <div className="cart-item-name">{item.name}</div>
+
               <div className="cart-item-price">
-                ${item.price.toFixed(2)} × {item.quantity}
+                ₦{item.price.toLocaleString()} × {item.quantity}
               </div>
+
+              {/* Quantity Controls */}
+              <div className="cart-quantity-controls" style={{ marginTop: 8 }}>
+                <button onClick={() => onDecrease(item.id)}>-</button>
+                <span style={{ padding: "0 8px" }}>{item.quantity}</span>
+                <button onClick={() => onIncrease(item.id)}>+</button>
+              </div>
+
+              {/* Remove Button */}
+              <button
+                className="remove-btn"
+                onClick={() => onRemove(item.id)}
+                style={{ marginTop: 8 }}
+              >
+                Remove
+              </button>
             </div>
           </div>
         ))}
@@ -53,8 +77,20 @@ export default function CartSidebar({
       <div className="cart-footer">
         <div className="cart-total">
           <span>Total</span>
-          <span>${total.toFixed(2)}</span>
+          <span>₦{total.toLocaleString()}</span>
         </div>
+
+        {/* Cancel / Clear Cart */}
+        <button
+          className="cancel-cart-btn"
+          onClick={() => {
+            onRemove("ALL");
+            onClose();
+          }}
+        >
+          Cancel Cart
+        </button>
+
         <button className="checkout-btn" onClick={onCheckout}>
           Checkout
         </button>

@@ -11,23 +11,87 @@ import { products as allProducts, Product } from './data/products';
 
 import N8NChat from './components/N8NChat';
 
-
-
 type Page = 'home' | 'shop' | 'about' | 'contact';
+
+export interface CartItem extends Product {
+  quantity: number;
+}
 
 function App() {
   const [page, setPage] = useState<Page>('home');
-  const [cart, setCart] = useState<Product[]>([]);
+
+  // FIX: Cart now stores quantity
+  const [cart, setCart] = useState<CartItem[]>([]);
+
   const [cartOpen, setCartOpen] = useState(false);
   const [filter, setFilter] = useState<string>('all');
 
   const featured = allProducts.slice(0, 6);
-  const filtered = useMemo(() => (filter === 'all' ? allProducts : allProducts.filter(p => p.category === filter)), [filter]);
 
+  const filtered = useMemo(
+    () => (filter === 'all'
+      ? allProducts
+      : allProducts.filter(p => p.category === filter)),
+    [filter]
+  );
+
+  /** FIX: Add to cart without duplicates */
   function addToCart(id: number) {
     const p = allProducts.find(x => x.id === id);
     if (!p) return;
-    setCart(prev => [...prev, p]);
+
+    setCart(prev => {
+      const existing = prev.find(item => item.id === id);
+
+      if (existing) {
+        return prev.map(item =>
+          item.id === id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        );
+      }
+
+      return [...prev, { ...p, quantity: 1 }];
+    });
+
+    
+  }
+
+  /** FIX: Remove item */
+  function removeFromCart(id: number) {
+    setCart(prev => prev.filter(item => item.id !== id));
+  }
+
+  /** FIX: Decrease quantity */
+  function decreaseQuantity(id: number) {
+    setCart(prev =>
+      prev
+        .map(item =>
+          item.id === id
+            ? { ...item, quantity: item.quantity - 1 }
+            : item
+        )
+        .filter(item => item.quantity > 0)
+    );
+  }
+  function handleRemove(id: number | "ALL") {
+    if (id === "ALL") {
+      setCart([]);   // Clear cart
+    } else {
+      setCart(prev => prev.filter(item => item.id !== id));
+    }
+  }
+  
+
+  /** FIX: Increase quantity */
+  function increaseQuantity(id: number) {
+    setCart(prev =>
+      prev.map(item =>
+        item.id === id
+          ? { ...item, quantity: item.quantity + 1 }
+          : item
+      )
+    );
   }
 
   function handleNavigate(p: Page) {
@@ -39,8 +103,6 @@ function App() {
     setFilter(cat);
   }
 
-
-
   function checkout() {
     if (cart.length === 0) {
       alert('Your cart is empty. Add some products first!');
@@ -51,19 +113,24 @@ function App() {
 
   return (
     <div className="bg-[#0a0a0a] min-h-screen text-white" style={{ fontFamily: "'Lato', sans-serif" }}>
-      <Header onNavigate={(p) => handleNavigate(p as Page)} onToggleCart={() => setCartOpen(v => !v)} cartCount={cart.length} />
+      <Header
+        onNavigate={(p) => handleNavigate(p as Page)}
+        onToggleCart={() => setCartOpen(v => !v)}
+        cartCount={cart.reduce((sum, item) => sum + item.quantity, 0)} // FIX
+      />
+
       <main className="pt-28">
         {page === 'home' && (
           <>
             <Hero onShop={() => handleNavigate('shop')} />
+
             <section className="px-6 py-16 max-w-[1200px] mx-auto">
               <div className="text-center mb-12">
                 <h2 className="text-3xl font-extrabold" style={{ fontFamily: "'Playfair Display', serif" }}>Featured Collections</h2>
                 <p className="text-white/80">Discover our handcrafted wellness essentials</p>
               </div>
-              <div className="mb-12">
-                <ProductGrid products={featured} onAdd={addToCart} />
-              </div>
+
+              <ProductGrid products={featured} onAdd={addToCart} />
             </section>
 
             <Newsletter />
@@ -79,7 +146,15 @@ function App() {
 
             <div className="flex gap-4 justify-center flex-wrap mb-8">
               {['all','soaps','creams','candles','beard','relief','sprays'].map(cat => (
-                <button key={cat} className={`px-6 py-2 rounded-full border ${filter === cat ? 'bg-gradient-to-r from-yellow-400 to-orange-400 text-black border-yellow-400' : 'bg-[rgba(26,26,26,0.6)] border-[rgba(255,215,0,0.3)] text-white'}`} onClick={() => handleFilter(cat)}>
+                <button
+                  key={cat}
+                  className={`px-6 py-2 rounded-full border ${
+                    filter === cat
+                      ? 'bg-gradient-to-r from-yellow-400 to-orange-400 text-black border-yellow-400'
+                      : 'bg-[rgba(26,26,26,0.6)] border-[rgba(255,215,0,0.3)] text-white'
+                  }`}
+                  onClick={() => handleFilter(cat)}
+                >
                   {cat === 'all' ? 'All Products' : cat.charAt(0).toUpperCase() + cat.slice(1)}
                 </button>
               ))}
@@ -91,16 +166,24 @@ function App() {
 
         {page === 'about' && <About />}
 
-        {page === 'contact' && <Contact/>}
+        {page === 'contact' && <Contact />}
 
         <Footer />
       </main>
 
-      <CartSidebar isOpen={cartOpen} cartItems={cart.map((item) => ({ ...item, quantity: 1 }))} onClose={() => setCartOpen(false)} onCheckout={checkout} />
-      
-      
-      <N8NChat />
+      <CartSidebar
+  isOpen={cartOpen}
+  cartItems={cart}
+  onClose={() => setCartOpen(false)}
+  onCheckout={checkout}
+  onIncrease={increaseQuantity}   // or the function name you used for increase
+  onDecrease={decreaseQuantity}   // or the function name you used for decrease
+  onRemove={handleRemove}         // handleRemove should accept number | "ALL"
+/>
 
+
+
+      <N8NChat />
     </div>
   );
 }
