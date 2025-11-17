@@ -86,8 +86,6 @@ model Order {
   shippingState String
   shippingZip   String
   shippingCountry String
-  shippingCarrier String? // carrier used (e.g., "usps", "fedex", "ups")
-  shippingMethod String? // method type (e.g., "priority", "ground")
   
   // Billing info (same as shipping if not specified)
   billingName   String?
@@ -107,74 +105,3 @@ model Order {
   updatedAt     DateTime @updatedAt
 }
 
-model ShippingCarrier {
-  id             String   @id @default(cuid())
-  name           String   @unique // "usps", "fedex", "ups", "dhl"
-  displayName    String   // "USPS", "FedEx", etc.
-  enabled        Boolean  @default(true)
-  priority       Int      @default(0) // sort order
-  
-  // API credentials
-  apiKey         String?
-  apiSecret      String?
-  accountId      String?
-  
-  // Rate config
-  minWeight      Float    @default(0)    // minimum weight in lbs
-  maxWeight      Float    @default(70)   // maximum weight in lbs
-  baseCost       Float    @default(0)    // base shipping cost
-  costPerPound   Float    @default(0.5)  // cost per additional pound
-  
-  // Feature flags
-  realTimeRates  Boolean  @default(false) // uses API for live quotes
-  estimatedDaysMin Int    @default(1)
-  estimatedDaysMax Int    @default(5)
-  
-  methods        ShippingMethod[]
-  rates          ShippingRate[]
-  
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-}
-
-model ShippingMethod {
-  id             String   @id @default(cuid())
-  carrierId      String
-  carrier        ShippingCarrier @relation(fields: [carrierId], references: [id], onDelete: Cascade)
-  
-  name           String   // "Priority Mail", "2-Day", "Ground"
-  code           String   // "priority_mail", "2day", "ground"
-  estimatedDaysMin Int
-  estimatedDaysMax Int
-  
-  @@unique([carrierId, code])
-}
-
-model ShippingZone {
-  id             String   @id @default(cuid())
-  name           String   // "Zone 1: Local", "Zone 2: Regional", etc.
-  states         String   // JSON array: ["CA", "OR", "WA"]
-  countries      String   @default("[]") // JSON array
-  zipRanges      String   @default("[]") // JSON array of {start, end}
-  enabled        Boolean  @default(true)
-  priority       Int      @default(0)
-  
-  rates          ShippingRate[]
-  
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-}
-
-model ShippingRate {
-  id             String   @id @default(cuid())
-  carrierId      String
-  carrier        ShippingCarrier @relation(fields: [carrierId], references: [id], onDelete: Cascade)
-  zoneId         String
-  zone           ShippingZone @relation(fields: [zoneId], references: [id], onDelete: Cascade)
-  
-  minWeight      Float    // range start (lbs)
-  maxWeight      Float    // range end (lbs)
-  cost           Float    // flat rate or base cost
-  
-  @@unique([carrierId, zoneId, minWeight, maxWeight])
-}
