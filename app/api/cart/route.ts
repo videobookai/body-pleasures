@@ -1,8 +1,16 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { cookies } from 'next/headers'
+import { verifyToken } from '@/lib/auth'
 
 function getSessionId (cookieStore: Awaited<ReturnType<typeof cookies>>) {
+  // Prefer authenticated user's id when present so carts persist across devices
+  const authToken = cookieStore.get('authToken')?.value
+  if (authToken) {
+    const payload = verifyToken(authToken)
+    if (payload && payload.userId) return `user:${payload.userId}`
+  }
+
   let sid = cookieStore.get('sessionId')?.value
   if (!sid) {
     sid = `session_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`
@@ -78,7 +86,7 @@ export async function POST (req: Request) {
   })
   const subtotal = updated!.items.reduce((s: number, i: any) => s + i.price * i.quantity, 0)
 
-  const response = NextResponse.json({ items: updated!.items, subtotal }, { status: 201 })
+  const response = NextResponse.json({ sessionId, items: updated!.items, subtotal }, { status: 201 })
 
   // Ensure sessionId is set as a persistent cookie
   response.cookies.set('sessionId', sessionId, {

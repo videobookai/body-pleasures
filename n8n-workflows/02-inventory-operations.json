@@ -12,7 +12,7 @@
             "id": "schedule_trigger",
             "name": "Schedule: Daily at 1 AM",
             "type": "n8n-nodes-base.cron",
-            "typeVersion": 1,
+            "typeVersion": 2,
             "position": [
                 250,
                 300
@@ -70,7 +70,7 @@
             "id": "check_has_low_stock",
             "name": "If: Has Low Stock Items",
             "type": "n8n-nodes-base.if",
-            "typeVersion": 1,
+            "typeVersion": 2,
             "position": [
                 1000,
                 300
@@ -98,7 +98,7 @@
             "id": "slack_alert",
             "name": "Slack: Send Low Stock Alert",
             "type": "n8n-nodes-base.slack",
-            "typeVersion": 1,
+            "typeVersion": 2,
             "position": [
                 1500,
                 200

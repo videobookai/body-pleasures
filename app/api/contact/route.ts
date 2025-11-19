@@ -1,25 +1,32 @@
 import { NextResponse } from 'next/server'
+import { triggerWebhook } from '@/lib/webhook-triggers'
 
 export async function POST (req: Request) {
   try {
     const payload = await req.json()
-    const webhook = process.env.N8N_WEBHOOK_URL
-    if (!webhook) {
-      return NextResponse.json({ error: 'N8N webhook not configured (set N8N_WEBHOOK_URL)' }, { status: 500 })
+    // Basic payload normalization
+    const contact = {
+      name: payload.name || payload.fullName || '',
+      email: payload.email || '',
+      subject: payload.subject || '',
+      message: payload.message || payload.msg || '',
+      createdAt: new Date().toISOString(),
     }
 
-    // Forward to N8N webhook
-    const resp = await fetch(webhook, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    })
+    const webhookUrl = 'https://oyedey-bootcamp.app.n8n.cloud/webhook-test/contact-form'
 
-    if (!resp.ok) return NextResponse.json({ error: 'failed to deliver to n8n' }, { status: 502 })
+    try {
+      console.log('[Contact] triggering contact webhook to', webhookUrl, 'payload name=', contact.name)
+      await triggerWebhook('contact.submitted', { contact } as any, webhookUrl)
+      console.log('[Contact] contact webhook triggered for', contact.email)
+    } catch (err) {
+      console.error('[Contact] failed to deliver contact webhook', err)
+      // fallthrough: still return success to client but note delivery failure in logs
+    }
 
-    const body = await resp.text()
-    return NextResponse.json({ ok: true, result: body })
+    return NextResponse.json({ ok: true })
   } catch (err) {
+    console.error('[Contact] error', err)
     return NextResponse.json({ error: 'server error' }, { status: 500 })
   }
 }

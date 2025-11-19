@@ -12,7 +12,7 @@
             "id": "webhook_new_review",
             "name": "Webhook: New Review Posted",
             "type": "n8n-nodes-base.webhook",
-            "typeVersion": 1,
+            "typeVersion": 2,
             "position": [
                 250,
                 300
@@ -34,7 +34,7 @@
             "id": "ai_sentiment_analysis",
             "name": "OpenAI: Sentiment Analysis",
             "type": "n8n-nodes-base.openaiChatModel",
-            "typeVersion": 1,
+            "typeVersion": 2,
             "position": [
                 500,
                 300
@@ -71,7 +71,7 @@
             "id": "check_if_negative",
             "name": "If: Sentiment is Negative",
             "type": "n8n-nodes-base.if",
-            "typeVersion": 1,
+            "typeVersion": 2,
             "position": [
                 1000,
                 300
@@ -107,7 +107,7 @@
             "id": "slack_negative_alert",
             "name": "Slack: Alert Support Team",
             "type": "n8n-nodes-base.slack",
-            "typeVersion": 1,
+            "typeVersion": 2,
             "position": [
                 1250,
                 300
@@ -125,7 +125,7 @@
             "id": "slack_positive_feedback",
             "name": "Slack: Share Positive Review",
             "type": "n8n-nodes-base.slack",
-            "typeVersion": 1,
+            "typeVersion": 2,
             "position": [
                 1250,
                 450
@@ -173,7 +173,7 @@
             "id": "respond_webhook",
             "name": "Respond to Webhook",
             "type": "n8n-nodes-base.respondToWebhook",
-            "typeVersion": 1,
+            "typeVersion": 2,
             "position": [
                 2000,
                 300

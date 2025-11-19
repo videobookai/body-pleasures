@@ -43,8 +43,46 @@ function CheckoutForm () {
         fetchCart()
     }, [])
 
+    const [useDummy, setUseDummy] = useState(false)
+
+    const fillTestData = () => {
+        setShippingName('Test User')
+        setShippingEmail('test@example.com')
+        setShippingPhone('555-555-5555')
+        setShippingAddress('123 Test St')
+        setShippingCity('Testville')
+        setShippingState('TS')
+        setShippingZip('00000')
+        setShippingCountry('US')
+    }
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
+        // If using dummy/test mode skip Stripe and call the test checkout endpoint
+        if (useDummy) {
+            setLoading(true)
+            try {
+                const res = await fetch('/api/checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ shippingName, shippingEmail, shippingPhone, shippingAddress, shippingCity, shippingState, shippingZip, shippingCountry, tax: 0, shipping: 0, total }),
+                })
+                const data = await res.json()
+                if (res.ok && data && data.id) {
+                    router.push('/checkout/success')
+                    return
+                } else {
+                    alert('Test checkout failed')
+                }
+            } catch (err) {
+                console.error(err)
+                alert('Error in test checkout')
+            } finally {
+                setLoading(false)
+            }
+            return
+        }
+
         if (!stripe || !elements) return
         setLoading(true)
         try {
@@ -101,6 +139,11 @@ function CheckoutForm () {
                         <div>
                             <h2 className="text-lg font-semibold mb-4">Shipping</h2>
                             <div className="space-y-3">
+                                <div className="flex items-center gap-2 mb-2">
+                                    <input id="useDummy" type="checkbox" checked={useDummy} onChange={(e) => setUseDummy(e.target.checked)} />
+                                    <label htmlFor="useDummy" className="text-sm">Use test/dummy checkout (local only)</label>
+                                    <button type="button" className="ml-auto text-sm underline" onClick={fillTestData}>Fill test data</button>
+                                </div>
                                 <input className="w-full border rounded px-3 py-2" placeholder="Full Name" value={shippingName} onChange={(e) => setShippingName(e.target.value)} required />
                                 <input className="w-full border rounded px-3 py-2" type="email" placeholder="Email" value={shippingEmail} onChange={(e) => setShippingEmail(e.target.value)} required />
                                 <input className="w-full border rounded px-3 py-2" placeholder="Phone" value={shippingPhone} onChange={(e) => setShippingPhone(e.target.value)} />
@@ -120,9 +163,14 @@ function CheckoutForm () {
                             <div className="border rounded p-4 bg-gray-50">
                                 <CardElement options={{ hidePostalCode: true }} />
                             </div>
+                            {useDummy && (
+                                <div className="mt-2 text-sm text-muted-foreground">
+                                    Using test checkout — no real card is charged. If you want to simulate a card, use Stripe test card number <code>4242 4242 4242 4242</code> with any CVC and future expiry.
+                                </div>
+                            )}
                         </div>
-                        <Button type="submit" disabled={loading || !stripe} className="w-full">
-                            {loading ? 'Processing...' : `Pay $${total.toFixed(2)}`}
+                        <Button type="submit" disabled={loading || (!useDummy && !stripe)} className="w-full">
+                            {loading ? 'Processing...' : useDummy ? `Test Pay $${total.toFixed(2)}` : `Pay $${total.toFixed(2)}`}
                         </Button>
                     </form>
                 </div>

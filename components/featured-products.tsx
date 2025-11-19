@@ -55,8 +55,17 @@ function ProductCard ({ product }: { product: Product }) {
       })
 
       if (res.ok) {
-        // Dispatch custom event to notify nav to refresh cart count
-        window.dispatchEvent(new CustomEvent('cart-updated'))
+        // Use server response to update nav badge without an extra fetch
+        try {
+          const data = await res.json()
+          const items = data.items || []
+          const count = items.reduce((s: number, i: any) => s + (i.quantity || 0), 0)
+          const subtotal = data.subtotal ?? items.reduce((s: number, i: any) => s + (i.price || 0) * (i.quantity || 0), 0)
+          window.dispatchEvent(new CustomEvent('cart-updated', { detail: { count, subtotal } }))
+        } catch (err) {
+          // fallback: still notify without payload
+          window.dispatchEvent(new CustomEvent('cart-updated'))
+        }
         // visual feedback
         setAdded(true)
         window.setTimeout(() => setAdded(false), 800)

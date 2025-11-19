@@ -24,13 +24,20 @@ type WebhookPayload = {
     text: string
     createdAt: string
   }
+  contact?: {
+    name: string
+    email: string
+    message: string
+    subject?: string
+    createdAt: string
+  }
 }
 
-export async function triggerWebhook (event: 'order.created' | 'review.created', payload: WebhookPayload) {
+export async function triggerWebhook (event: 'order.created' | 'review.created' | 'contact.submitted', payload: WebhookPayload, webhookUrlOverride?: string) {
   try {
-    const webhookUrl = process.env.N8N_WEBHOOK_URL
+    const webhookUrl = webhookUrlOverride || process.env.N8N_WEBHOOK_URL
     if (!webhookUrl) {
-      console.warn('[Webhook] N8N_WEBHOOK_URL not set, skipping webhook trigger')
+      console.warn('[Webhook] no webhook URL provided, skipping webhook trigger')
       return
     }
 
@@ -46,7 +53,7 @@ export async function triggerWebhook (event: 'order.created' | 'review.created',
     if (!response.ok) {
       console.error(`[Webhook] Failed to trigger ${event}:`, response.status, await response.text())
     } else {
-      console.log(`[Webhook] Successfully triggered ${event}`)
+      console.log(`[Webhook] Successfully triggered ${event} -> ${webhookUrl}`)
     }
   } catch (err) {
     console.error(`[Webhook] Error triggering ${event}:`, err)
@@ -66,14 +73,14 @@ export async function triggerOrderWebhook (order: {
   status: string
   shippingAddress?: string
   createdAt: string
-}) {
+}, webhookUrlOverride?: string) {
   return triggerWebhook('order.created', {
     order: {
       items: order.items || [],
       shippingAddress: order.shippingAddress || '',
       ...order,
     },
-  })
+  }, webhookUrlOverride)
 }
 
 /**
@@ -90,4 +97,17 @@ export async function triggerReviewWebhook (review: {
   createdAt: string
 }) {
   return triggerWebhook('review.created', { review })
+}
+
+/**
+ * Trigger contact.submitted webhook
+ */
+export async function triggerContactWebhook (contact: {
+  name: string
+  email: string
+  message: string
+  subject?: string
+  createdAt: string
+}, webhookUrlOverride?: string) {
+  return triggerWebhook('contact.submitted', { contact }, webhookUrlOverride)
 }

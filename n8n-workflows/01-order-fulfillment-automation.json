@@ -12,7 +12,7 @@
             "id": "webhook_trigger",
             "name": "Webhook: New Order",
             "type": "n8n-nodes-base.webhook",
-            "typeVersion": 1,
+            "typeVersion": 2,
             "position": [
                 250,
                 300
@@ -28,7 +28,7 @@
             "id": "slack_notification",
             "name": "Slack: Team Notification",
             "type": "n8n-nodes-base.slack",
-            "typeVersion": 1,
+            "typeVersion": 2,
             "position": [
                 500,
                 150
@@ -80,7 +80,7 @@
             "id": "set_sheet_data",
             "name": "Data: Prepare Sheet Row",
             "type": "n8n-nodes-base.set",
-            "typeVersion": 1,
+            "typeVersion": 2,
             "position": [
                 500,
                 300
@@ -116,7 +116,7 @@
             "id": "google_docs_invoice",
             "name": "Google Docs: Create Invoice",
             "type": "n8n-nodes-base.googleDocs",
-            "typeVersion": 1,
+            "typeVersion": 2,
             "position": [
                 500,
                 450
@@ -136,7 +136,7 @@
             "id": "google_drive_folder",
             "name": "Google Drive: Create Customer Folder",
             "type": "n8n-nodes-base.googleDrive",
-            "typeVersion": 1,
+            "typeVersion": 2,
             "position": [
                 750,
                 450
@@ -156,7 +156,7 @@
             "id": "google_drive_save_invoice",
             "name": "Google Drive: Move Invoice to Folder",
             "type": "n8n-nodes-base.googleDrive",
-            "typeVersion": 1,
+            "typeVersion": 2,
             "position": [
                 1000,
                 450
@@ -170,7 +170,7 @@
             "id": "success_response",
             "name": "Respond to Webhook",
             "type": "n8n-nodes-base.respondToWebhook",
-            "typeVersion": 1,
+            "typeVersion": 2,
             "position": [
                 1250,
                 300

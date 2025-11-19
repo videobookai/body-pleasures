@@ -3,10 +3,12 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Menu, X, ShoppingBag, User } from "lucide-react"
 import { useAuth } from "@/hooks/useAuth"
 
 export function Navigation () {
+  const router = useRouter()
   const [isOpen, setIsOpen] = useState(false)
   const [cartCount, setCartCount] = useState(0)
   const { user, loading } = useAuth()
@@ -29,17 +31,35 @@ export function Navigation () {
     fetchCartCount()
 
     const onFocus = () => fetchCartCount()
-    const onCartUpdated = () => fetchCartCount()
+    const onCartUpdated = (e: Event) => {
+      // If event carries details from the mutating calls, use them to update nav without refetch
+      const ev: any = e as CustomEvent
+      if (ev && ev.detail) {
+        const detail = ev.detail
+        if (typeof detail.count === 'number') {
+          setCartCount(detail.count)
+          return
+        }
+        if (Array.isArray(detail.items)) {
+          const count = detail.items.reduce((s: number, i: any) => s + (i.quantity || 0), 0)
+          setCartCount(count)
+          return
+        }
+      }
+      // fallback: fetch the cart
+      fetchCartCount()
+    }
+
+    const onVisibility = () => { if (document.visibilityState === 'visible') fetchCartCount() }
 
     window.addEventListener('focus', onFocus)
     window.addEventListener('cart-updated', onCartUpdated)
-    document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'visible') fetchCartCount()
-    })
+    document.addEventListener('visibilitychange', onVisibility)
 
     return () => {
       window.removeEventListener('focus', onFocus)
       window.removeEventListener('cart-updated', onCartUpdated)
+      document.removeEventListener('visibilitychange', onVisibility)
     }
   }, [])
 
@@ -49,7 +69,23 @@ export function Navigation () {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <h1 className="text-xl font-serif font-semibold text-foreground">{"Ms V's Body Pleasures"}</h1>
+            {/* Site title: clicking always navigates to home. If already on home, force a reload */}
+            <Link
+              href="/"
+              onClick={(e) => {
+                // If already on home, force a full reload to "always load" the home page
+                if (typeof window !== 'undefined' && window.location.pathname === '/') {
+                  e.preventDefault()
+                  window.location.href = '/'
+                } else {
+                  // Otherwise use client navigation
+                  // Allow Link to handle default navigation
+                }
+              }}
+              className="text-xl font-serif font-semibold text-foreground"
+            >
+              {"Ms V's Body Pleasures"}
+            </Link>
           </div>
 
           {/* Desktop Navigation */}

@@ -40,6 +40,8 @@ export default function CartPage () {
     const updateQuantity = async (id: string, quantity: number) => {
         // optimistic UI: clamp quantity
         const clamped = Math.max(1, quantity)
+        // optimistic update for immediate UI feedback
+        setItems((prev) => prev.map((it) => it.id === id ? { ...it, quantity: clamped } : it))
         try {
             const res = await fetch(`/api/cart/${encodeURIComponent(id)}`, {
                 method: 'PATCH',
@@ -47,10 +49,34 @@ export default function CartPage () {
                 body: JSON.stringify({ quantity: clamped }),
             })
             if (!res.ok) throw new Error('Failed to update')
-            const updated = await res.json()
-            setItems((prev) => prev.map((it) => it.id === id ? { ...it, quantity: updated.quantity ?? clamped } : it))
+            const data = await res.json()
+            // If server returned the updated item, update that specific item (avoid full refetch)
+            if (data && data.item) {
+                setItems((prev) => prev.map((it) => it.id === id ? { ...it, quantity: data.item.quantity } : it))
+            } else if (data && data.items) {
+                // fallback: server returned full items list
+                setItems(data.items || [])
+            } else {
+                // no useful payload, re-sync
+                await fetchCart()
+            }
+            // notify other UI (nav) to refresh and provide details when available
+            if (data && data.items) {
+                const count = data.items.reduce((s: number, i: any) => s + (i.quantity || 0), 0)
+                const subtotal = data.subtotal ?? data.items.reduce((s: number, i: any) => s + (i.price || 0) * (i.quantity || 0), 0)
+                window.dispatchEvent(new CustomEvent('cart-updated', { detail: { count, subtotal, items: data.items } }))
+            } else if (data && data.item) {
+                // compute count from local state
+                const count = items.reduce((s, it) => s + (it.quantity || 0), 0)
+                const subtotal = data.subtotal ?? items.reduce((s: number, i: any) => s + i.price * i.quantity, 0)
+                window.dispatchEvent(new CustomEvent('cart-updated', { detail: { count, subtotal } }))
+            } else {
+                window.dispatchEvent(new CustomEvent('cart-updated'))
+            }
         } catch (err) {
             console.error('Update quantity failed', err)
+            // revert to server state on error
+            fetchCart()
         }
     }
 
@@ -58,7 +84,26 @@ export default function CartPage () {
         try {
             const res = await fetch(`/api/cart/${encodeURIComponent(id)}`, { method: 'DELETE' })
             if (!res.ok) throw new Error('Failed to remove')
-            setItems((prev) => prev.filter((it) => it.id !== id))
+            const data = await res.json()
+            if (data && data.deletedId) {
+                setItems((prev) => prev.filter((it) => it.id !== data.deletedId))
+            } else if (data && data.items) {
+                setItems(data.items || [])
+            } else {
+                await fetchCart()
+            }
+            // notify nav and other listeners with details when available
+            if (data && data.items) {
+                const count = data.items.reduce((s: number, i: any) => s + (i.quantity || 0), 0)
+                const subtotal = data.subtotal ?? data.items.reduce((s: number, i: any) => s + (i.price || 0) * (i.quantity || 0), 0)
+                window.dispatchEvent(new CustomEvent('cart-updated', { detail: { count, subtotal, items: data.items } }))
+            } else if (data && data.deletedId) {
+                const count = items.reduce((s, it) => s + (it.quantity || 0), 0)
+                const subtotal = data.subtotal ?? items.reduce((s: number, i: any) => s + i.price * i.quantity, 0)
+                window.dispatchEvent(new CustomEvent('cart-updated', { detail: { count, subtotal, deletedId: data.deletedId } }))
+            } else {
+                window.dispatchEvent(new CustomEvent('cart-updated'))
+            }
         } catch (err) {
             console.error('Remove item failed', err)
         }

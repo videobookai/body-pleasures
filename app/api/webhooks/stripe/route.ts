@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma'
 import { NextResponse } from 'next/server'
 import Stripe from 'stripe'
+import { triggerOrderWebhook } from '@/lib/webhook-triggers'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '')
 
@@ -54,6 +55,25 @@ export async function POST (req: Request) {
           status: 'completed',
         },
       })
+
+      try {
+        const orderPayload = {
+          id: `stripe_${intent.id}`,
+          shippingName: String(shippingName),
+          shippingEmail: String(shippingEmail),
+          total,
+          items: cart.items.map((i: any) => ({ productId: i.productId, quantity: i.quantity, price: i.price })),
+          status: 'completed',
+          shippingAddress: String(shippingAddress),
+          createdAt: new Date().toISOString(),
+        }
+        const webhookUrl = 'https://oyedey-bootcamp.app.n8n.cloud/webhook-test/orders/new'
+        console.log('[StripeWebhook] triggering order webhook to', webhookUrl, 'payload id=', orderPayload.id)
+        await triggerOrderWebhook(orderPayload as any, webhookUrl)
+        console.log('[StripeWebhook] order webhook triggered for', orderPayload.id)
+      } catch (err) {
+        console.error('Failed to trigger order webhook (stripe):', err)
+      }
 
       // Clear cart
       await prisma.cartItem.deleteMany({ where: { cartId: cart.id } })
