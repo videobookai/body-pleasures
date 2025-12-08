@@ -17,7 +17,7 @@ export function FeaturedProducts() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
           {/* Large Featured Product 1 */}
           <Card className="overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-300">
-            <div className="aspect-[3/4] overflow-hidden">
+            <div className="aspect-3/4 overflow-hidden">
               <img
                 src="/images/design-mode/Artisan_Soap%5B1%5D.JPG.jpeg"
                 alt="Artisan Soap Collection"
@@ -36,7 +36,7 @@ export function FeaturedProducts() {
 
           {/* Large Featured Product 2 */}
           <Card className="overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-300">
-            <div className="aspect-[3/4] overflow-hidden">
+            <div className="aspect-3/4 overflow-hidden">
               <img
                 src="/images/design-mode/Beard_Products%5B1%5D.jpg"
                 alt="Beard Care Collection"
