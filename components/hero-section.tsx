@@ -3,8 +3,8 @@ import { Sparkles } from "lucide-react"
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
-      <div className="w-full mx-auto max-w-7xl">
+    <section className="relative my-4 mt-12 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+      <div className="w-full mx-auto lg:max-w-7xl">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
 
           {/* Left column: decorative + texts + CTAs */}
@@ -40,7 +40,7 @@ export function HeroSection() {
           </div>
 
           {/* Right column: Hero Image Grid */}
-          <div className="my-6 lg:mt-0 grid grid-cols-2 gap-4">
+          <div className="my-6 lg:mt-10 lg:grid grid-cols-2 gap-4 hidden">
             <div className="aspect-square rounded-2xl overflow-hidden">
               <img
                 src="/images/design-mode/asoap.jpeg"

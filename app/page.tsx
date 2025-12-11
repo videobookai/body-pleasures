@@ -8,22 +8,33 @@ import { Footer } from "@/components/footer";
 import Slider from "@/components/sliders";
 import GlobalApi from "./_utils/GlobalApi";
 import slider from "@/miss-v-admin/src/api/slider/controllers/slider";
+import Category from "@/miss-v-admin/src/api/category/controllers/category";
+import CategoryList from "@/components/CategoryList";
+import ProductList from "@/components/ProductList";
 
 export default async function Home() {
   const sliderList = await GlobalApi.getSliders();
+  const categoryList = await GlobalApi.getCategoryList();
+
+  const productList = await GlobalApi.getAllProducts();
   return (
     <main
-      className="min-h-screen bg-white flex flex-col"
+      className="min-h-screen bg-white flex flex-col "
       suppressHydrationWarning={true}
     >
       <Navigation />
 
       <HeroSection />
       <Slider sliderList={sliderList} />
-      <ProductCategories />
+      <CategoryList categoryList={categoryList} />
+
+      <ProductList productList={productList}/>
+
+
+      {/* <ProductCategories />
       <FeaturedProducts />
       <AboutSection />
-      <ContactSection />
+      <ContactSection /> */}
       <Footer />
     </main>
   );
