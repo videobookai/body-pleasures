@@ -9,13 +9,16 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { Menu, X, ShoppingBag } from "lucide-react";
+import { useCart } from "@/components/CartContext";
 import GlobalApi from "@/app/_utils/GlobalApi";
+import Link from "next/link";
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const [categoryList, setCategoryList] = useState<
     Array<{ id:number ; name: string }>
   >([]);
+  const { totalItems } = useCart();
 
   useEffect(() => {
     getCategoryList();
@@ -34,10 +37,11 @@ export function Navigation() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <div className="shrink-0">
+          <div className="shrink-0">    <Link href={"/"}>
             <h1 className="text-xl font-serif font-semibold text-foreground">
               {"Ms V's Body Pleasures"}
             </h1>
+            </Link>
           </div>
 
           {/* Desktop Navigation */}
@@ -60,10 +64,11 @@ export function Navigation() {
                     <div className="px-2 py-1 text-sm text-muted-foreground">No categories</div>
                   </DropdownMenuItem>
                 )}
-                {categoryList.map((category, index) => (
+                {categoryList.map((category, index) => (                  <Link href={`/products-category/${category.name}`} key={category.id}>
                   <DropdownMenuItem key={index} className="cursor-pointer">
                     <span className="text-sm capitalize">{category?.name}</span>
                   </DropdownMenuItem>
+                  </Link>
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
@@ -79,9 +84,16 @@ export function Navigation() {
             >
               Contact
             </a>
-            <Button size="sm" variant="ghost">
-              <ShoppingBag className="h-4 w-4" />
-            </Button>
+            <Link href="/cart" className="relative">
+              <Button size="sm" variant="ghost">
+                <ShoppingBag className="h-4 w-4" />
+              </Button>
+              {totalItems > 0 && (
+                <span className="absolute -top-1 -right-1 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
+                  {totalItems}
+                </span>
+              )}
+            </Link>
           </div>
 
           {/* Mobile menu button */}

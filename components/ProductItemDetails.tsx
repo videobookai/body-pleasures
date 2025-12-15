@@ -2,6 +2,8 @@
 import Image from "next/image";
 import React, { useState } from "react";
 import { Button } from "./ui/button";
+import { useCart } from "./CartContext";
+import { toast } from "sonner";
 import { ShoppingBasket } from "lucide-react";
 interface ProductItemDetailsProps {
   product: any;
@@ -13,6 +15,7 @@ const ProductItemDetails = ({ product }: ProductItemDetailsProps) => {
     product.sellingPrice ? product.sellingPrice : product.mrp
   );
   const [quantity, setQuantity] = useState(1);
+  const { addItem } = useCart();
   return (
     <div className="grid grid-cols-1  gap-2 md:gap-4 md:grid-cols-2 p-7 text-primary">
       <Image
@@ -71,7 +74,18 @@ const ProductItemDetails = ({ product }: ProductItemDetailsProps) => {
             Total = ${(quantity * productTotalPrice).toFixed(2)}
           </h2>
         </div>
-        <Button className="flex gap-3 my-2 cursor-pointer items-center w-36 bg-yellow-700 hover:bg-yellow-800 rounded-none justify-center">
+        <Button
+          onClick={() => {
+            const id = product.id ?? product._id ?? product.name;
+            const price = product.sellingPrice ?? product.mrp ?? 0;
+            const image = product.images?.[0]?.url
+              ? process.env.NEXT_PUBLIC_BASE_URL + product.images[0].url
+              : undefined;
+            addItem({ id, name: product.name, price: Number(price), quantity, image });
+            toast.success(`${quantity} × ${product.name} added to cart`);
+          }}
+          className="flex gap-3 my-2 cursor-pointer items-center w-36 bg-yellow-700 hover:bg-yellow-800 rounded-none justify-center"
+        >
           <ShoppingBasket className="w-12 h-12" />
           Add to Cart
         </Button>
