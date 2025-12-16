@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { sign } from 'crypto';
 
 const axiosClient = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:1337/api",
@@ -54,10 +55,27 @@ const getProductByCategory =(category: string)=>axiosClient.get('/products?filte
 .then(resp=>{
     return resp.data.data
 });
+
+const registerUser=(username: string, email: string, password: string)=>axiosClient.post(
+    "/auth/local/register",{
+        username:username,
+        email:email,
+        password:password
+    }
+);
+
+const signIn=(email: string, password:string)=>axiosClient.post(
+    '/auth/local', {
+        identifier:email,
+        password:password
+    }
+)
 export default {
     getCategory,
     getSliders, 
     getCategoryList,
     getAllProducts,
-    getProductByCategory
+    getProductByCategory,
+    registerUser,
+    signIn
 };
