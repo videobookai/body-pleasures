@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -9,21 +9,45 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { Menu, X, ShoppingBag, User } from "lucide-react";
-import { useCart } from "@/components/CartContext";
+
 import GlobalApi from "@/app/_utils/GlobalApi";
 import Link from "next/link";
 import { UserDropdown } from "./user-dropdown";
+import {UpdateCartContext} from "@/app/_context/UpdateCartContext";
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const [categoryList, setCategoryList] = useState<
     Array<{ id: number; name: string }>
   >([]);
-  const { totalItems } = useCart();
+
+
+  
+  const [totalCartItems, setTotalCartItems] = useState(0);
+  const {updateCart, setUpdateCart} = useContext<any>(UpdateCartContext);
+
+  const [cartItemList, setCartItemList] = useState<any>([]);
+  
+const [user, setUser] = useState<any>({});
+
+useEffect(() => {
+  // Access sessionStorage only on client side
+  if (typeof window !== "undefined") {
+    const storedUser = sessionStorage.getItem("user");
+    setUser(storedUser ? JSON.parse(storedUser) : {});
+  }
+}, []);
+
+useEffect(() => {
+  getCartItems();
+}, [updateCart, user]);
 
   useEffect(() => {
     getCategoryList();
   }, []);
+
+
+
 
   const getCategoryList = () => {
     GlobalApi.getCategory().then((resp) => {
@@ -31,6 +55,34 @@ export function Navigation() {
       console.log("getCategoryList response:", resp.data.data);
       console.log("categoryList state:", categoryList);
     });
+  };
+
+  const getCartItems = async () => {
+    // Ensure we have a user id and token before calling API
+    if (!user?.id) {
+      
+      return;
+    }
+
+    const token = typeof window !== "undefined" ? sessionStorage.getItem("authToken") : null;
+    if (!token) {
+      console.warn("No auth token found in sessionStorage; skipping cart fetch.");
+      
+      return;
+    }
+
+    try {
+      const resp = await GlobalApi.getUserCartItems(user.id, token);
+      // Support different response shapes (service might return array or { data: [...] })
+      const cartItemList_ = resp?.data?.data ?? resp?.data ?? resp;
+      console.log("Cart items:", cartItemList_);
+      setTotalCartItems(cartItemList_?.length);
+      setCartItemList(cartItemList_);
+    } catch (error) {
+      console.error("getCartItems error:", error);
+      
+      
+    }
   };
 
   return (
@@ -105,9 +157,9 @@ export function Navigation() {
               <Button size="sm" variant="ghost">
                 <ShoppingBag className="h-4 w-4" />
               </Button>
-              {totalItems > 0 && (
+              {totalCartItems > 0 && (
                 <span className="absolute -top-1 -right-1 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
-                  {totalItems}
+                  {totalCartItems}
                 </span>
               )}
             </Link>
