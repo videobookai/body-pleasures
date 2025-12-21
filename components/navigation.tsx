@@ -141,13 +141,13 @@ useEffect(() => {
               </DropdownMenuContent>
             </DropdownMenu>
             <a
-              href="#about"
+              href="/about"
               className="text-lg text-gray-600 hover:text-black transition-colors font-bold"
             >
               About
             </a>
             <a
-              href="#contact"
+              href="/contact-us"
               className="text-lg text-gray-600 hover:text-black transition-colors font-bold"
             >
               Contact

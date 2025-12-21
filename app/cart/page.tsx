@@ -214,7 +214,9 @@ export default function CartPage() {
                     >
                       Clear Cart
                     </Button>
-                    <Button className="bg-yellow-700 hover:bg-yellow-800">
+                    <Button 
+                    onClick={()=>window.location.href='/checkout'}
+                    className="bg-yellow-700 hover:bg-yellow-800">
                       Checkout
                     </Button>
                   </div>

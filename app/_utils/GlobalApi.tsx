@@ -121,6 +121,10 @@ const deleteCartItem = (documentId: string, jwt: string) =>
   });
 
 
+const createContactForm = (data: any) => axiosClient.post('/contact-forms', { data });
+
+
+
 export default {
   getCategory,
   getSliders,
@@ -132,5 +136,5 @@ export default {
   addToCart,
   getUserCartItems,
   deleteCartItem,
-
+  createContactForm
 };
