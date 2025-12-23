@@ -3,6 +3,8 @@ import type { Metadata } from "next"
 import { Playfair_Display, Inter } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
+import { CartProvider } from "@/components/CartContext";
+import { Toaster } from "sonner";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -45,8 +47,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${playfair.variable} font-sans antialiased`}>
-        {children}
+      <body className={`${inter.variable} ${playfair.variable} font-sans antialiased`} suppressHydrationWarning={true}>
+        <CartProvider>
+          {children}
+        </CartProvider>
+        <Toaster position="top-right" />
         <Analytics />
       </body>
     </html>
