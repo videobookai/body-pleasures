@@ -1,9 +1,9 @@
 import type { Metadata } from "next"
 import { Playfair_Display, Inter } from "next/font/google"
-import { Analytics } from "@vercel/analytics/next"
+// import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 import { Providers } from "./_utils/Providers/provider"
-
+import {PayPalScriptProvider} from "@paypal/react-paypal-js"
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -14,6 +14,8 @@ const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
 })
+
+
 
 export const metadata: Metadata = {
   title: "Ms V's Body Pleasures - Artisan Soaps & Wellness Products",
@@ -45,13 +47,14 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
+      
     <html lang="en">
       <body className={`${inter.variable} ${playfair.variable} font-sans antialiased`} suppressHydrationWarning={true}>
         <Providers>
           {children}
         </Providers>
-        <Analytics />
+        {/* <Analytics /> */}
       </body>
     </html>
-  )
-}
+    
+  )}

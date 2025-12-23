@@ -75,7 +75,7 @@ useEffect(() => {
       const resp = await GlobalApi.getUserCartItems(user.id, token);
       // Support different response shapes (service might return array or { data: [...] })
       const cartItemList_ = resp?.data?.data ?? resp?.data ?? resp;
-      console.log("Cart items:", cartItemList_);
+     
       setTotalCartItems(cartItemList_?.length);
       setCartItemList(cartItemList_);
     } catch (error) {
@@ -102,7 +102,7 @@ useEffect(() => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8 justify-center">
             <a
-              href="#shop"
+              href="/products-category/soaps"
               className="text-lg text-gray-600 hover:text-black transition-colors font-bold"
             >
               Shop

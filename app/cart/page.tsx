@@ -18,6 +18,8 @@ import {
 import { Loader2 } from "lucide-react";
 import { set } from "date-fns";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+
 
 // Define the CartItem type
 type CartItem = {
@@ -33,6 +35,7 @@ type CartItem = {
 const useUserCart = () => {
   const [items, setItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
+  
 
   const fetchCartItems = async () => {
     try {
@@ -66,7 +69,8 @@ const useUserCart = () => {
 
 export default function CartPage() {
   const { items, setItems, loading, refetch } = useUserCart();
-
+  const jwt = sessionStorage.getItem("authToken");
+  const router = useRouter();
   const [loadingAction, setLoadingAction] = useState(false);
 
   const [subTotal, setSubTotal] = useState(0);
@@ -97,7 +101,6 @@ export default function CartPage() {
       // Make the API call to delete the item from the backend
       await GlobalApi.deleteCartItem(String(documentId), jwt);
       toast.success("Item removed from cart");
-      
     } catch (error) {
       console.error("Failed to remove item:", error);
       toast.error("Failed to remove item from cart");
@@ -109,7 +112,6 @@ export default function CartPage() {
   };
 
   const clearCart = async () => {
-    const jwt = sessionStorage.getItem("authToken");
     if (!jwt) return;
 
     try {
@@ -214,9 +216,12 @@ export default function CartPage() {
                     >
                       Clear Cart
                     </Button>
-                    <Button 
-                    onClick={()=>window.location.href='/checkout'}
-                    className="bg-yellow-700 hover:bg-yellow-800">
+                    <Button
+                      onClick={() =>
+                        router.push(jwt ? "/checkout" : "/sign-in")
+                      }
+                      className="bg-yellow-700 hover:bg-yellow-800"
+                    >
                       Checkout
                     </Button>
                   </div>

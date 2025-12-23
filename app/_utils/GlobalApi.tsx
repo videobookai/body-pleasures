@@ -105,6 +105,7 @@ const getUserCartItems = (userId: number, jwt: string) =>
         price: product.sellingPrice,
         quantity: item.quantity,
         image: product.images[0].url,
+        product: product.id
       };
     });
     
@@ -112,6 +113,8 @@ const getUserCartItems = (userId: number, jwt: string) =>
     return cartItemList.filter((item: null)=> item !== null);
   });
 
+
+ 
 // Also add methods for cart management
 const deleteCartItem = (documentId: string, jwt: string) =>
   axiosClient.delete(`/user-carts/${documentId}`, {
@@ -122,6 +125,13 @@ const deleteCartItem = (documentId: string, jwt: string) =>
 
 
 const createContactForm = (data: any) => axiosClient.post('/contact-forms', { data });
+
+ const createOrder= (data: any, jwt:string)=>axiosClient.post('/orders', data, {
+  headers:{
+     Authorization: `Bearer ${jwt}`
+  }
+ })
+
 
 
 
@@ -136,5 +146,6 @@ export default {
   addToCart,
   getUserCartItems,
   deleteCartItem,
-  createContactForm
+  createContactForm,
+  createOrder
 };
