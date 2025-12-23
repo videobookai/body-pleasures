@@ -20,14 +20,14 @@ const values = [
 
 export function AboutSection() {
   return (
-    <section id="about" className="py-24 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
+    <section className="pt-20 px-4 pb-3 sm:px-6 lg:px-8 lg:my-6">
+      <div className="max-w-4xl mx-auto lg:max-w-[80%]">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Left side - Image */}
           <div className="relative">
             <div className="aspect-square rounded-3xl overflow-hidden">
               <img
-                src="/images/design-mode/20240921_163032%5B1%5D.JPG.jpeg"
+                src="/images/design-mode/2024.jpeg"
                 alt="Ms V's Body Pleasures Market Booth"
                 className="w-full h-full object-cover"
               />

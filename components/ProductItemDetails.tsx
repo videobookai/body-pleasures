@@ -1,21 +1,66 @@
 "use client";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Button } from "./ui/button";
-import { useCart } from "./CartContext";
+
 import { toast } from "sonner";
-import { ShoppingBasket } from "lucide-react";
+import { Loader2, ShoppingBasket } from "lucide-react";
+import { useRouter } from "next/navigation";
+import GlobalApi from "@/app/_utils/GlobalApi";
+import {UpdateCartContext} from "@/app/_context/UpdateCartContext";
+import { set } from "date-fns";
+
 interface ProductItemDetailsProps {
   product: any;
 }
 const ProductItemDetails = ({ product }: ProductItemDetailsProps) => {
   const imageUrl = process.env.NEXT_PUBLIC_BASE_URL + product.images?.[0]?.url;
+  const [loading, setLoading] = useState(false);
+
+  const jwt = sessionStorage.getItem("authToken");
+  const router = useRouter();
+  const user = JSON.parse(sessionStorage.getItem("user") || "null");
+
+  const {updateCart, setUpdateCart} = useContext<any>(UpdateCartContext);
 
   const [productTotalPrice, setProductTotalPrice] = useState(
     product.sellingPrice ? product.sellingPrice : product.mrp
   );
   const [quantity, setQuantity] = useState(1);
-  const { addItem } = useCart();
+ 
+  const addToCart = () => {
+    setLoading(true);
+    if (!jwt) {
+      toast.error("Please sign in to add items to your cart");
+      router.push("/sign-in");
+
+      return;
+    }
+
+    const data = {
+      data: {
+        quantity: quantity,
+        amount: (quantity * productTotalPrice).toFixed(2),
+        products: product.id,
+        userId: user.id,
+      },
+    };
+    console.log("Adding to cart:", data);
+
+    GlobalApi.addToCart(data, jwt)
+      .then((resp) => {
+        console.log("Add to cart response:", resp);
+        toast.success(`${quantity} × ${product.name} added to cart`);
+        setUpdateCart(!updateCart);
+        setLoading(false);
+      })
+      .catch((err) => {
+        toast.error("Failed to add item to cart");
+        console.error("Add to cart error:", err);
+        setLoading(false);
+      });
+  };
+
   return (
     <div className="grid grid-cols-1  gap-2 md:gap-4 md:grid-cols-2 p-7 text-primary">
       <Image
@@ -64,8 +109,7 @@ const ProductItemDetails = ({ product }: ProductItemDetailsProps) => {
               onClick={() => {
                 setQuantity(quantity + 1);
               }}
-
-               className="cursor-pointer disabled:cursor-not-allowed"
+              className="cursor-pointer disabled:cursor-not-allowed"
             >
               +
             </button>
@@ -75,19 +119,12 @@ const ProductItemDetails = ({ product }: ProductItemDetailsProps) => {
           </h2>
         </div>
         <Button
-          onClick={() => {
-            const id = product.id ?? product._id ?? product.name;
-            const price = product.sellingPrice ?? product.mrp ?? 0;
-            const image = product.images?.[0]?.url
-              ? process.env.NEXT_PUBLIC_BASE_URL + product.images[0].url
-              : undefined;
-            addItem({ id, name: product.name, price: Number(price), quantity, image });
-            toast.success(`${quantity} × ${product.name} added to cart`);
-          }}
+          disabled={loading}
+          onClick={() => addToCart()}
           className="flex gap-3 my-2 cursor-pointer items-center w-36 bg-yellow-700 hover:bg-yellow-800 rounded-none justify-center"
         >
           <ShoppingBasket className="w-12 h-12" />
-          Add to Cart
+          {loading ? <Loader2 className="animate-spin" /> : "Add to Cart"}
         </Button>
 
         <h2 className="text-sm  font-bold">
