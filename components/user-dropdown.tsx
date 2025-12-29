@@ -38,7 +38,7 @@ export function UserDropdown() {
         {user ? (
           <>
             <DropdownMenuItem>
-              <Link href="/profile">Profile</Link>
+              <Link href="/my-order">My Orders</Link>
             </DropdownMenuItem>
             <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
           </>

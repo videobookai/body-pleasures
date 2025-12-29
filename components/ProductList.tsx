@@ -6,11 +6,11 @@ interface ProductListProps {
 }
 
 const ProductList = ({productList}: ProductListProps) => {
-    console.log("Product List:", productList);
+   
   return (
     <div className='my-5 flex flex-col justify-center w-full lg:mx-auto bg-secondary/30 px-4 py-6'>
         <h2 className='text-2xl font-bold text-primary mb-4 ml-4 lg:ml-72 md:ml-6'>
-            Our Popular Products
+            Products
         </h2>
         <div className="mx-6 grid grid-cols-1 md:grid-cols-2 
         lg:grid-cols-3
