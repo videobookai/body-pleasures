@@ -28,8 +28,7 @@ export default async function Home() {
       <Slider sliderList={sliderList} />
       <CategoryList categoryList={categoryList} />
 
-      <ProductList productList={productList}/>
-
+      <ProductList productList={productList} />
 
       {/* <ProductCategories />
       <FeaturedProducts />
