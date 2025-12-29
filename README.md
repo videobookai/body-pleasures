@@ -132,6 +132,3 @@ The backend is a Strapi application located in the `miss-v-admin` directory.
 
 
 
-## License
-
-Distributed under the MIT License. See `LICENSE` for more information.
