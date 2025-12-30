@@ -102,7 +102,7 @@ useEffect(() => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8 justify-center">
             <a
-              href="/products-category/soaps"
+              href="/shop"
               className="text-lg text-gray-600 hover:text-black transition-colors font-bold"
             >
               Shop

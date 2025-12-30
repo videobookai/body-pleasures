@@ -82,6 +82,9 @@ const getProductByCategory = (category: string) =>
       return resp.data.data;
     });
 
+
+
+
 const registerUser = (username: string, email: string, password: string) =>
   axiosClient.post("/auth/local/register", {
     username: username,
@@ -152,6 +155,26 @@ const deleteCartItem = (documentId: string, jwt: string) =>
     },
   });
 
+const clearUserCart = async (userId: number, jwt: string) => {
+  try {
+    // First, get all cart items for the user
+    const resp = await getUserCartItems(userId, jwt);
+    
+    // Delete each cart item
+    const deletePromises = resp.map((item: any) => 
+      deleteCartItem(item.documentId, jwt)
+    );
+    
+    // Wait for all deletions to complete
+    await Promise.all(deletePromises);
+    
+    return { success: true };
+  } catch (error) {
+    console.error("Error clearing cart:", error);
+    throw error;
+  }
+};
+
 const createContactForm = (data: any) =>
   axiosClient.post("/contact-forms", { data });
 
@@ -175,4 +198,5 @@ export default {
   deleteCartItem,
   createContactForm,
   createOrder,
+  clearUserCart
 };

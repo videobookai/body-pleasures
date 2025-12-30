@@ -40,8 +40,8 @@ const useUserCart = () => {
   const fetchCartItems = async () => {
     try {
       setLoading(true);
-      const user = JSON.parse(sessionStorage.getItem("user") as string);
-      const jwt = sessionStorage.getItem("authToken");
+      const user = JSON.parse(sessionStorage?.getItem("user") as string);
+      const jwt = sessionStorage?.getItem("authToken");
 
       if (!user || !jwt) {
         console.log("User or JWT not found. Aborting fetch.");
