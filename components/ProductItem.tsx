@@ -28,7 +28,7 @@ const ProductItem = ({ product }: ProductItemProps) => {
   return (
     <Card
       key={product.id}
-      className="pt-2 my-4 px-2 pb-2 bg-white   hover:scale-105 transition-transform duration-500   cursor-pointer flex justify-center flex-col"
+      className="pt-2 my-4 px-2 pb-2 bg-white w-full md:w-[350px] lg:w-full   hover:scale-105 transition-transform duration-500   cursor-pointer flex justify-center flex-col"
     >
       {imageUrl ? (
         <Image

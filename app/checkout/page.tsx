@@ -14,66 +14,73 @@ const CheckoutPage = () => {
   const [totalCartItems, setTotalCartItems] = useState(0);
   const [cartItemList, setCartItemList] = useState<any[]>([]);
   const [subTotal, setSubTotal] = useState(0);
-  const [name, setName] = useState("")
-  const [email, setEmail] = useState("")
-  const [phone, setPhone] = useState("")
-  const [zip, setZip] = useState("")
-  const [address, setAddress] = useState("")
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [zip, setZip] = useState("");
+  const [address, setAddress] = useState("");
 
   const jwt = sessionStorage?.getItem("authToken");
+  const router = useRouter()
 
   const userString = sessionStorage?.getItem("user");
   if (!userString || !jwt) {
-    window.location.href = ("/")
-    
-    return
-  };
+    window.location.href = "/";
+
+    return;
+  }
   const user = JSON.parse(userString);
   const [{ isPending }] = usePayPalScriptReducer();
 
- const onApprove = (data: any) => {
-  console.log(data)
+  const onApprove = (data: any) => {
+    console.log(data);
 
     // Validate required fields
     if (!name || !email || !phone || !address || !zip) {
       toast.error("Please fill in all billing details");
       return;
     }
-  
-  // Send only necessary fields
-  const orderItems = cartItemList.map(item => ({
-    product: item.product,
-    quantity: item.quantity,
-    price: item.price
-  }));
-  console.log("Order Items", orderItems)
-  const payload = {
-    data: {
-      paymentId: (data.paymentId).toString(),
-      userId: user?.id,
-      username: name,
-      address: address,
-      totalAmount: calculateTotalAmount(),
-      email: email,
-      phone: phone,
-      zip: zip,
-      order: orderItems  
-    }
-  }
 
-  console.log("Order payload", payload)
-  
-  GlobalApi.createOrder(payload, jwt).then(resp=>{
-    console.log(resp)
-    toast.success("Order Placed Successfully")
+    // Send only necessary fields
+    const orderItems = cartItemList.map((item) => ({
+      product: item.product,
+      quantity: item.quantity,
+      price: item.price,
+    }));
+    console.log("Order Items", orderItems);
+    const payload = {
+      data: {
+        paymentId: data.paymentId.toString(),
+        userId: user?.id,
+        username: name,
+        address: address,
+        totalAmount: calculateTotalAmount(),
+        email: email,
+        phone: phone,
+        zip: zip,
+        order: orderItems,
+      },
+    };
 
-  }).catch(error => {
-    console.error("Order creation failed", error);
-    toast.error("Failed to place order. Please try again.");
-  })
-}
+    console.log("Order payload", payload);
 
+    GlobalApi.createOrder(payload, jwt)
+      .then(async (resp) => {
+        console.log(resp);
 
+        GlobalApi.clearUserCart(user.id, jwt);
+        setCartItemList([]);
+        setTotalCartItems(0);
+        setSubTotal(0);
+
+        toast.success("Order Placed Successfully");
+        router.replace("/order-confirmation")
+      })
+      .catch((error) => {
+        console.error("Order creation failed", error);
+        toast.error("Failed to place order. Please try again.");
+      });
+  };
 
   useEffect(() => {
     getCartItems();
@@ -120,14 +127,13 @@ const CheckoutPage = () => {
   };
 
   const taxPercent = 0.9;
-  const deliveryCost = 5
+  const deliveryCost = 5;
   const taxAmount = subTotal - taxPercent * subTotal;
-
 
   const calculateTotalAmount = () => {
     const totalAmount = subTotal + taxAmount + deliveryCost;
     return totalAmount.toFixed(2);
-  }
+  };
 
   return (
     <div className="flex flex-col gap-2">
@@ -141,15 +147,30 @@ const CheckoutPage = () => {
           <div className="col-span-2 mx-20">
             <h2 className="font-bold text-3xl">Billing Details</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mt-3">
-              <Input placeholder="Name" onChange={(e) => setName(e.target.value)} />
-              <Input placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
+              <Input
+                placeholder="Name"
+                onChange={(e) => setName(e.target.value)}
+              />
+              <Input
+                placeholder="Email"
+                onChange={(e) => setEmail(e.target.value)}
+              />
             </div>
             <div className="grid grid-cols-2 gap-10 mt-3">
-              <Input placeholder="Phone" onChange={(e) => setPhone(e.target.value)} />
-              <Input placeholder="Zip" onChange={(e) => setZip(e.target.value)} />
+              <Input
+                placeholder="Phone"
+                onChange={(e) => setPhone(e.target.value)}
+              />
+              <Input
+                placeholder="Zip"
+                onChange={(e) => setZip(e.target.value)}
+              />
             </div>
             <div className="mt-3">
-              <Input placeholder="Address" onChange={(e) => setAddress(e.target.value)} />
+              <Input
+                placeholder="Address"
+                onChange={(e) => setAddress(e.target.value)}
+              />
             </div>
           </div>
           <div className="mx-10 border my-1 sm:my-8">
@@ -174,7 +195,19 @@ const CheckoutPage = () => {
 
               {isPending ? <div className="spinner" /> : null}
 
-              <Button onClick={()=>onApprove({paymentId:123, name, phone, address, zip, cartItemList,totalAmount:calculateTotalAmount() })}>
+              <Button
+                onClick={() =>
+                  onApprove({
+                    paymentId: 123,
+                    name,
+                    phone,
+                    address,
+                    zip,
+                    cartItemList,
+                    totalAmount: calculateTotalAmount(),
+                  })
+                }
+              >
                 Place Order
               </Button>
 

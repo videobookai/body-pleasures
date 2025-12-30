@@ -25,11 +25,10 @@ const ProductCategory = async ({
             {categoryName}
           </h2>
         </div>
-
-        <TopCategoryList categoryList={categoryList} />         <div className="p-5 md:p-10">
-<ProductList productList={productList} />
+        <TopCategoryList categoryList={categoryList} />{" "}
+        <div className="p-5 md:p-10">
+          <ProductList productList={productList} />
         </div>
-        
       </div>
       <Footer />
     </div>
