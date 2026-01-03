@@ -16,6 +16,9 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::product.product"
+    },
+    "docId": {
+      "type": "string"
     }
   },
   "config": {}

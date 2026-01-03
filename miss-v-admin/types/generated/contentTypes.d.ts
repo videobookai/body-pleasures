@@ -552,6 +552,8 @@ export interface ApiOrderOrder extends Struct.CollectionTypeSchema {
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::order.order'> &
       Schema.Attribute.Private;
     order: Schema.Attribute.Component<'ordered-item.orderedtem', true>;
+    orderStatus: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Pending'>;
     paymentId: Schema.Attribute.String;
     phone: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;

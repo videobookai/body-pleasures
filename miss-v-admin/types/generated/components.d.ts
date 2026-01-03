@@ -7,6 +7,7 @@ export interface OrderedItemOrderedtem extends Struct.ComponentSchema {
     icon: 'layer';
   };
   attributes: {
+    docId: Schema.Attribute.String;
     price: Schema.Attribute.Decimal;
     product: Schema.Attribute.Relation<'oneToOne', 'api::product.product'>;
     quantity: Schema.Attribute.Integer;

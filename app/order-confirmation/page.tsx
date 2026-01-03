@@ -1,7 +1,7 @@
 "use client"
 import { Navigation } from '@/components/navigation'
 import { Button } from '@/components/ui/button'
-import { CheckCircle2, HomeIcon } from 'lucide-react'
+import { CheckCircle2, HomeIcon, ListOrderedIcon } from 'lucide-react'
 import React from 'react'
 
 const OrderConfirmation = () => {
@@ -19,11 +19,21 @@ const OrderConfirmation = () => {
                 Order Successfully placed
             </h2>
             <h2>Thank you for the order</h2>
-            <Button className='px-6 cursor-pointer mt-6' onClick={()=>{
+            <div className='flex mt-6 gap-3'>
+                 <Button className='px-6 cursor-pointer' onClick={()=>{
                 window.location.href="/"
             }}>
                 <HomeIcon/> Return Home
             </Button>
+            <Button className='px-6 cursor-pointer ' 
+            variant={"outline"}
+            onClick={()=>{
+                window.location.href="/my-orders"
+            }}>
+                <ListOrderedIcon/> Track Order
+            </Button>
+            </div>
+           
         </div>
     </div>
   )
