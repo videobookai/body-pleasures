@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+
 miss-v-admin/node_modules
 # next.js
 /.next/
