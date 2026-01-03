@@ -19,6 +19,7 @@ const CheckoutPage = () => {
   const [phone, setPhone] = useState("");
   const [zip, setZip] = useState("");
   const [address, setAddress] = useState("");
+  const [emailError, setEmailError] = useState("");
 
   const jwt = sessionStorage?.getItem("authToken");
   const router = useRouter()
@@ -32,6 +33,16 @@ const CheckoutPage = () => {
   const user = JSON.parse(userString);
   const [{ isPending }] = usePayPalScriptReducer();
 
+  const validateEmail = (email: string) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!regex.test(email)) {
+      setEmailError("Invalid email format");
+      return false;
+    }
+    setEmailError("");
+    return true;
+  };
+
   const onApprove = (data: any) => {
     console.log(data);
 
@@ -41,11 +52,17 @@ const CheckoutPage = () => {
       return;
     }
 
+    if (!validateEmail(email)) {
+      toast.error("Invalid email format");
+      return;
+    }
+
     // Send only necessary fields
     const orderItems = cartItemList.map((item) => ({
       product: item.product,
       quantity: item.quantity,
       price: item.price,
+      docId:item.documentId
     }));
     console.log("Order Items", orderItems);
     const payload = {
@@ -118,6 +135,7 @@ const CheckoutPage = () => {
       const resp = await GlobalApi.getUserCartItems(user.id, token);
       // Support different response shapes (service might return array or { data: [...] })
       const cartItemList_ = resp?.data?.data ?? resp?.data ?? resp;
+      console.log(cartItemList_)
 
       setTotalCartItems(cartItemList_?.length);
       setCartItemList(cartItemList_);
@@ -151,10 +169,16 @@ const CheckoutPage = () => {
                 placeholder="Name"
                 onChange={(e) => setName(e.target.value)}
               />
-              <Input
-                placeholder="Email"
-                onChange={(e) => setEmail(e.target.value)}
-              />
+              <div>
+                <Input
+                  placeholder="Email"
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    validateEmail(e.target.value);
+                  }}
+                />
+                {emailError && <p className="text-red-500 text-sm mt-1">{emailError}</p>}
+              </div>
             </div>
             <div className="grid grid-cols-2 gap-10 mt-3">
               <Input
@@ -195,23 +219,10 @@ const CheckoutPage = () => {
 
               {isPending ? <div className="spinner" /> : null}
 
-              <Button
-                onClick={() =>
-                  onApprove({
-                    paymentId: 123,
-                    name,
-                    phone,
-                    address,
-                    zip,
-                    cartItemList,
-                    totalAmount: calculateTotalAmount(),
-                  })
-                }
-              >
-                Place Order
-              </Button>
+             
 
-              {/* <PayPalButtons style={{ layout: "horizontal" }}
+              <PayPalButtons style={{ layout: "horizontal" }}
+              disabled={!name || !email || !phone || !address || !zip || !!emailError}
                 onApprove={async (data, actions) => {
                   const order = await actions.order?.capture();
                   console.log("order", order);
@@ -232,7 +243,7 @@ const CheckoutPage = () => {
                     intent: "CAPTURE"
                   })
                 }}
-              /> */}
+              />
             </div>
           </div>
         </div>

@@ -39,6 +39,10 @@
     },
     "phone": {
       "type": "string"
+    },
+    "orderStatus": {
+      "type": "string",
+      "default": "Pending"
     }
   }
 }
