@@ -7,8 +7,8 @@ import { ContactSection } from "@/components/contact-section";
 import { Footer } from "@/components/footer";
 import Slider from "@/components/sliders";
 import GlobalApi from "./_utils/GlobalApi";
-import slider from "@/miss-v-admin/src/api/slider/controllers/slider";
-import Category from "@/miss-v-admin/src/api/category/controllers/category";
+import slider from "@/backend/miss-v-admin/src/api/slider/controllers/slider";
+import Category from "@/backend/miss-v-admin/src/api/category/controllers/category";
 import CategoryList from "@/components/CategoryList";
 import ProductList from "@/components/ProductList";
 
