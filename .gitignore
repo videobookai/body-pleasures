@@ -3,7 +3,7 @@
 # dependencies
 /node_modules
 
-miss-v-admin/node_modules
+/miss-v-admin/node_modules
 # next.js
 /.next/
 /out/
@@ -27,3 +27,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+.cache
+.build
+dist
