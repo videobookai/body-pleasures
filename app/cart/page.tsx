@@ -131,7 +131,7 @@ export default function CartPage() {
     return (
       <div className="w-full flex flex-col min-h-screen">
         <Navigation />
-        <div className="flex-grow flex items-center justify-center gap-2">
+        <div className="grow flex items-center justify-center gap-2">
           <p>Loading your cart</p>
           <Loader2 className="animate-spin" />
         </div>
