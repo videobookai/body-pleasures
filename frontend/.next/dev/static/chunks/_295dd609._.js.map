@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/DELL/Documents/coding/body-pleasures/app/my-order/page.tsx"],"sourcesContent":["\"use client\"\r\nimport { useRouter } from 'next/navigation';\r\nimport React, { useEffect } from 'react'\r\n\r\nconst MyOrderPage = () => {\r\n    const jwt = sessionStorage.getItem(\"authToken\");\r\n    const router = useRouter();\r\n\r\n    useEffect(()=>{\r\n        if(!jwt){\r\n            router.replace('/')\r\n        }\r\n    },[])\r\n  return (\r\n    <div className='flex  flex-col'>\r\n        <div>\r\n\r\n        </div>\r\n\r\n    </div>\r\n  )\r\n}\r\n\r\nexport default MyOrderPage"],"names":[],"mappings":";;;;;AACA;AACA;;;AAFA;;;AAIA,MAAM,cAAc;;IAChB,MAAM,MAAM,eAAe,OAAO,CAAC;IACnC,MAAM,SAAS,IAAA,kJAAS;IAExB,IAAA,0KAAS;iCAAC;YACN,IAAG,CAAC,KAAI;gBACJ,OAAO,OAAO,CAAC;YACnB;QACJ;gCAAE,EAAE;IACN,qBACE,6LAAC;QAAI,WAAU;kBACX,cAAA,6LAAC;;;;;;;;;;AAMT;GAjBM;;QAEa,kJAAS;;;KAFtB;uCAmBS","debugId":null}},
+    {"offset": {"line": 55, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/DELL/Documents/coding/body-pleasures/node_modules/next/navigation.js"],"sourcesContent":["module.exports = require('./dist/client/components/navigation')\n"],"names":[],"mappings":"AAAA,OAAO,OAAO","ignoreList":[0],"debugId":null}}]
+}
