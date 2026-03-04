@@ -38,10 +38,11 @@ const useUserCart = () => {
   
 
   const fetchCartItems = async () => {
+    if (typeof window === "undefined") return;
     try {
       setLoading(true);
-      const user = JSON.parse(sessionStorage?.getItem("user") as string);
-      const jwt = sessionStorage?.getItem("authToken");
+      const user = JSON.parse(sessionStorage.getItem("user") || "null");
+      const jwt = sessionStorage.getItem("authToken");
 
       if (!user || !jwt) {
         console.log("User or JWT not found. Aborting fetch.");
@@ -69,9 +70,13 @@ const useUserCart = () => {
 
 export default function CartPage() {
   const { items, setItems, loading, refetch } = useUserCart();
-  const jwt = sessionStorage.getItem("authToken");
+  const [jwt, setJwt] = useState<string | null>(null);
   const router = useRouter();
   const [loadingAction, setLoadingAction] = useState(false);
+
+  useEffect(() => {
+    setJwt(sessionStorage.getItem("authToken"));
+  }, []);
 
   const [subTotal, setSubTotal] = useState(0);
 
@@ -168,7 +173,7 @@ export default function CartPage() {
                   <TableCell>
                     <Image
                       src={
-                        process.env?.NEXT_PUBLIC_BASE_URL! + item.image ||
+                        item.image?.startsWith('http') ? item.image : (process.env?.NEXT_PUBLIC_BASE_URL + item.image) ||
                         "/placeholder.svg"
                       }
                       alt={item.name}

@@ -9,6 +9,13 @@ backend/miss-v-admin/node_modules
 /out/
 /frontend/.next/
 /frontend/node_modules
+/.claude/
+/backend/miss-v-admin/.tmp/
+/backend/miss-v-admin/strapi.md
+
+/.claude/
+/backend/miss-v-admin/.tmp/
+/backend/miss-v-admin/strapi.md
 
 # production
 /build

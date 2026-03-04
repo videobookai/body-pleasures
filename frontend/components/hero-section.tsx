@@ -23,7 +23,7 @@ export function HeroSection() {
             </h1>
 
             {/* Subheading */}
-            <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mb-12 leading-relaxed text-left">
+            <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mb-12 leading-relaxed text-left font-serif-variant">
               {
                 "Transform your daily routine into an extraordinary experience with our artisan soaps, body care products, and wellness essentials"
               }

@@ -45,6 +45,43 @@
       "relation": "manyToMany",
       "target": "api::category.category",
       "inversedBy": "products"
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": [
+        "Cold Process Soap",
+        "Hot Process Soap",
+        "Bubble Bath",
+        "Bubble Bath Powder",
+        "Bath Salt",
+        "Milk Bath",
+        "Beard Wash Bar",
+        "Beard Wash",
+        "Beard Conditioner",
+        "Beard Balm",
+        "Beard Oil",
+        "Shave Prep Oil",
+        "Shave Soap",
+        "Turmeric Soap",
+        "Turmeric Lotion",
+        "Turmeric Oil",
+        "Sea Moss Soap",
+        "Sea Moss Body Wash",
+        "Relief Product",
+        "Body Cream",
+        "Body Scent Oil",
+        "Body Scent Spray",
+        "Concrete Candle",
+        "Stoneware Candle",
+        "Concrete Candle (Black)",
+        "Concrete Candle (Grey)",
+        "Concrete Candle (Green)",
+        "Concrete Candle (Lavender)",
+        "Concrete Candle (Off White)",
+        "Wax Melt Clamshell",
+        "Snap Bars -Wax Melts",
+        "Incense Sticks"
+      ]
     }
   }
 }

@@ -7,7 +7,6 @@ import { toast } from "sonner";
 import { Loader2, ShoppingBasket } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-
 import { set } from "date-fns";
 import GlobalApi from "../app/_utils/GlobalApi";
 import { UpdateCartContext } from "../app/_context/UpdateCartContext";
@@ -16,20 +15,23 @@ interface ProductItemDetailsProps {
   product: any;
 }
 const ProductItemDetails = ({ product }: ProductItemDetailsProps) => {
-  const imageUrl = process.env.NEXT_PUBLIC_BASE_URL + product.images?.[0]?.url;
+  const rawUrl = product.images?.[0]?.url;
+  const imageUrl = rawUrl?.startsWith("http")
+    ? rawUrl
+    : process.env.NEXT_PUBLIC_BASE_URL + rawUrl;
   const [loading, setLoading] = useState(false);
 
   const jwt = sessionStorage.getItem("authToken");
   const router = useRouter();
   const user = JSON.parse(sessionStorage.getItem("user") || "null");
 
-  const {updateCart, setUpdateCart} = useContext<any>(UpdateCartContext);
+  const { updateCart, setUpdateCart } = useContext<any>(UpdateCartContext);
 
   const [productTotalPrice, setProductTotalPrice] = useState(
-    product.sellingPrice ? product.sellingPrice : product.mrp
+    product.sellingPrice ? product.sellingPrice : product.mrp,
   );
   const [quantity, setQuantity] = useState(1);
- 
+
   const addToCart = () => {
     setLoading(true);
     if (!jwt) {
@@ -73,14 +75,21 @@ const ProductItemDetails = ({ product }: ProductItemDetailsProps) => {
         className="bg-slate-200 h-[32opx] object-contain rounded-lg"
       />
       <div className="flex flex-col gap-2 justify-start">
-        <h2 className="text-2xl md:text-3xl font-bold">{product.name}</h2>
-        <h2 className="text-black/50 text-sm md:text-lg">
+        <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold font-serif">
+          {product.name}
+        </h2>
+        <h2
+          className="text-black/50 
+        text-xs
+        md:text-sm
+         "
+        >
           {product.description}
         </h2>
 
         <div className="flex flex-row gap-2 items-center my-2">
-          <p className="text-lg font-bold text-primary">
-            ${product.sellingPrice}
+          <p className="text-lg font-bold text-primary ">
+            Price: ${product.sellingPrice}
           </p>
           <p>
             {product.mrp && (
@@ -91,9 +100,7 @@ const ProductItemDetails = ({ product }: ProductItemDetailsProps) => {
           </p>
         </div>
 
-        <h2 className="font-medium text-lg">
-          Quantity: ({product.itemQuantityType})
-        </h2>
+        <h2 className="font-medium text-lg">Type: {product.type || "N/A"}</h2>
 
         <div className="flex flex-col items-baseline gap-3">
           <div className="flex border gap-10 items-center p-2 px-5">
