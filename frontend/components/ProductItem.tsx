@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React from "react";
 import { Card, CardFooter } from "./ui/card";
 import Image from "next/image";
@@ -6,7 +6,14 @@ import Image from "next/image";
 import { Button } from "./ui/button";
 
 import ProductItemDetails from "./ProductItemDetails";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog";
 
 interface ProductItemProps {
   product: any;
@@ -16,7 +23,9 @@ const ProductItem = ({ product }: ProductItemProps) => {
   if (!product) return null;
 
   const rawUrl = product.images?.[0]?.url;
-  const imageUrl = rawUrl?.startsWith("http") ? rawUrl : process.env.NEXT_PUBLIC_BASE_URL + rawUrl;
+  const imageUrl = rawUrl?.startsWith("http")
+    ? rawUrl
+    : process.env.NEXT_PUBLIC_BASE_URL + rawUrl;
 
   return (
     <Card
@@ -36,7 +45,7 @@ const ProductItem = ({ product }: ProductItemProps) => {
       )}
 
       <div className="flex flex-col gap-2 px-4 mb-2">
-        <h3 className="text-lg font-bold text-primary mb-2 font-serif" >
+        <h3 className="text-lg font-bold text-primary mb-2 font-serif">
           {product.name}
         </h3>
         <p className="text-sm text-muted-foreground mb-2 truncate ">
@@ -44,7 +53,7 @@ const ProductItem = ({ product }: ProductItemProps) => {
         </p>
         <div className="flex flex-row gap-2 items-center">
           <p className="text-xs md:text-base font-bold text-primary font-sans">
-         Price:   ${product.sellingPrice.toFixed(2)}
+            Price: ${product.sellingPrice.toFixed(2)}
           </p>
           <p>
             {product.mrp && (
@@ -59,7 +68,6 @@ const ProductItem = ({ product }: ProductItemProps) => {
       <CardFooter className="flex items-center justify-center my-2">
         <Dialog>
           <DialogTrigger asChild className="mb-2">
-          
             <Button className="cursor-pointer bg-yellow-700 hover:bg-yellow-800 w-36">
               View Product
             </Button>
