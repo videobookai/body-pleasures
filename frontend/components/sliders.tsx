@@ -54,7 +54,7 @@ const Slider = ({ sliderList }: SliderProps) => {
               >
                 {imageUrl ? (
                   <Image
-                    src={process.env.NEXT_PUBLIC_BASE_URL + imageUrl}
+                    src={imageUrl.startsWith("http") ? imageUrl : process.env.NEXT_PUBLIC_BASE_URL + imageUrl}
                     alt={slider.name || "slider image"}
                     width={1000}
                     height={600}
