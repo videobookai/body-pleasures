@@ -9,7 +9,7 @@ const ProductList = ({productList}: ProductListProps) => {
    
   return (
     <div className='my-5 flex flex-col justify-center w-full lg:mx-auto bg-secondary/30 px-4 py-4 rounded-lg'>
-        <h2 className='text-2xl font-bold text-primary mb-4 lg:ml-56 ml-2'>
+        <h2 className='text-xl md:text-3xl lg:text-4xl font-bold text-primary my-4 lg:my-8 lg:ml-56 ml-2 font-serif'>
             Products
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-3 

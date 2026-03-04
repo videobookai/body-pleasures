@@ -1,6 +1,6 @@
 import { Footer } from "@/components/footer";
 import { Navigation } from "@/components/navigation";
-import ProductList from "@/components/ProductList";
+import PaginatedProductList from "@/components/PaginatedProductList";
 import React from "react";
 import GlobalApi from "../_utils/GlobalApi";
 import TopCategoryList from "../(routes)/products-category/_components/TopCategoryList";
@@ -20,7 +20,7 @@ const ShopPage = async () => {
         </div>
         <TopCategoryList categoryList={categoryList} />{" "}
         <div className="p-5 md:p-10">
-          <ProductList productList={productList} />
+          <PaginatedProductList productList={productList} itemsPerPage={10} />
         </div>
       </div>
       
