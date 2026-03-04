@@ -15,7 +15,7 @@ interface ProductItemProps {
 const ProductItem = ({ product }: ProductItemProps) => {
   if (!product) return null;
 
-  const imageUrl = process.env.NEXT_PUBLIC_BASE_URL + product.images?.[0]?.url;
+  const imageUrl = product.images?.[0]?.url?.startsWith('http') ? product.images[0].url : `${process.env.NEXT_PUBLIC_BASE_URL}${product.images?.[0]?.url}`;
 
   return (
     <Card

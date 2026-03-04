@@ -22,7 +22,7 @@ const CategoryList = ({ categoryList }: CategoryListProps) => {
             className="mb-3 p-1 border rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer bg-secondary"
           >
             <Image
-              src={process.env.NEXT_PUBLIC_BASE_URL + category.icon?.[0]?.url}
+              src={category.icon?.[0]?.url?.startsWith('http') ? category.icon[0].url : `${process.env.NEXT_PUBLIC_BASE_URL}${category.icon?.[0]?.url}`}
               width={1000}
               height={800}
               alt="category-image"

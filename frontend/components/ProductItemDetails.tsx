@@ -16,7 +16,7 @@ interface ProductItemDetailsProps {
   product: any;
 }
 const ProductItemDetails = ({ product }: ProductItemDetailsProps) => {
-  const imageUrl = process.env.NEXT_PUBLIC_BASE_URL + product.images?.[0]?.url;
+  const imageUrl = product.images?.[0]?.url?.startsWith('http') ? product.images[0].url : `${process.env.NEXT_PUBLIC_BASE_URL}${product.images?.[0]?.url}`;
   const [loading, setLoading] = useState(false);
 
   const jwt = sessionStorage.getItem("authToken");
