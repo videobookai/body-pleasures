@@ -31,11 +31,11 @@ const Slider = ({ sliderList }: SliderProps) => {
   return (
     <>
       <style>{sliderStyles}</style>
-      <div className="w-full my-6  py-6 bg-secondary/30">
-      <div className="mx-4 w-full max-w-4xl md:max-w-6xl lg:max-w-7xl lg:px-8 flex flex-col items-center  overflow-x-clip lg:mx-auto">
+      <div className="w-full my-6  py-6 bg-white">
+      <div className="mx-4 w-full lg:max-w-7xl  flex flex-col items-center  overflow-x-clip lg:mx-auto">
         <Swiper
-          modules={[Navigation, Autoplay]}
-          navigation
+          modules={[ Autoplay]}
+         
           autoplay={{
             delay: 5000,
             disableOnInteraction: false,

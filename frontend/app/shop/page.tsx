@@ -14,7 +14,7 @@ const ShopPage = async () => {
 
       <div className="w-full">
         <div className="bg-primary w-full">
-          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold  mb-4  capitalize text-center text-white py-4">
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold  mb-4  capitalize text-center text-white py-4 font-serif">
             Shop
           </h2>
         </div>

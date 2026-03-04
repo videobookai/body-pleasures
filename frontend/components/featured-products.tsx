@@ -9,7 +9,7 @@ export function FeaturedProducts() {
           <h2 className="text-4xl sm:text-5xl md:text-6xl font-serif font-medium mb-4 text-balance">
             {"Bestselling Products"}
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto text-pretty leading-relaxed">
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto text-pretty leading-relaxed font-serif-variant">
             {"Our most loved products, trusted by customers for their quality and effectiveness"}
           </p>
         </div>
@@ -26,7 +26,7 @@ export function FeaturedProducts() {
             </div>
             <div className="p-8">
               <h3 className="text-2xl font-serif font-medium mb-2">Artisan Soap Collection</h3>
-              <p className="text-muted-foreground mb-4 leading-relaxed">
+              <p className="text-muted-foreground mb-4 leading-relaxed font-serif-variant">
                 {"Choose from over 30 unique scents and formulations"}
               </p>
               <p className="text-xl font-medium mb-4">{"Starting at $6.00"}</p>
@@ -45,7 +45,7 @@ export function FeaturedProducts() {
             </div>
             <div className="p-8">
               <h3 className="text-2xl font-serif font-medium mb-2">Complete Beard Care</h3>
-              <p className="text-muted-foreground mb-4 leading-relaxed">
+              <p className="text-muted-foreground mb-4 leading-relaxed font-serif-variant">
                 {"Premium oils, washes, balms, and conditioners"}
               </p>
               <p className="text-xl font-medium mb-4">{"Starting at $5.00"}</p>

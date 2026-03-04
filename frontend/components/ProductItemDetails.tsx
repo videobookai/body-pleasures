@@ -73,14 +73,17 @@ const ProductItemDetails = ({ product }: ProductItemDetailsProps) => {
         className="bg-slate-200 h-[32opx] object-contain rounded-lg"
       />
       <div className="flex flex-col gap-2 justify-start">
-        <h2 className="text-2xl md:text-3xl font-bold">{product.name}</h2>
-        <h2 className="text-black/50 text-sm md:text-lg">
+        <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold font-serif">{product.name}</h2>
+        <h2 className="text-black/50 
+        text-xs
+        md:text-sm
+         ">
           {product.description}
         </h2>
 
         <div className="flex flex-row gap-2 items-center my-2">
-          <p className="text-lg font-bold text-primary">
-            ${product.sellingPrice}
+          <p className="text-lg font-bold text-primary ">
+         Price:   ${product.sellingPrice}
           </p>
           <p>
             {product.mrp && (
@@ -92,7 +95,7 @@ const ProductItemDetails = ({ product }: ProductItemDetailsProps) => {
         </div>
 
         <h2 className="font-medium text-lg">
-          Quantity: ({product.itemQuantityType})
+          Type: {product.type || "N/A"}
         </h2>
 
         <div className="flex flex-col items-baseline gap-3">
