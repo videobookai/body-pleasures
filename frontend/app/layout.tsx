@@ -49,7 +49,7 @@ export default function RootLayout({
   return (
       
     <html lang="en">
-      <body className={`${inter.variable} ${playfair.variable} font-sans antialiased`} suppressHydrationWarning={true}>
+      <body className={`${inter.variable} ${playfair.variable} font-serif antialiased`} suppressHydrationWarning={true}>
         <Providers>
           {children}
         </Providers>

@@ -3,7 +3,7 @@
 import { useContext, useEffect, useState } from "react";
 
 
-import { Menu, X, ShoppingBag, User } from "lucide-react";
+import { Menu, X, ShoppingBag, User, ArrowDown, ChevronDown} from "lucide-react";
 
 
 import Link from "next/link";
@@ -107,14 +107,14 @@ useEffect(() => {
               Shop
             </a>
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
+              <DropdownMenuTrigger asChild className="cursor-pointer">
                 <Button
                   variant="ghost"
                   className="text-lg text-gray-600 
                   hover:bg-white
-                  hover:text-black transition-colors font-bold"
+                  hover:text-black transition-colors font-bold flex items-center gap-1"
                 >
-                  Collections
+                  Collections <ChevronDown className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="w-40 z-60">

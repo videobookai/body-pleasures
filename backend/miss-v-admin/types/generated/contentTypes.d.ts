@@ -482,6 +482,7 @@ export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    description: Schema.Attribute.Text;
     icon: Schema.Attribute.Media<
       'images' | 'files' | 'videos' | 'audios',
       true
@@ -602,6 +603,42 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
     publishedAt: Schema.Attribute.DateTime;
     sellingPrice: Schema.Attribute.Integer;
     slug: Schema.Attribute.UID<'name'>;
+    type: Schema.Attribute.Enumeration<
+      [
+        'Cold Process Soap',
+        'Hot Process Soap',
+        'Bubble Bath',
+        'Bubble Bath Powder',
+        'Bath Salt',
+        'Milk Bath',
+        'Beard Wash Bar',
+        'Beard Wash',
+        'Beard Conditioner',
+        'Beard Balm',
+        'Beard Oil',
+        'Shave Prep Oil',
+        'Shave Soap',
+        'Turmeric Soap',
+        'Turmeric Lotion',
+        'Turmeric Oil',
+        'Sea Moss Soap',
+        'Sea Moss Body Wash',
+        'Relief Product',
+        'Body Cream',
+        'Body Scent Oil',
+        'Body Scent Spray',
+        'Concrete Candle',
+        'Stoneware Candle',
+        'Concrete Candle (Black)',
+        'Concrete Candle (Grey)',
+        'Concrete Candle (Green)',
+        'Concrete Candle (Lavender)',
+        'Concrete Candle (Off White)',
+        'Wax Melt Clamshell',
+        'Snap Bars -Wax Melts',
+        'Incense Sticks',
+      ]
+    >;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;

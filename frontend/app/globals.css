@@ -93,3 +93,9 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .font-serif-variant {
+    @apply font-serif italic tracking-[0.01em];
+  }
+}

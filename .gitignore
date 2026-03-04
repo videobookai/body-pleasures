@@ -13,6 +13,10 @@ backend/miss-v-admin/node_modules
 /backend/miss-v-admin/.tmp/
 /backend/miss-v-admin/strapi.md
 
+/.claude/
+/backend/miss-v-admin/.tmp/
+/backend/miss-v-admin/strapi.md
+
 # production
 /build
 
