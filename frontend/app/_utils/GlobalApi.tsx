@@ -12,7 +12,7 @@ const strapiApiToken = process.env.NEXT_PUBLIC_STRAPI_API_TOKEN;
 axiosClient.interceptors.request.use(
   (config) => {
     const userToken =
-      typeof window !== "undefined" ? localStorage.getItem("authToken") : null;
+      typeof window !== "undefined" ? sessionStorage.getItem("authToken") : null;
 
     // Prefer the logged-in user JWT; fallback to Strapi API token for public reads.
     const authToken = userToken || strapiApiToken;
@@ -34,7 +34,7 @@ axiosClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401 && typeof window !== "undefined") {
-        localStorage.removeItem("authToken");
+        sessionStorage.removeItem("authToken");
     }
     return Promise.reject(error);
   }
@@ -98,6 +98,16 @@ const signIn = (email: string, password: string) =>
     identifier: email,
     password: password,
   });
+
+const checkUserExistsByEmail = async (email: string) => {
+  const resp = await axiosClient.get(
+    `/users?filters[email][$eq]=${encodeURIComponent(email)}&pagination[limit]=1`
+  );
+
+  // Strapi /users typically returns an array.
+  return Array.isArray(resp.data) && resp.data.length > 0;
+};
+
 const addToCart = (data: any, jwt: string) =>
   axiosClient.post("/user-carts", data, {
     headers: {
@@ -200,6 +210,16 @@ const getOrdersByUserId = (userId: number, jwt: string) =>
       return resp.data.data;
     });
 
+    const forgotPassword = (email: string)=> axiosClient.post("/auth/forgot-password", {
+      email
+    })
+    const resetPassword = (code: string, password: string, passwordConfirmation: string) => axiosClient.post("/auth/reset-password", {
+      code,
+      password,
+      passwordConfirmation
+    })
+  
+
 export default {
   getCategory,
   getSliders,
@@ -208,6 +228,7 @@ export default {
   getProductByCategory,
   registerUser,
   signIn,
+  checkUserExistsByEmail,
   addToCart,
   getUserCartItems,
   deleteCartItem,
@@ -215,4 +236,6 @@ export default {
   createOrder,
   clearUserCart,
   getOrdersByUserId,
+  forgotPassword,
+  resetPassword
 };

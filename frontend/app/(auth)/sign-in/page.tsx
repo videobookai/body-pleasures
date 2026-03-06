@@ -101,7 +101,11 @@ const SignIn = () => {
          <div className="flex flex-row gap-2 mt-6 items-start justify-start mb-6">
                 <p>Don't have an account?</p>
             <Link className="text-blue-500 underline" href={"/sign-up"}>Click here to sign up</Link>
+           
             </div>
+            <Link className="text-blue-500 underline mb-6" href={"/reset-password"}>
+              Forgot Password?
+            </Link>
             
       </div>
    
