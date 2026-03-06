@@ -1,40 +1,44 @@
 import axios from "axios";
-import { sign } from "crypto";
-import { initialize } from "next/dist/server/lib/render-server";
 
 const axiosClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:1337/api",
+  baseURL:
+    process.env.NEXT_PUBLIC_API_URL ||
+    "https://light-laughter-714ca5c3e9.strapiapp.com/api",
 });
 
-// Register interceptors only when running in the browser (avoid server-side localStorage)
-if (typeof window !== "undefined") {
-  // Add request interceptor
-  axiosClient.interceptors.request.use(
-    (config) => {
-      const token = localStorage.getItem("authToken");
-      if (token) {
-        // preserve existing headers and add Authorization
-        config.headers = {
-          ...(config.headers as any),
-          Authorization: `Bearer ${token}`,
-        };
-      }
-      return config;
-    },
-    (error) => Promise.reject(error)
-  );
+const strapiApiToken = process.env.NEXT_PUBLIC_STRAPI_API_TOKEN;
 
-  // Add response interceptor
-  axiosClient.interceptors.response.use(
-    (response) => response,
-    (error) => {
-      if (error.response?.status === 401) {
-        localStorage.removeItem("authToken");
-      }
-      return Promise.reject(error);
+// Add request interceptor
+axiosClient.interceptors.request.use(
+  (config) => {
+    const userToken =
+      typeof window !== "undefined" ? localStorage.getItem("authToken") : null;
+
+    // Prefer the logged-in user JWT; fallback to Strapi API token for public reads.
+    const authToken = userToken || strapiApiToken;
+
+    if (authToken) {
+      config.headers = {
+        ...(config.headers as any),
+        Authorization: `Bearer ${authToken}`,
+      };
     }
-  );
-}
+
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// Add response interceptor
+axiosClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401 && typeof window !== "undefined") {
+        localStorage.removeItem("authToken");
+    }
+    return Promise.reject(error);
+  }
+);
 
 const getCategory = () => axiosClient.get("/categories");
 

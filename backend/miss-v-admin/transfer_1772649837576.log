@@ -1,0 +1,5 @@
+[2026-03-04 18:43:57.626] error: [FATAL] [Data transfer] Error in assets read stream: WebSocket is not open: readyState 3 (CLOSED)
+[2026-03-04 18:43:57.634] error: [ERROR] WebSocket is not open: readyState 3 (CLOSED)
+[2026-03-04 18:43:57.916] error: [ERROR] WebSocket is not open: readyState 3 (CLOSED)
+[2026-03-04 18:44:01.103] error: [ERROR] WebSocket is not open: readyState 3 (CLOSED)
+[2026-03-04 18:44:01.393] error: [FATAL] WebSocket is not open: readyState 3 (CLOSED)

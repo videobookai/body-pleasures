@@ -39,7 +39,7 @@ const TopCategoryList: React.FC<TopCategoryListProps> = ({ categoryList = [] }) 
         <Link href={`/products-category/${categoryParam}`} key={category.id ?? index}>
            <div className="mb-3 p-1 border rounded-lg gap-2 w-[250px] min-w-[200px] shadow-sm hover:shadow-md cursor-pointer bg-secondary ">
             <Image
-              src={`${process.env.NEXT_PUBLIC_BASE_URL ?? ''}${category.icon?.[0]?.url ?? ''}`}
+              src={category.icon?.[0]?.url!}
               width={300}
               height={280}
               alt={displayName || 'category-image'}

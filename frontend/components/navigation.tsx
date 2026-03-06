@@ -99,7 +99,7 @@ useEffect(() => {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8 justify-center">
+          <div className="hidden md:flex items-center gap-8 justify-center font-serif">
             <a
               href="/shop"
               className="text-lg text-gray-600 hover:text-black transition-colors font-bold"
@@ -125,17 +125,14 @@ useEffect(() => {
                     </div>
                   </DropdownMenuItem>
                 )}
-                {categoryList.map((category, index) => (
-                  <Link
-                    href={`/products-category/${category.name}`}
-                    key={category.id}
-                  >
-                    <DropdownMenuItem key={index} className="cursor-pointer">
+                {categoryList.map((category) => (
+                  <DropdownMenuItem asChild key={category.id} className="cursor-pointer">
+                    <Link href={`/products-category/${category.name}`}>
                       <span className="text-sm capitalize">
                         {category?.name}
                       </span>
-                    </DropdownMenuItem>
-                  </Link>
+                    </Link>
+                  </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
@@ -210,17 +207,14 @@ useEffect(() => {
                     </div>
                   </DropdownMenuItem>
                 )}
-                {categoryList.map((category, index) => (
-                  <Link
-                    href={`/products-category/${category.name}`}
-                    key={category.id}
-                  >
-                    <DropdownMenuItem key={index} className="cursor-pointer">
+                {categoryList.map((category) => (
+                  <DropdownMenuItem asChild key={category.id} className="cursor-pointer">
+                    <Link href={`/products-category/${category.name}`}>
                       <span className="text-sm capitalize">
                         {category?.name}
                       </span>
-                    </DropdownMenuItem>
-                  </Link>
+                    </Link>
+                  </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>

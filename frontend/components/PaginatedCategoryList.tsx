@@ -2,36 +2,36 @@
 
 import React, { useMemo, useState } from "react";
 import ReactPaginate from "react-paginate";
-import ProductList from "./ProductList";
+import CategoryList from "./CategoryList";
 
-interface PaginatedProductListProps {
-  productList: any[];
+interface PaginatedCategoryListProps {
+  categoryList: any[];
   itemsPerPage?: number;
 }
 
-const PaginatedProductList = ({
-  productList,
+const PaginatedCategoryList = ({
+  categoryList,
   itemsPerPage = 10,
-}: PaginatedProductListProps) => {
+}: PaginatedCategoryListProps) => {
   const [currentPage, setCurrentPage] = useState(0);
 
-  const totalPages = Math.ceil(productList.length / itemsPerPage);
+  const totalPages = Math.ceil(categoryList.length / itemsPerPage);
 
   const currentItems = useMemo(() => {
     const start = currentPage * itemsPerPage;
     const end = start + itemsPerPage;
-    return productList.slice(start, end);
-  }, [currentPage, itemsPerPage, productList]);
+    return categoryList.slice(start, end);
+  }, [categoryList, currentPage, itemsPerPage]);
 
   const handlePageClick = (selectedItem: { selected: number }) => {
     setCurrentPage(selectedItem.selected);
   };
 
   return (
-    <div>
-      <ProductList productList={currentItems} />
+    <div className="w-full">
+      <CategoryList categoryList={currentItems} />
       {totalPages > 1 && (
-        <div className="my-8 flex justify-center">
+        <div className="mt-8 flex justify-center">
           <ReactPaginate
             breakLabel="..."
             nextLabel="Next"
@@ -60,4 +60,4 @@ const PaginatedProductList = ({
   );
 };
 
-export default PaginatedProductList;
+export default PaginatedCategoryList;

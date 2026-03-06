@@ -15,7 +15,7 @@ interface ProductItemProps {
 const ProductItem = ({ product }: ProductItemProps) => {
   if (!product) return null;
 
-  const imageUrl = process.env.NEXT_PUBLIC_BASE_URL + product.images?.[0]?.url;
+  const imageUrl = product.images?.[0]?.url;
 
   return (
     <Card
@@ -34,11 +34,11 @@ const ProductItem = ({ product }: ProductItemProps) => {
         <div className="w-full h-48 bg-muted rounded-lg mb-4" />
       )}
 
-      <div className="flex flex-col gap-2 px-4 mb-2">
-        <h3 className="text-lg font-bold text-primary mb-2 font-serif" >
+      <div className="flex flex-col gap-2 px-1 md:px-4 mb-2">
+        <h3 className="text-sm md:text-lg font-bold text-primary mb-2 font-serif" >
           {product.name}
         </h3>
-        <p className="text-sm text-muted-foreground mb-2 truncate ">
+        <p className="text-xs md:text-sm text-muted-foreground mb-2 truncate ">
           {product.description}
         </p>
         <div className="flex flex-row gap-2 items-center">
@@ -55,11 +55,11 @@ const ProductItem = ({ product }: ProductItemProps) => {
         </div>
       </div>
 
-      <CardFooter className="flex items-center justify-center my-2">
+      <CardFooter className="flex items-center justify-center my-0 md:my-2">
         <Dialog>
           <DialogTrigger asChild className="mb-2">
           
-            <Button className="cursor-pointer bg-yellow-700 hover:bg-yellow-800 w-36">
+            <Button className="cursor-pointer bg-yellow-700 hover:bg-yellow-800 text-xs md:text-sm">
               View Product
             </Button>
           </DialogTrigger>
