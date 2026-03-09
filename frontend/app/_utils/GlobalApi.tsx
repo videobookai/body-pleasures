@@ -14,8 +14,9 @@ axiosClient.interceptors.request.use(
     const userToken =
       typeof window !== "undefined" ? sessionStorage.getItem("authToken") : null;
 
-    // Prefer the logged-in user JWT; fallback to Strapi API token for public reads.
-    const authToken = userToken || strapiApiToken;
+    // Allow selected calls to opt out of user JWT so Strapi evaluates them as public/API-token requests.
+    const isPublicRequest = (config as any)?.meta?.public === true;
+    const authToken = isPublicRequest ? strapiApiToken : userToken || strapiApiToken;
 
     if (authToken) {
       config.headers = {
@@ -40,7 +41,7 @@ axiosClient.interceptors.response.use(
   }
 );
 
-const getCategory = () => axiosClient.get("/categories");
+const getCategory = () => axiosClient.get("/categories", { meta: { public: true } } as any);
 
 const getSliders = () =>
   axiosClient
@@ -60,7 +61,7 @@ const getSliders = () =>
 
 const getCategoryList = () =>
   axiosClient
-    .get("/categories?populate=*")
+    .get("/categories?populate=*", { meta: { public: true } } as any)
     .then((resp) => {
       return resp.data.data;
     })

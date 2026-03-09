@@ -47,7 +47,7 @@ const ProductItemDetails = ({ product }: ProductItemDetailsProps) => {
         userId: user.id,
       },
     };
-    console.log("Adding to cart:", data);
+    
 
     GlobalApi.addToCart(data, jwt)
       .then((resp) => {
@@ -64,37 +64,40 @@ const ProductItemDetails = ({ product }: ProductItemDetailsProps) => {
   };
 
   return (
-    <div className="grid grid-cols-1  gap-2 md:gap-4 md:grid-cols-2 p-7 text-primary">
+    <div className="grid grid-cols-1  gap-2 md:gap-4 md:grid-cols-2 p-4 md:p-7 text-primary ">
       <Image
         src={imageUrl}
         alt={product.name || "product-image"}
         width={300}
         height={300}
-        className="bg-slate-200 h-[32opx] object-contain rounded-lg"
+        className="bg-secondary/10 object-contain   md:object-cover rounded-lg h-38 md:h-96 w-full"
       />
-      <div className="flex flex-col gap-2 justify-start">
-        <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold font-serif">{product.name}</h2>
+      <div className="flex flex-col gap-2 justify-start overflow-y-auto px-1 md:px-4 ">
+        <div className="h-30 md:h-full overflow-y-auto my-2">
+        <h2 className="text-xl md:text-3xl lg:text-4xl font-bold font-serif">{product.name}</h2>
         <h2 className="text-black/50 
         text-xs
         md:text-sm
          ">
           {product.description}
         </h2>
+        </div>
+        
 
         <div className="flex flex-row gap-2 items-center my-2">
-          <p className="text-lg font-bold text-primary ">
+          <p className="text-sm md:text-lg font-bold text-primary ">
          Price:   ${product.sellingPrice}
           </p>
           <p>
             {product.mrp && (
-              <span className="text-lg text-muted-foreground line-through mr-2">
+              <span className="text-xs md:text-lg text-muted-foreground line-through mr-2">
                 ${product.mrp}
               </span>
             )}
           </p>
         </div>
 
-        <h2 className="font-medium text-lg">
+        <h2 className="font-medium md:text-lg text-sm text-left">
           Type: {product.type || "N/A"}
         </h2>
 
@@ -132,9 +135,9 @@ const ProductItemDetails = ({ product }: ProductItemDetailsProps) => {
           {loading ? <Loader2 className="animate-spin" /> : "Add to Cart"}
         </Button>
 
-        <h2 className="text-sm  font-bold">
+        <h2 className="text-xs md:text-sm text-left font-bold">
           Category:
-          <span className="capitalize text-sm font-normal">
+          <span className="capitalize text-xs md:text-sm font-normal">
             {" " + product.categories?.[0].name}
           </span>
         </h2>

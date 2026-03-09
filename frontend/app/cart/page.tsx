@@ -168,7 +168,7 @@ export default function CartPage() {
                   <TableCell>
                     <Image
                       src={
-                        process.env?.NEXT_PUBLIC_BASE_URL! + item.image ||
+                      item.image ||
                         "/placeholder.svg"
                       }
                       alt={item.name}

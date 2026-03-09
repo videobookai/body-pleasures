@@ -24,7 +24,7 @@ const ShopPage = async () => {
             Products
         </h2>
         </div>
-        <div className="my-4 md:my-6 lg:my-8 px-4 md:px-6 lg:px-8">
+        <div className="my-4 md:my-6 lg:my-8 px-0 md:px-6 lg:px-8">
           <PaginatedProductList productList={productList} itemsPerPage={10} />
         </div>
       </div>
