@@ -11,12 +11,8 @@ const strapiApiToken = process.env.NEXT_PUBLIC_STRAPI_API_TOKEN;
 // Add request interceptor
 axiosClient.interceptors.request.use(
   (config) => {
-    const userToken =
-      typeof window !== "undefined" ? sessionStorage.getItem("authToken") : null;
-
-    // Allow selected calls to opt out of user JWT so Strapi evaluates them as public/API-token requests.
     const isPublicRequest = (config as any)?.meta?.public === true;
-    const authToken = isPublicRequest ? strapiApiToken : userToken || strapiApiToken;
+    const authToken = isPublicRequest ? undefined : strapiApiToken;
 
     if (authToken) {
       config.headers = {
@@ -33,12 +29,7 @@ axiosClient.interceptors.request.use(
 // Add response interceptor
 axiosClient.interceptors.response.use(
   (response) => response,
-  (error) => {
-    if (error.response?.status === 401 && typeof window !== "undefined") {
-        sessionStorage.removeItem("authToken");
-    }
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 const getCategory = () => axiosClient.get("/categories", { meta: { public: true } } as any);

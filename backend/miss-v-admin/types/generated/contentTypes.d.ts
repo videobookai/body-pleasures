@@ -598,10 +598,10 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
       'api::product.product'
     > &
       Schema.Attribute.Private;
-    mrp: Schema.Attribute.Integer;
+    mrp: Schema.Attribute.Decimal;
     name: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
-    sellingPrice: Schema.Attribute.Integer;
+    sellingPrice: Schema.Attribute.Decimal;
     slug: Schema.Attribute.UID<'name'>;
     type: Schema.Attribute.Enumeration<
       [

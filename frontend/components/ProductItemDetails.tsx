@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Button } from "./ui/button";
 
 import { toast } from "sonner";
@@ -8,7 +8,6 @@ import { Loader2, ShoppingBasket } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 
-import { set } from "date-fns";
 import GlobalApi from "../app/_utils/GlobalApi";
 import { UpdateCartContext } from "../app/_context/UpdateCartContext";
 
@@ -18,10 +17,9 @@ interface ProductItemDetailsProps {
 const ProductItemDetails = ({ product }: ProductItemDetailsProps) => {
   const imageUrl = product.images?.[0]?.url;
   const [loading, setLoading] = useState(false);
-
-  const jwt = sessionStorage.getItem("authToken");
   const router = useRouter();
-  const user = JSON.parse(sessionStorage.getItem("user") || "null");
+  const [jwt, setJwt] = useState<string | null>(null);
+  const [user, setUser] = useState<any>(null);
 
   const {updateCart, setUpdateCart} = useContext<any>(UpdateCartContext);
 
@@ -29,10 +27,43 @@ const ProductItemDetails = ({ product }: ProductItemDetailsProps) => {
     product.sellingPrice ? product.sellingPrice : product.mrp
   );
   const [quantity, setQuantity] = useState(1);
+
+  useEffect(() => {
+    const storedToken = sessionStorage.getItem("authToken");
+    const storedUser = sessionStorage.getItem("user");
+
+    setJwt(storedToken);
+    setUser(storedUser ? JSON.parse(storedUser) : null);
+  }, []);
+
+  const notifyCartAddedEmail = async () => {
+    if (!user?.email) return;
+
+    try {
+      await fetch("/api/email/cart-added", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          to: user.email,
+          payload: {
+            customerName: user.username || user.name || "Customer",
+            productName: product.name,
+            quantity,
+            unitPrice: Number(productTotalPrice),
+            lineTotal: Number((quantity * productTotalPrice).toFixed(2)),
+            addedAt: new Date().toISOString(),
+          },
+        }),
+      });
+    } catch (error) {
+      console.error("Cart email notification failed", error);
+    }
+  };
  
   const addToCart = () => {
     setLoading(true);
     if (!jwt) {
+      setLoading(false);
       toast.error("Please sign in to add items to your cart");
       router.push("/sign-in");
 
@@ -52,7 +83,8 @@ const ProductItemDetails = ({ product }: ProductItemDetailsProps) => {
     GlobalApi.addToCart(data, jwt)
       .then((resp) => {
         console.log("Add to cart response:", resp);
-        toast.success(`${quantity} × ${product.name} added to cart`);
+        toast.success(`${quantity} x ${product.name} added to cart`);
+        void notifyCartAddedEmail();
         setUpdateCart(!updateCart);
         setLoading(false);
       })

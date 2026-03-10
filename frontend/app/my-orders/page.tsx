@@ -12,6 +12,7 @@ import {
 import MyOrderItem from "./_components/MyOrderItem";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Footer } from "@/components/footer";
+import { PackageSearch } from "lucide-react";
 
 interface Order {
   createdAt: string;
@@ -54,9 +55,9 @@ const MyOrderPage = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen ">
       <Navigation />
-      <div className="mt-20 grow">
+      <div className="mt-16 grow max-w-7xl mx-auto w-full">
         <h2 className="p-3 bg-primary text-xl md:text-2xl lg:text-3xl font-bold text-white text-center">
           My Orders
         </h2>
@@ -66,9 +67,9 @@ const MyOrderPage = () => {
           <div>
             {loading ? (
               <div>
-                <Skeleton className="h-10 w-full my-5 max-w-[1400px] bg-primary/30" />
-                <Skeleton className="h-10 w-full my-5 max-w-[1400px] bg-primary/30" />
-                <Skeleton className="h-10 w-full my-5 max-w-[1400px] bg-primary/30" />
+                <Skeleton className="h-10 w-full my-5 max-w-350 bg-primary/30" />
+                <Skeleton className="h-10 w-full my-5 max-w-350 bg-primary/30" />
+                <Skeleton className="h-10 w-full my-5 max-w-350 bg-primary/30" />
                 <Skeleton className="h-10 w-full my-5 max-w-[1400px] bg-primary/30" />
               </div>
             ) : (
@@ -106,12 +107,21 @@ const MyOrderPage = () => {
             )}
           </div>
         </div>
+        {(orderList.length === 0 && !loading) && (
+          <div className="flex flex-row items-center md:px-10 gap-2 md:gap-4 lg:gap-6 my-10 mx-auto text-left px-4 justify-start lg:px-20">
+            <PackageSearch className="text-gray-400" size={50} />
+            <h2 className="text-sm md:text-xl  text-gray-500 font-sans">
+              You have not placed an order yet
+            </h2>
+          </div>)
+        }
       </div>
-      <div className="flex justify-center mt-auto mb-10">
+
+      {orderList.length >= 1 && (<div className="flex justify-center mt-auto mb-10">
         <p className="font-light text-xs md:text-sm text-gray-500 font-sans text-center">
           *Total Amount contains the added tax and shipping fees
         </p>
-      </div>
+      </div>)}
       <Footer />
     </div>
   );

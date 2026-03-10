@@ -18,10 +18,10 @@
       "type": "text"
     },
     "mrp": {
-      "type": "integer"
+      "type": "decimal"
     },
     "sellingPrice": {
-      "type": "integer"
+      "type": "decimal"
     },
     "itemQuantityType": {
       "type": "string"
