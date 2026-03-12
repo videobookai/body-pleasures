@@ -2,11 +2,35 @@ import axios from "axios";
 
 const axiosClient = axios.create({
   baseURL:
-    process.env.NEXT_PUBLIC_API_URL ||
-    "https://light-laughter-714ca5c3e9.strapiapp.com/api",
+    process.env.NEXT_PUBLIC_API_URL ,
 });
 
 const strapiApiToken = process.env.NEXT_PUBLIC_STRAPI_API_TOKEN;
+const apiBase =  process.env.NEXT_PUBLIC_API_URL!;
+const assetBase = apiBase.replace(/\/api\/?$/, "");
+
+const toAbsoluteUrl = (url?: string) =>
+  url ? (url.startsWith("http") ? url : `${assetBase}${url}`) : undefined;
+
+const normalizeProduct = (item: any) => {
+  const product = item?.attributes ?? item;
+  const rawImages = product?.images?.data ?? product?.images ?? [];
+
+  const images = rawImages.map((img: any) => {
+    const attrs = img?.attributes ?? img;
+    return {
+      ...attrs,
+      id: img?.id ?? attrs?.id,
+      url: toAbsoluteUrl(attrs?.url),
+    };
+  });
+
+  return {
+    ...product,
+    id: item?.id ?? product?.id,
+    images,
+  };
+};
 
 // Add request interceptor
 axiosClient.interceptors.request.use(
@@ -66,16 +90,59 @@ const getCategoryList = () =>
       throw err;
     });
 
+const getCategoryListByNames = (names: string[]) => {
+  if (!Array.isArray(names) || names.length === 0) {
+    return Promise.resolve([]);
+  }
+
+  const params = new URLSearchParams();
+  names.forEach((name, index) => {
+    params.append(`filters[name][$in][${index}]`, name);
+  });
+  params.append("populate", "*");
+
+  return axiosClient
+    .get(`/categories?${params.toString()}`, { meta: { public: true } } as any)
+    .then((resp) => {
+      return resp.data.data;
+    })
+    .catch((err) => {
+      console.error(
+        "[GlobalApi] getCategoryListByNames error:",
+        err.message,
+        err.response?.status,
+        err.response?.data
+      );
+      throw err;
+    });
+};
+
 const getAllProducts = () =>
-  axiosClient.get("/products?populate=*").then((resp) => {
-    return resp.data.data;
+  axiosClient.get("/products?populate=images").then((resp) => {
+    return resp.data.data.map(normalizeProduct);
   });
 
 const getProductByCategory = (category: string) =>
   axiosClient
-    .get("/products?filters[categories][name][$in]=" + category + "&populate=*")
+    .get(
+      "/products?filters[categories][name][$in]=" +
+        encodeURIComponent(category) +
+        "&populate=images",
+      { meta: { public: true } } as any
+    )
     .then((resp) => {
-      return resp.data.data;
+      return resp.data.data.map(normalizeProduct);
+    })
+    .catch((err) => {
+      console.error(
+        "[GlobalApi] getProductByCategory error:",
+        err.message,
+        err.response?.status,
+        err.cause,
+        err.response?.data,
+        err.config?.url
+      );
+      throw err;
     });
 
 const registerUser = (username: string, email: string, password: string) =>
@@ -216,6 +283,7 @@ export default {
   getCategory,
   getSliders,
   getCategoryList,
+  getCategoryListByNames,
   getAllProducts,
   getProductByCategory,
   registerUser,

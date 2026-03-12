@@ -31,7 +31,7 @@ const PaginatedProductList = ({
     <div>
       <ProductList productList={currentItems} />
       {totalPages > 1 && (
-        <div className="my-8 flex justify-center">
+        <div className="flex mb-4 justify-center">
           <ReactPaginate
             breakLabel="..."
             nextLabel="Next"
