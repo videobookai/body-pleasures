@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import GlobalApi from "@/frontend/app/_utils/GlobalApi";
+import GlobalApi from "@/app/_utils/GlobalApi";
 
 export async function POST(request: Request) {
   const data = await request.json();

@@ -49,11 +49,19 @@ useEffect(() => {
 
 
   const getCategoryList = () => {
-    GlobalApi.getCategory().then((resp) => {
-      setCategoryList(resp.data.data);
-      console.log("getCategoryList response:", resp.data.data);
-      console.log("categoryList state:", categoryList);
-    });
+    GlobalApi.getCategory()
+      .then((resp) => {
+        setCategoryList(resp.data.data);
+      })
+      .catch((err) => {
+        console.error(
+          "[Navigation] getCategoryList error:",
+          err?.message,
+          err?.response?.status,
+          err?.response?.data
+        );
+        setCategoryList([]);
+      });
   };
 
   const getCartItems = async () => {
@@ -99,7 +107,7 @@ useEffect(() => {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8 justify-center">
+          <div className="hidden md:flex items-center gap-8 justify-center font-serif">
             <a
               href="/shop"
               className="text-lg text-gray-600 hover:text-black transition-colors font-bold"
@@ -117,7 +125,7 @@ useEffect(() => {
                   Collections <ChevronDown className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-40 z-60">
+              <DropdownMenuContent align="start" className="w-40 z-60 overflow-y-auto h-60">
                 {categoryList.length === 0 && (
                   <DropdownMenuItem asChild>
                     <div className="px-2 py-1 text-sm text-muted-foreground">
@@ -125,17 +133,14 @@ useEffect(() => {
                     </div>
                   </DropdownMenuItem>
                 )}
-                {categoryList.map((category, index) => (
-                  <Link
-                    href={`/products-category/${category.name}`}
-                    key={category.id}
-                  >
-                    <DropdownMenuItem key={index} className="cursor-pointer">
+                {categoryList.map((category) => (
+                  <DropdownMenuItem asChild key={category.id} className="cursor-pointer">
+                    <Link href={`/products-category/${category.name}`}>
                       <span className="text-sm capitalize">
                         {category?.name}
                       </span>
-                    </DropdownMenuItem>
-                  </Link>
+                    </Link>
+                  </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
@@ -188,7 +193,7 @@ useEffect(() => {
         {isOpen && (
           <div className="md:hidden py-4 space-y-4">
             <a
-              href="#shop"
+              href="/shop"
               className="block text-sm text-foreground/80 hover:text-foreground transition-colors"
             >
               Shop
@@ -197,12 +202,12 @@ useEffect(() => {
               <DropdownMenuTrigger asChild>
                 <Button
                   variant={"ghost"}
-                  className="text-lg text-gray-600 hover:text-black transition-colors font-bold"
+                  className="text-sm text-gray-600 font-bold underline flex items-center gap-1"
                 >
                   Collections
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-40 z-60">
+              <DropdownMenuContent align="start" className="w-40 z-60 h-52 overflow-y-auto">
                 {categoryList.length === 0 && (
                   <DropdownMenuItem asChild>
                     <div className="px-2 py-1 text-sm text-muted-foreground">
@@ -210,28 +215,25 @@ useEffect(() => {
                     </div>
                   </DropdownMenuItem>
                 )}
-                {categoryList.map((category, index) => (
-                  <Link
-                    href={`/products-category/${category.name}`}
-                    key={category.id}
-                  >
-                    <DropdownMenuItem key={index} className="cursor-pointer">
+                {categoryList.map((category) => (
+                  <DropdownMenuItem asChild key={category.id} className="cursor-pointer">
+                    <Link href={`/products-category/${category.name}`}>
                       <span className="text-sm capitalize">
                         {category?.name}
                       </span>
-                    </DropdownMenuItem>
-                  </Link>
+                    </Link>
+                  </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
             <a
-              href="#about"
+              href="/about"
               className="block text-sm text-foreground/80 hover:text-foreground transition-colors"
             >
               About
             </a>
             <a
-              href="#contact"
+              href="/contact-us"
               className="block text-sm text-foreground/80 hover:text-foreground transition-colors"
             >
               Contact

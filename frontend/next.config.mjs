@@ -8,12 +8,7 @@ const nextConfig = {
   },
   images: {
     unoptimized: true,
-    remotePatterns: [
-      { hostname: '192.168.1.142' },
-      { hostname: 'localhost' },
-      { hostname: '172.20.240.1' },
-      { hostname: '*.strapiapp.com' },
-    ],
+    domains: ['192.168.1.142', 'localhost', 'light-laughter-714ca5c3e9.strapiapp.com']
   },
   reactStrictMode:false
 }

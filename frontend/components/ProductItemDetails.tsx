@@ -1,13 +1,13 @@
 "use client";
 import Image from "next/image";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Button } from "./ui/button";
 
 import { toast } from "sonner";
 import { Loader2, ShoppingBasket } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-import { set } from "date-fns";
+
 import GlobalApi from "../app/_utils/GlobalApi";
 import { UpdateCartContext } from "../app/_context/UpdateCartContext";
 
@@ -15,15 +15,11 @@ interface ProductItemDetailsProps {
   product: any;
 }
 const ProductItemDetails = ({ product }: ProductItemDetailsProps) => {
-  const rawUrl = product.images?.[0]?.url;
-  const imageUrl = rawUrl?.startsWith("http")
-    ? rawUrl
-    : process.env.NEXT_PUBLIC_BASE_URL + rawUrl;
+  const imageUrl = product.images?.[0]?.url;
   const [loading, setLoading] = useState(false);
-
-  const jwt = sessionStorage.getItem("authToken");
   const router = useRouter();
-  const user = JSON.parse(sessionStorage.getItem("user") || "null");
+  const [jwt, setJwt] = useState<string | null>(null);
+  const [user, setUser] = useState<any>(null);
 
   const { updateCart, setUpdateCart } = useContext<any>(UpdateCartContext);
 
@@ -32,9 +28,42 @@ const ProductItemDetails = ({ product }: ProductItemDetailsProps) => {
   );
   const [quantity, setQuantity] = useState(1);
 
+  useEffect(() => {
+    const storedToken = sessionStorage.getItem("authToken");
+    const storedUser = sessionStorage.getItem("user");
+
+    setJwt(storedToken);
+    setUser(storedUser ? JSON.parse(storedUser) : null);
+  }, []);
+
+  const notifyCartAddedEmail = async () => {
+    if (!user?.email) return;
+
+    try {
+      await fetch("/api/email/cart-added", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          to: user.email,
+          payload: {
+            customerName: user.username || user.name || "Customer",
+            productName: product.name,
+            quantity,
+            unitPrice: Number(productTotalPrice),
+            lineTotal: Number((quantity * productTotalPrice).toFixed(2)),
+            addedAt: new Date().toISOString(),
+          },
+        }),
+      });
+    } catch (error) {
+      console.error("Cart email notification failed", error);
+    }
+  };
+ 
   const addToCart = () => {
     setLoading(true);
     if (!jwt) {
+      setLoading(false);
       toast.error("Please sign in to add items to your cart");
       router.push("/sign-in");
 
@@ -49,12 +78,13 @@ const ProductItemDetails = ({ product }: ProductItemDetailsProps) => {
         userId: user.id,
       },
     };
-    console.log("Adding to cart:", data);
+    
 
     GlobalApi.addToCart(data, jwt)
       .then((resp) => {
         console.log("Add to cart response:", resp);
-        toast.success(`${quantity} × ${product.name} added to cart`);
+        toast.success(`${quantity} x ${product.name} added to cart`);
+        void notifyCartAddedEmail();
         setUpdateCart(!updateCart);
         setLoading(false);
       })
@@ -66,41 +96,43 @@ const ProductItemDetails = ({ product }: ProductItemDetailsProps) => {
   };
 
   return (
-    <div className="grid grid-cols-1  gap-2 md:gap-4 md:grid-cols-2 p-7 text-primary">
+    <div className="grid grid-cols-1  gap-2 md:gap-4 md:grid-cols-2 p-4 md:p-7 text-primary ">
       <Image
         src={imageUrl}
         alt={product.name || "product-image"}
         width={300}
         height={300}
-        className="bg-slate-200 h-[32opx] object-contain rounded-lg"
+        className="bg-secondary/10 object-contain   md:object-cover rounded-lg h-38 md:h-96 w-full"
       />
-      <div className="flex flex-col gap-2 justify-start">
-        <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold font-serif">
-          {product.name}
-        </h2>
-        <h2
-          className="text-black/50 
+      <div className="flex flex-col gap-2 justify-start overflow-y-auto px-1 md:px-4 ">
+        <div className="h-30 md:h-full overflow-y-auto my-2">
+        <h2 className="text-xl md:text-3xl lg:text-4xl font-bold font-serif">{product.name}</h2>
+        <h2 className="text-black/50 
         text-xs
         md:text-sm
          "
         >
           {product.description}
         </h2>
+        </div>
+        
 
         <div className="flex flex-row gap-2 items-center my-2">
-          <p className="text-lg font-bold text-primary ">
-            Price: ${product.sellingPrice}
+          <p className="text-sm md:text-lg font-bold text-primary ">
+         Price:   ${product.sellingPrice}
           </p>
           <p>
             {product.mrp && (
-              <span className="text-lg text-muted-foreground line-through mr-2">
+              <span className="text-xs md:text-lg text-muted-foreground line-through mr-2">
                 ${product.mrp}
               </span>
             )}
           </p>
         </div>
 
-        <h2 className="font-medium text-lg">Type: {product.type || "N/A"}</h2>
+        <h2 className="font-medium md:text-lg text-sm text-left">
+          Type: {product.type || "N/A"}
+        </h2>
 
         <div className="flex flex-col items-baseline gap-3">
           <div className="flex border gap-10 items-center p-2 px-5">
@@ -136,9 +168,9 @@ const ProductItemDetails = ({ product }: ProductItemDetailsProps) => {
           {loading ? <Loader2 className="animate-spin" /> : "Add to Cart"}
         </Button>
 
-        <h2 className="text-sm  font-bold">
+        <h2 className="text-xs md:text-sm text-left font-bold">
           Category:
-          <span className="capitalize text-sm font-normal">
+          <span className="capitalize text-xs md:text-sm font-normal">
             {" " + product.categories?.[0].name}
           </span>
         </h2>

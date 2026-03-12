@@ -1,42 +1,62 @@
 import axios from "axios";
-import { sign } from "crypto";
-import { initialize } from "next/dist/server/lib/render-server";
 
 const axiosClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:1337/api",
+  baseURL:
+    process.env.NEXT_PUBLIC_API_URL ,
 });
 
-// Register interceptors only when running in the browser (avoid server-side localStorage)
-if (typeof window !== "undefined") {
-  // Add request interceptor
-  axiosClient.interceptors.request.use(
-    (config) => {
-      const token = localStorage.getItem("authToken");
-      if (token) {
-        // preserve existing headers and add Authorization
-        config.headers = {
-          ...(config.headers as any),
-          Authorization: `Bearer ${token}`,
-        };
-      }
-      return config;
-    },
-    (error) => Promise.reject(error)
-  );
+const strapiApiToken = process.env.NEXT_PUBLIC_STRAPI_API_TOKEN;
+const apiBase =  process.env.NEXT_PUBLIC_API_URL!;
+const assetBase = apiBase.replace(/\/api\/?$/, "");
 
-  // Add response interceptor
-  axiosClient.interceptors.response.use(
-    (response) => response,
-    (error) => {
-      if (error.response?.status === 401) {
-        localStorage.removeItem("authToken");
-      }
-      return Promise.reject(error);
+const toAbsoluteUrl = (url?: string) =>
+  url ? (url.startsWith("http") ? url : `${assetBase}${url}`) : undefined;
+
+const normalizeProduct = (item: any) => {
+  const product = item?.attributes ?? item;
+  const rawImages = product?.images?.data ?? product?.images ?? [];
+
+  const images = rawImages.map((img: any) => {
+    const attrs = img?.attributes ?? img;
+    return {
+      ...attrs,
+      id: img?.id ?? attrs?.id,
+      url: toAbsoluteUrl(attrs?.url),
+    };
+  });
+
+  return {
+    ...product,
+    id: item?.id ?? product?.id,
+    images,
+  };
+};
+
+// Add request interceptor
+axiosClient.interceptors.request.use(
+  (config) => {
+    const isPublicRequest = (config as any)?.meta?.public === true;
+    const authToken = isPublicRequest ? undefined : strapiApiToken;
+
+    if (authToken) {
+      config.headers = {
+        ...(config.headers as any),
+        Authorization: `Bearer ${authToken}`,
+      };
     }
-  );
-}
 
-const getCategory = () => axiosClient.get("/categories");
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// Add response interceptor
+axiosClient.interceptors.response.use(
+  (response) => response,
+  (error) => Promise.reject(error)
+);
+
+const getCategory = () => axiosClient.get("/categories", { meta: { public: true } } as any);
 
 const getSliders = () =>
   axiosClient
@@ -56,7 +76,7 @@ const getSliders = () =>
 
 const getCategoryList = () =>
   axiosClient
-    .get("/categories?populate=*")
+    .get("/categories?populate=*", { meta: { public: true } } as any)
     .then((resp) => {
       return resp.data.data;
     })
@@ -70,16 +90,59 @@ const getCategoryList = () =>
       throw err;
     });
 
+const getCategoryListByNames = (names: string[]) => {
+  if (!Array.isArray(names) || names.length === 0) {
+    return Promise.resolve([]);
+  }
+
+  const params = new URLSearchParams();
+  names.forEach((name, index) => {
+    params.append(`filters[name][$in][${index}]`, name);
+  });
+  params.append("populate", "*");
+
+  return axiosClient
+    .get(`/categories?${params.toString()}`, { meta: { public: true } } as any)
+    .then((resp) => {
+      return resp.data.data;
+    })
+    .catch((err) => {
+      console.error(
+        "[GlobalApi] getCategoryListByNames error:",
+        err.message,
+        err.response?.status,
+        err.response?.data
+      );
+      throw err;
+    });
+};
+
 const getAllProducts = () =>
-  axiosClient.get("/products?populate=*").then((resp) => {
-    return resp.data.data;
+  axiosClient.get("/products?populate=images").then((resp) => {
+    return resp.data.data.map(normalizeProduct);
   });
 
 const getProductByCategory = (category: string) =>
   axiosClient
-    .get("/products?filters[categories][name][$in]=" + category + "&populate=*")
+    .get(
+      "/products?filters[categories][name][$in]=" +
+        encodeURIComponent(category) +
+        "&populate=images",
+      { meta: { public: true } } as any
+    )
     .then((resp) => {
-      return resp.data.data;
+      return resp.data.data.map(normalizeProduct);
+    })
+    .catch((err) => {
+      console.error(
+        "[GlobalApi] getProductByCategory error:",
+        err.message,
+        err.response?.status,
+        err.cause,
+        err.response?.data,
+        err.config?.url
+      );
+      throw err;
     });
 
 const registerUser = (username: string, email: string, password: string) =>
@@ -94,6 +157,16 @@ const signIn = (email: string, password: string) =>
     identifier: email,
     password: password,
   });
+
+const checkUserExistsByEmail = async (email: string) => {
+  const resp = await axiosClient.get(
+    `/users?filters[email][$eq]=${encodeURIComponent(email)}&pagination[limit]=1`
+  );
+
+  // Strapi /users typically returns an array.
+  return Array.isArray(resp.data) && resp.data.length > 0;
+};
+
 const addToCart = (data: any, jwt: string) =>
   axiosClient.post("/user-carts", data, {
     headers: {
@@ -196,14 +269,26 @@ const getOrdersByUserId = (userId: number, jwt: string) =>
       return resp.data.data;
     });
 
+    const forgotPassword = (email: string)=> axiosClient.post("/auth/forgot-password", {
+      email
+    })
+    const resetPassword = (code: string, password: string, passwordConfirmation: string) => axiosClient.post("/auth/reset-password", {
+      code,
+      password,
+      passwordConfirmation
+    })
+  
+
 export default {
   getCategory,
   getSliders,
   getCategoryList,
+  getCategoryListByNames,
   getAllProducts,
   getProductByCategory,
   registerUser,
   signIn,
+  checkUserExistsByEmail,
   addToCart,
   getUserCartItems,
   deleteCartItem,
@@ -211,4 +296,6 @@ export default {
   createOrder,
   clearUserCart,
   getOrdersByUserId,
+  forgotPassword,
+  resetPassword
 };

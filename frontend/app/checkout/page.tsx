@@ -1,9 +1,7 @@
 "use client";
 import { Footer } from "@/components/footer";
 import { Navigation } from "@/components/navigation";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowBigRight } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import GlobalApi from "../_utils/GlobalApi";
@@ -43,6 +41,47 @@ const CheckoutPage = () => {
     return true;
   };
 
+  const sendOrderStatusNotification = async ({
+    orderStatus,
+    failureReason,
+    orderId,
+    createdAt,
+  }: {
+    orderStatus: string;
+    failureReason?: string;
+    orderId?: string;
+    createdAt?: string;
+  }) => {
+    if (!email) return;
+
+    try {
+      await fetch("/api/email/order-status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          to: email,
+          payload: {
+            customerName: name || user?.username || "Customer",
+            orderId,
+            orderStatus,
+            totalAmount: Number(calculateTotalAmount()),
+            paymentId: "N/A",
+            createdAt: createdAt || new Date().toISOString(),
+            shippingAddress: address,
+            failureReason,
+            items: cartItemList.map((item) => ({
+              name: item.name || `Product #${item.product}`,
+              quantity: Number(item.quantity || 1),
+              price: Number(item.price || 0),
+            })),
+          },
+        }),
+      });
+    } catch (error) {
+      console.error("Order status email notification failed", error);
+    }
+  };
+
   const onApprove = (data: any) => {
     console.log(data);
 
@@ -56,6 +95,13 @@ const CheckoutPage = () => {
       toast.error("Invalid email format");
       return;
     }
+
+    const emailItems = cartItemList.map((item) => ({
+      name: item.name || `Product #${item.product}`,
+      quantity: Number(item.quantity || 1),
+      price: Number(item.price || 0),
+    }));
+    const checkoutTotal = Number(calculateTotalAmount());
 
     // Send only necessary fields
     const orderItems = cartItemList.map((item) => ({
@@ -84,17 +130,45 @@ const CheckoutPage = () => {
     GlobalApi.createOrder(payload, jwt)
       .then(async (resp) => {
         console.log(resp);
+        const createdOrder = resp?.data?.data;
+        const paymentId =
+          createdOrder?.paymentId?.toString() || data?.paymentId?.toString() || "N/A";
 
         GlobalApi.clearUserCart(user.id, jwt);
         setCartItemList([]);
         setTotalCartItems(0);
         setSubTotal(0);
+        void fetch("/api/email/order-status", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            to: email,
+            payload: {
+              customerName: name || user?.username || "Customer",
+              orderId:
+                createdOrder?.documentId?.toString() ||
+                createdOrder?.id?.toString() ||
+                "N/A",
+              orderStatus: createdOrder?.orderStatus || "success",
+              totalAmount: checkoutTotal,
+              paymentId,
+              createdAt: createdOrder?.createdAt || new Date().toISOString(),
+              shippingAddress: address,
+              items: emailItems,
+            },
+          }),
+        });
 
         toast.success("Order Placed Successfully");
         router.replace("/order-confirmation")
       })
       .catch((error) => {
         console.error("Order creation failed", error);
+        void sendOrderStatusNotification({
+          orderStatus: "failed",
+          failureReason: "Order creation failed after payment capture.",
+          createdAt: new Date().toISOString(),
+        });
         toast.error("Failed to place order. Please try again.");
       });
   };

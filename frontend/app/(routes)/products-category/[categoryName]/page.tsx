@@ -46,7 +46,7 @@ const ProductCategory = async ({
   return (
     <div className="mt-24 flex flex-col">
       <Navigation />
-      <div className="w-full">
+      <div className="w-full max-w-3xl md:max-w-4xl lg:max-w-7xl mx-auto">
         <div className="bg-primary w-full">
           <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold  mb-4  capitalize text-center text-white py-4">
             {displayCategoryName}
@@ -60,7 +60,7 @@ const ProductCategory = async ({
             </p>
           )}
           <p className="mt-4 text-center text-sm md:text-base text-muted-foreground">
-            {productList.length} products found
+            {productList.length} product(s) found
           </p>
         </div>
         
