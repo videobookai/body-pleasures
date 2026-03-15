@@ -18,10 +18,13 @@ const ShopPage = async () => {
             Shop
           </h2>
         </div>
+        <h2 className="text-xl md:text-3xl lg:text-4xl font-bold text-primary mt-6 mb-4 ml-2 md:ml-8 font-serif">
+          Categories:
+        </h2>
         <TopCategoryList categoryList={categoryList} />
         <div className="flex ml-2 md:ml-8  mt-4 md:mt-6 lg:mt-8">
         <h2 className='text-xl md:text-3xl lg:text-4xl font-bold text-primary  font-serif'>
-            Products
+          Top Products
         </h2>
         </div>
         <div className="my-4 md:my-6 lg:my-8 px-0 md:px-6 lg:px-8">

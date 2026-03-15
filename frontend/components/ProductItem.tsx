@@ -28,7 +28,7 @@ const ProductItem = ({ product }: ProductItemProps) => {
           alt={product.name || "product-image"}
           width={500}
           height={200}
-          className="w-full h-20 md:h-52 lg:h-64 object-fill rounded-lg mb-2"
+          className="w-full h-28 md:h-52 lg:h-64 object-contain md:object-fill rounded-lg mb-2"
         />
       ) : (
         <div className="w-full h-48 bg-muted rounded-lg mb-4" />

@@ -23,7 +23,7 @@ const ResetPassword = () => {
   if (!code) {
     return (
       <div className="flex flex-col items-center gap-2 mt-20">
-        <div className="flex flex-col items-center p-4 bg-secondary/10 shadow-lg w-fit md:w-2xl lg:w-3xl mt-4 mb-20">
+        <div className="flex flex-col items-center p-4 bg-secondary/10 shadow-lg w-full md:w-2xl lg:w-3xl mt-4 mb-20">
           <div className="shrink-0 py-8">
             <h1 className="text-xl md:text-2xl font-serif font-semibold text-foreground">
               {"Ms V's Body Pleasures"}
@@ -33,11 +33,11 @@ const ResetPassword = () => {
           <h2 className="font-bold text-2xl md:text-4xl mt-4 text-primary">
             Not Authorized
           </h2>
-          <h2 className="text-gray-500 text-center">
+          <h2 className="text-gray-500 text-xs md:text-sm text-center">
             The password reset link is invalid or has expired.
           </h2>
 
-          <div className="flex flex-row gap-2 mt-6 items-start justify-start mb-6">
+          <div className="flex flex-row gap-2 mt-6 items-start justify-start mb-6 text-xs md:text-sm">
             <p>Back to login?</p>
             <Link className="text-blue-500 underline" href="/sign-in">
               Sign in

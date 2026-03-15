@@ -47,17 +47,17 @@ const SignIn = () => {
   return (
       <div className="flex flex-col items-center gap-2  mt-20">
    
-      <div className="flex flex-col items-center p-4 bg-secondary/10 shadow-lg w-fit md:w-2xl lg:w-3xl mt-4 mb-20">
+      <div className="flex flex-col items-center p-4 bg-secondary/10 shadow-lg w-full md:w-2xl lg:w-3xl mt-4 mb-20 mx-4">
         <div className="shrink-0 py-8">
-          {" "}
+          
           
             <h1 className="text-xl md:text-2xl font-serif font-semibold text-foreground">
               {"Ms V's Body Pleasures"}
             </h1>
          
         </div>
-        <h2 className="font-bold text-2xl md:text-4xl mt-4 text-primary">Welcome! Sign In</h2>
-        <h2 className="text-gray-500">Enter your Email and Password to proceed</h2>
+        <h2 className="font-bold  text-xl md:text-4xl mt-4 text-primary">Welcome! Sign In</h2>
+        <h2 className="text-gray-500 text-sm md:text-lg text-center m-2">Enter your Email and Password to proceed</h2>
         
 
         <div className="flex flex-col w-full gap-5 mt-7 px-4">
@@ -65,7 +65,7 @@ const SignIn = () => {
             <Input
                 type="email"
                 placeholder="name@example.com"
-                className="bg-white"
+                className="bg-white text-xs md:text-sm pr-0 md:pr-10"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
             />
@@ -73,7 +73,7 @@ const SignIn = () => {
                 <Input
                     type={showPassword ? "text" : "password"}
                     placeholder="Password"
-                    className="bg-white pr-10"
+                    className="bg-white text-xs md:text-sm pr-0 md:pr-10 "
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 />
@@ -84,9 +84,9 @@ const SignIn = () => {
                     aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                     {showPassword ? (
-                        <Eye className="cursor-pointer"/>
+                        <Eye className="cursor-pointer w-3 h-3 md:w-5 md:h-5"/>
                     ) : (
-                       <EyeClosed className="cursor-pointer"/>
+                       <EyeClosed className="cursor-pointer w-3 h-3 md:w-5 md:h-5"/>
                     )}
                 </button>
             </div>
@@ -98,12 +98,12 @@ const SignIn = () => {
                 {loading? <Loader2 className='animate-spin'/> : "Sign In"}
             </Button>
         </div>
-         <div className="flex flex-row gap-2 mt-6 items-start justify-start mb-6">
+         <div className="flex flex-row gap-2 mt-6 items-start justify-start mb-4 text-xs md:text-sm">
                 <p>Don't have an account?</p>
             <Link className="text-blue-500 underline" href={"/sign-up"}>Click here to sign up</Link>
            
             </div>
-            <Link className="text-blue-500 underline mb-6" href={"/reset-password"}>
+            <Link className="text-blue-500 underline mb-6 text-xs md:text-sm" href={"/forgot-password"}>
               Forgot Password?
             </Link>
             

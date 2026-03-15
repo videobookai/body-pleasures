@@ -52,22 +52,22 @@ const SignUp = () => {
                         {"Ms V's Body Pleasures"}
                     </h1>
 
-                </div>
-                <h2 className="font-bold text-2xl md:text-4xl mt-4 text-primary">Create an Account</h2>
-                <h2 className="text-gray-500">Enter your Email, Username, and Password to proceed</h2>
+                    </div>
+                <h2 className="font-bold text-xl  md:text-4xl mt-4 text-primary">Create an Account</h2>
+                <h2 className="text-gray-500 text-xs md:text-sm text-center my-2">Enter your Email, Username, and Password to proceed</h2>
 
 
                 <div className="flex flex-col w-full gap-5 mt-7 px-4">
                     <Input
                         placeholder="Username"
-                        className="bg-white"
+                        className="bg-white text-xs md:text-sm pr-0 md:pr-10"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                     />
                     <Input
                         type="email"
                         placeholder="name@example.com"
-                        className="bg-white"
+                        className="bg-white text-xs md:text-sm pr-0 md:pr-10"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                     />
@@ -75,7 +75,7 @@ const SignUp = () => {
                         <Input
                             type={showPassword ? "text" : "password"}
                             placeholder="Password"
-                            className="bg-white pr-10"
+                            className="bg-white text-xs md:text-sm pr-0 md:pr-10"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                         />
@@ -86,9 +86,9 @@ const SignUp = () => {
                             aria-label={showPassword ? "Hide password" : "Show password"}
                         >
                             {showPassword ? (
-                                <Eye className="cursor-pointer" />
+                                <Eye className="cursor-pointer w-3 h-3 md:w-5 md:h-5" />
                             ) : (
-                                <EyeClosed className="cursor-pointer" />
+                                <EyeClosed className="cursor-pointer w-3 h-3 md:w-5 md:h-5" />
                             )}
                         </button>
                     </div>
@@ -100,7 +100,7 @@ const SignUp = () => {
                         {loading ? <Loader2 className='animate-spin' /> : "Create an Account"}
                     </Button>
                 </div>
-                <div className="flex flex-row gap-2 mt-6 items-start justify-start mb-6">
+                <div className="flex flex-row gap-2 mt-6 items-start justify-start mb-6 text-xs md:text-sm">
                     <p>Already have an account?</p>
                     <Link className="text-blue-500 underline" href={"/sign-in"}>Click here to sign in</Link>
                 </div>

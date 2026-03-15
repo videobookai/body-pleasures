@@ -14,23 +14,27 @@ const toAbsoluteUrl = (url?: string) =>
 
 const normalizeProduct = (item: any) => {
   const product = item?.attributes ?? item;
-  const rawImages = product?.images?.data ?? product?.images ?? [];
 
+  const rawImages = product?.images?.data ?? product?.images ?? [];
   const images = rawImages.map((img: any) => {
     const attrs = img?.attributes ?? img;
-    return {
-      ...attrs,
-      id: img?.id ?? attrs?.id,
-      url: toAbsoluteUrl(attrs?.url),
-    };
+    return { ...attrs, id: img?.id ?? attrs?.id, url: toAbsoluteUrl(attrs?.url) };
+  });
+
+  const rawCategories = product?.categories?.data ?? product?.categories ?? [];
+  const categories = rawCategories.map((cat: any) => {
+    const attrs = cat?.attributes ?? cat;
+    return { ...attrs, id: cat?.id ?? attrs?.id };
   });
 
   return {
     ...product,
     id: item?.id ?? product?.id,
     images,
+    categories,
   };
 };
+
 
 // Add request interceptor
 axiosClient.interceptors.request.use(
@@ -118,16 +122,28 @@ const getCategoryListByNames = (names: string[]) => {
 };
 
 const getAllProducts = () =>
-  axiosClient.get("/products?populate=images").then((resp) => {
-    return resp.data.data.map(normalizeProduct);
-  });
+  axiosClient
+    .get("/products?populate=*")
+    .then((resp) => {
+      return resp.data.data.map(normalizeProduct);
+    })
+    .catch((err) => {
+      console.error(
+        "[GlobalApi] getAllProducts error:",
+        err.message,
+        err.response?.status,
+        err.response?.data,
+        err.config?.url
+      );
+      throw err;
+    });
 
 const getProductByCategory = (category: string) =>
   axiosClient
     .get(
       "/products?filters[categories][name][$in]=" +
         encodeURIComponent(category) +
-        "&populate=images",
+        "&populate=*",
       { meta: { public: true } } as any
     )
     .then((resp) => {
