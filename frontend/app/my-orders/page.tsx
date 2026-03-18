@@ -13,6 +13,7 @@ import MyOrderItem from "./_components/MyOrderItem";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Footer } from "@/components/footer";
 import { PackageSearch } from "lucide-react";
+import { useAuth } from "@/app/_context/AuthContext";
 
 interface Order {
   createdAt: string;
@@ -28,27 +29,26 @@ interface Order {
 }
 
 const MyOrderPage = () => {
-  const user = JSON.parse(sessionStorage?.getItem("user") as string);
-  const jwt = sessionStorage?.getItem("authToken") as string;
-  if (!user && !jwt) {
-    if (typeof window !== "undefined") {
-      window.location.href = "/";
-    }
-  }
+  const { user, loading: authLoading } = useAuth();
   const router = useRouter();
 
   const [orderList, setOrderList] = useState<Order[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!jwt) {
+    if (!authLoading && !user) {
       router.replace("/");
+      return;
     }
-    getMyOrder();
-  }, []);
+
+    if (user) {
+      void getMyOrder();
+    }
+  }, [authLoading, router, user]);
+
   const getMyOrder = async () => {
     setLoading(true);
-    const orderedList_ = await GlobalApi.getOrdersByUserId(user?.id, jwt);
+    const orderedList_ = await GlobalApi.getOrdersByUserId();
 
     setOrderList(orderedList_);
     setLoading(false);

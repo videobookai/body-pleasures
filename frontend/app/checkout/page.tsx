@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import GlobalApi from "../_utils/GlobalApi";
 import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
 import { toast } from "sonner";
+import { useAuth } from "@/app/_context/AuthContext";
 
 const CheckoutPage = () => {
   const [totalCartItems, setTotalCartItems] = useState(0);
@@ -19,17 +20,15 @@ const CheckoutPage = () => {
   const [address, setAddress] = useState("");
   const [emailError, setEmailError] = useState("");
 
-  const jwt = sessionStorage?.getItem("authToken");
-  const router = useRouter()
-
-  const userString = sessionStorage?.getItem("user");
-  if (!userString || !jwt) {
-    window.location.href = "/";
-
-    return;
-  }
-  const user = JSON.parse(userString);
+  const { user, loading: authLoading } = useAuth();
+  const router = useRouter();
   const [{ isPending }] = usePayPalScriptReducer();
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.replace("/");
+    }
+  }, [authLoading, user, router]);
 
   const validateEmail = (email: string) => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -85,6 +84,11 @@ const CheckoutPage = () => {
   const onApprove = (data: any) => {
     console.log(data);
 
+    if (!user?.id) {
+      toast.error("Please sign in to place an order.");
+      return;
+    }
+
     // Validate required fields
     if (!name || !email || !phone || !address || !zip) {
       toast.error("Please fill in all billing details");
@@ -127,14 +131,14 @@ const CheckoutPage = () => {
 
     console.log("Order payload", payload);
 
-    GlobalApi.createOrder(payload, jwt)
+    GlobalApi.createOrder(payload)
       .then(async (resp) => {
         console.log(resp);
         const createdOrder = resp?.data?.data;
         const paymentId =
           createdOrder?.paymentId?.toString() || data?.paymentId?.toString() || "N/A";
 
-        GlobalApi.clearUserCart(user.id, jwt);
+        await GlobalApi.clearUserCart();
         setCartItemList([]);
         setTotalCartItems(0);
         setSubTotal(0);
@@ -174,8 +178,13 @@ const CheckoutPage = () => {
   };
 
   useEffect(() => {
-    getCartItems();
-  }, []);
+    if (user) {
+      getCartItems();
+    } else {
+      setCartItemList([]);
+      setTotalCartItems(0);
+    }
+  }, [user]);
 
   useEffect(() => {
     if (cartItemList) {
@@ -188,28 +197,13 @@ const CheckoutPage = () => {
   }, [cartItemList]);
 
   const getCartItems = async () => {
-    // Ensure we have a user id and token before calling API
     if (!user) {
       return;
     }
 
-    const token =
-      typeof window !== "undefined"
-        ? sessionStorage.getItem("authToken")
-        : null;
-    if (!token) {
-      console.warn(
-        "No auth token found in sessionStorage; skipping cart fetch."
-      );
-
-      return;
-    }
-
     try {
-      const resp = await GlobalApi.getUserCartItems(user.id, token);
-      // Support different response shapes (service might return array or { data: [...] })
-      const cartItemList_ = resp?.data?.data ?? resp?.data ?? resp;
-      console.log(cartItemList_)
+      const cartItemList_ = await GlobalApi.getUserCartItems();
+      console.log(cartItemList_);
 
       setTotalCartItems(cartItemList_?.length);
       setCartItemList(cartItemList_);

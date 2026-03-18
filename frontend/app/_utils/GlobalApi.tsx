@@ -35,6 +35,32 @@ const normalizeProduct = (item: any) => {
   };
 };
 
+const apiFetch = async (path: string, options: RequestInit = {}) => {
+  const resp = await fetch(path, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...(options.headers ?? {}),
+    },
+  });
+
+  const data = await resp.json().catch(() => ({}));
+
+  if (!resp.ok) {
+    const errorPayload = data?.error ?? resp.statusText ?? "Request failed.";
+    const errorMessage =
+      typeof errorPayload === "string"
+        ? errorPayload
+        : errorPayload && typeof errorPayload === "object"
+        ? JSON.stringify(errorPayload)
+        : String(errorPayload);
+
+    throw new Error(errorMessage);
+  }
+
+  return data;
+};
+
 
 // Add request interceptor
 axiosClient.interceptors.request.use(
@@ -63,36 +89,12 @@ axiosClient.interceptors.response.use(
 const getCategory = () => axiosClient.get("/categories", { meta: { public: true } } as any);
 
 const getSliders = () =>
-  axiosClient
-    .get("/sliders?populate=*")
-    .then((resp) => {
-      return resp.data.data;
-    })
-    .catch((err) => {
-      console.error(
-        "[GlobalApi] getSliders error:",
-        err.message,
-        err.response?.status,
-        err.response?.data
-      );
-      throw err;
-    });
+  axiosClient.get("/sliders?populate=*").then((resp) => resp.data.data);
 
 const getCategoryList = () =>
   axiosClient
     .get("/categories?populate=*", { meta: { public: true } } as any)
-    .then((resp) => {
-      return resp.data.data;
-    })
-    .catch((err) => {
-      console.error(
-        "[GlobalApi] getCategoryList error:",
-        err.message,
-        err.response?.status,
-        err.response?.data
-      );
-      throw err;
-    });
+    .then((resp) => resp.data.data);
 
 const getCategoryListByNames = (names: string[]) => {
   if (!Array.isArray(names) || names.length === 0) {
@@ -183,117 +185,100 @@ const checkUserExistsByEmail = async (email: string) => {
   return Array.isArray(resp.data) && resp.data.length > 0;
 };
 
-const addToCart = (data: any, jwt: string) =>
-  axiosClient.post("/user-carts", data, {
-    headers: {
-      Authorization: "Bearer " + jwt,
-    },
+const addToCart = (data: any) =>
+  apiFetch("/api/cart", {
+    method: "POST",
+    body: JSON.stringify({ data }),
   });
 
-const getUserCartItems = (userId: number, jwt: string) =>
-  axiosClient
-    .get(
-      `/user-carts?filters[userId][$eq]=${userId}&populate[products][populate]=*`,
-      {
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
+const getUserCartItems = () =>
+  apiFetch("/api/cart").then((resp) => {
+    const payload = resp?.data ?? resp;
+    
+
+    const resolveArray = (value: any) => {
+      if (Array.isArray(value)) {
+        return value;
       }
-    )
-    .then((resp) => {
-      const data = resp.data.data;
-      console.log("getUserCartItems response data:", data);
-      const cartItemList = data.map((item: any) => {
-        // Defensive check to ensure there's a product and it has an image
-        if (
-          !item.products ||
-          item.products.length === 0 ||
-          !item.products[0].images ||
-          item.products[0].images.length === 0
-        ) {
+      if (value?.data && Array.isArray(value.data)) {
+        return value.data;
+      }
+      return [];
+    };
+
+    const rawItems = resolveArray(payload?.data ?? payload);
+
+    const cartItemList = rawItems
+      .map((item: any) => {
+        const cartAttributes = item?.attributes ?? item;
+        const products = resolveArray(item?.products ?? cartAttributes?.products);
+        const productEntry = products[0];
+        const productAttributes = productEntry?.attributes ?? productEntry;
+        if (!productAttributes) {
           return null;
         }
 
-        const product = item.products[0];
+        const images = resolveArray(productAttributes?.images);
+        const firstImage = images[0];
+        const imageAttributes = firstImage?.attributes ?? firstImage;
+        const imageUrl = toAbsoluteUrl(imageAttributes?.url);
+
+        if (!imageUrl) {
+          return null;
+        }
 
         return {
-          id: item.id,
-          documentId: item.documentId,
-          name: product.name,
-          amount: item.amount,
-          initialPrice: product.mrp,
-          price: product.sellingPrice,
-          quantity: item.quantity,
-          image: product.images[0].url,
-          product: product.id,
+          id: item?.id ?? cartAttributes?.id,
+          documentId: cartAttributes?.documentId ?? item?.id,
+          name: productAttributes?.name,
+          amount: cartAttributes?.amount,
+          initialPrice: productAttributes?.mrp,
+          price: productAttributes?.sellingPrice,
+          quantity: cartAttributes?.quantity,
+          image: imageUrl,
+          product: productAttributes?.id,
         };
-      });
+      })
+      .filter(Boolean);
 
-      // Filter out any cart items that might be missing data
-      return cartItemList.filter((item: null) => item !== null);
-    });
-
-// Also add methods for cart management
-const deleteCartItem = (documentId: string, jwt: string) =>
-  axiosClient.delete(`/user-carts/${documentId}`, {
-    headers: {
-      Authorization: `Bearer ${jwt}`,
-    },
+    return cartItemList;
   });
 
-  const clearUserCart = async (userId: number, jwt: string) => {
-  try {
-    // First, get all cart items for the user
-    const resp = await getUserCartItems(userId, jwt);
-    
-    // Delete each cart item
-    const deletePromises = resp.map((item: any) => 
-      deleteCartItem(item.documentId, jwt)
-    );
-    
-    // Wait for all deletions to complete
-    await Promise.all(deletePromises);
-    
-    return { success: true };
-  } catch (error) {
-    console.error("Error clearing cart:", error);
-    throw error;
-  }
-};
+// Also add methods for cart management
+const deleteCartItem = (documentId: string) =>
+  apiFetch(`/api/cart/item/${documentId}`, {
+    method: "DELETE",
+  });
+
+const clearUserCart = () => apiFetch("/api/cart/clear", { method: "POST" });
 
 const createContactForm = (data: any) =>
   axiosClient.post("/contact-forms", { data });
 
-const createOrder = (data: any, jwt: string) =>
-  axiosClient.post("/orders", data, {
-    headers: {
-      Authorization: `Bearer ${jwt}`,
-    },
+const createOrder = (data: any) =>
+  apiFetch("/api/orders", {
+    method: "POST",
+    body: JSON.stringify({ data }),
   });
 
-const getOrdersByUserId = (userId: number, jwt: string) =>
-  axiosClient
-    .get(
-      `/orders?filters[userId][$eq]=${userId}&populate[order][populate][product][populate]=images`,
-      {
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-      }
-    )
-    .then((resp) => {
-      return resp.data.data;
-    });
+const getOrdersByUserId = () =>
+  apiFetch("/api/orders").then((resp) => resp?.data ?? resp ?? []);
 
-    const forgotPassword = (email: string)=> axiosClient.post("/auth/forgot-password", {
-      email
-    })
-    const resetPassword = (code: string, password: string, passwordConfirmation: string) => axiosClient.post("/auth/reset-password", {
-      code,
-      password,
-      passwordConfirmation
-    })
+const forgotPassword = (email: string) =>
+  axiosClient.post("/auth/forgot-password", {
+    email,
+  });
   
+const resetPassword = (
+  code: string,
+  password: string,
+  passwordConfirmation: string
+) =>
+  axiosClient.post("/auth/reset-password", {
+    code,
+    password,
+    passwordConfirmation,
+  });
 
 export default {
   getCategory,
@@ -313,5 +298,5 @@ export default {
   clearUserCart,
   getOrdersByUserId,
   forgotPassword,
-  resetPassword
+  resetPassword,
 };

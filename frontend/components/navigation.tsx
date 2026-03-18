@@ -12,6 +12,7 @@ import { UpdateCartContext } from "../app/_context/UpdateCartContext";
 import { Button } from "./ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import GlobalApi from "../app/_utils/GlobalApi";
+import { useAuth } from "@/app/_context/AuthContext";
 
 
 export function Navigation() {
@@ -25,20 +26,16 @@ export function Navigation() {
   const [totalCartItems, setTotalCartItems] = useState(0);
   const {updateCart, setUpdateCart} = useContext<any>(UpdateCartContext);
 
-  const [cartItemList, setCartItemList] = useState<any>([]);
-  
-const [user, setUser] = useState<any>({});
+const [cartItemList, setCartItemList] = useState<any>([]);
+const { user } = useAuth();
 
 useEffect(() => {
-  // Access sessionStorage only on client side
-  if (typeof window !== "undefined") {
-    const storedUser = sessionStorage.getItem("user");
-    setUser(storedUser ? JSON.parse(storedUser) : {});
+  if (user) {
+    getCartItems();
+  } else {
+    setTotalCartItems(0);
+    setCartItemList([]);
   }
-}, []);
-
-useEffect(() => {
-  getCartItems();
 }, [updateCart, user]);
 
   useEffect(() => {
@@ -65,30 +62,19 @@ useEffect(() => {
   };
 
   const getCartItems = async () => {
-    // Ensure we have a user id and token before calling API
     if (!user?.id) {
-      
-      return;
-    }
-
-    const token = typeof window !== "undefined" ? sessionStorage.getItem("authToken") : null;
-    if (!token) {
-      console.warn("No auth token found in sessionStorage; skipping cart fetch.");
-      
+      setTotalCartItems(0);
+      setCartItemList([]);
       return;
     }
 
     try {
-      const resp = await GlobalApi.getUserCartItems(user.id, token);
-      // Support different response shapes (service might return array or { data: [...] })
-      const cartItemList_ = resp?.data?.data ?? resp?.data ?? resp;
-     
-      setTotalCartItems(cartItemList_?.length);
+      const cartItemList_ = await GlobalApi.getUserCartItems();
+
+      setTotalCartItems(cartItemList_?.length ?? 0);
       setCartItemList(cartItemList_);
     } catch (error) {
       console.error("getCartItems error:", error);
-      
-      
     }
   };
 

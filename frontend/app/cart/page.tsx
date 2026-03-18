@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Navigation } from "@/components/navigation";
@@ -16,17 +16,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Loader2 } from "lucide-react";
-import { set } from "date-fns";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-
-const getSessionStorageItem = (key: string) => {
-  if (typeof window === "undefined") {
-    return null;
-  }
-
-  return window.sessionStorage.getItem(key);
-};
+import { useAuth } from "@/app/_context/AuthContext";
 
 // Define the CartItem type
 type CartItem = {
@@ -40,27 +32,20 @@ type CartItem = {
 
 // Custom hook for fetching and managing user cart data
 const useUserCart = () => {
+  const { user } = useAuth();
   const [items, setItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchCartItems = async () => {
-    if (typeof window === "undefined") {
+  const fetchCartItems = useCallback(async () => {
+    if (!user?.id) {
+      setItems([]);
       setLoading(false);
       return;
     }
 
     try {
       setLoading(true);
-      const user = JSON.parse((getSessionStorageItem("user") ?? "null") as string);
-      const jwt = getSessionStorageItem("authToken");
-
-      if (!user || !jwt) {
-        console.log("User or JWT not found. Aborting fetch.");
-        setLoading(false);
-        return;
-      }
-
-      const cartItems = await GlobalApi.getUserCartItems(user.id, jwt);
+      const cartItems = await GlobalApi.getUserCartItems();
       console.log("Fetched cart items:", cartItems);
 
       setItems(cartItems);
@@ -69,26 +54,22 @@ const useUserCart = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
 
   useEffect(() => {
-    fetchCartItems();
-  }, []);
+    void fetchCartItems();
+  }, [fetchCartItems]);
 
   return { items, setItems, loading, refetch: fetchCartItems };
 };
 
 export default function CartPage() {
   const { items, setItems, loading, refetch } = useUserCart();
-  const [jwt, setJwt] = useState<string | null>(null);
+  const { user, loading: authLoading } = useAuth();
   const router = useRouter();
   const [loadingAction, setLoadingAction] = useState(false);
 
   const [subTotal, setSubTotal] = useState(0);
-
-  useEffect(() => {
-    setJwt(getSessionStorageItem("authToken"));
-  }, []);
 
   useEffect(() => {
     const total = items.reduce(
@@ -99,27 +80,23 @@ export default function CartPage() {
   }, [items]);
 
   const removeItem = async (documentId: string | number) => {
-    setLoadingAction(true);
-    const authToken = getSessionStorageItem("authToken");
-    if (!authToken) {
-      setLoadingAction(false);
+    if (!user) {
+      toast.error("Please sign in to manage your cart.");
+      router.push("/sign-in");
       return;
     }
 
-    // Keep a copy of the original items in case we need to revert
-    const originalItems = [...items];
+    setLoadingAction(true);
 
-    // Optimistically update the UI by removing the item
+    const originalItems = [...items];
     setItems(items.filter((item) => item.documentId !== documentId));
 
     try {
-      // Make the API call to delete the item from the backend
-      await GlobalApi.deleteCartItem(String(documentId), authToken);
+      await GlobalApi.deleteCartItem(String(documentId));
       toast.success("Item removed from cart");
     } catch (error) {
       console.error("Failed to remove item:", error);
       toast.error("Failed to remove item from cart");
-      // If the API call fails, revert the UI to the original state
       setItems(originalItems);
     } finally {
       setLoadingAction(false);
@@ -127,15 +104,14 @@ export default function CartPage() {
   };
 
   const clearCart = async () => {
-    const authToken = getSessionStorageItem("authToken");
-    if (!authToken) return;
+    if (!user) {
+      toast.error("Please sign in to manage your cart.");
+      router.push("/sign-in");
+      return;
+    }
 
     try {
-      await Promise.all(
-        items.map((item) =>
-          GlobalApi.deleteCartItem(String(item.documentId), authToken),
-        ),
-      );
+      await GlobalApi.clearUserCart();
       refetch(); // Refetch cart items after clearing
     } catch (error) {
       console.error("Failed to clear cart:", error);
@@ -143,13 +119,28 @@ export default function CartPage() {
     }
   };
 
-  if (loading) {
+  if (loading || authLoading) {
     return (
       <div className="w-full flex flex-col min-h-screen">
         <Navigation />
         <div className="grow flex items-center justify-center gap-2">
           <p>Loading your cart</p>
           <Loader2 className="animate-spin" />
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="w-full flex flex-col min-h-screen">
+        <Navigation />
+        <div className="grow flex flex-col items-center justify-center gap-4">
+          <p className="text-lg font-semibold text-center">
+            Please sign in to view and manage your cart.
+          </p>
+          <Button onClick={() => router.push("/sign-in")}>Sign In</Button>
         </div>
         <Footer />
       </div>
@@ -209,8 +200,8 @@ export default function CartPage() {
                         </TableCell>
                         <TableCell className="text-right">
                           <Button
-                            disabled={loadingAction}             
-                            className="underline border!"
+                            disabled={loadingAction}
+                            className=""
                             variant="ghost"
                             size="sm"
                             onClick={() => removeItem(item.documentId)}
@@ -243,7 +234,7 @@ export default function CartPage() {
                           </Button>
                           <Button
                             onClick={() =>
-                              router.push(jwt ? "/checkout" : "/sign-in")
+                              router.push(user ? "/checkout" : "/sign-in")
                             }
                             className="bg-yellow-700 hover:bg-yellow-800"
                           >
@@ -256,7 +247,7 @@ export default function CartPage() {
                 </Table>
               </div>
             </div>
-
+            {/* Mobile view */}
             <div className="flex flex-col gap-4 md:hidden">
               {items.map((item) => (
                 <div
@@ -290,6 +281,7 @@ export default function CartPage() {
                         disabled={loadingAction}
                         variant="ghost"
                         size="sm"
+                        className="mx-2 border!"
                         onClick={() => removeItem(item.documentId)}
                       >
                         Remove
@@ -313,7 +305,7 @@ export default function CartPage() {
                     Clear Cart
                   </Button>
                   <Button
-                    onClick={() => router.push(jwt ? "/checkout" : "/sign-in")}
+                    onClick={() => router.push(user ? "/checkout" : "/sign-in")}
                     className="bg-yellow-700 hover:bg-yellow-800"
                   >
                     Checkout

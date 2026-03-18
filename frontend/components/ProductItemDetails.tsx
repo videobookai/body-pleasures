@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { Button } from "./ui/button";
 
 import { toast } from "sonner";
@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 
 import GlobalApi from "../app/_utils/GlobalApi";
 import { UpdateCartContext } from "../app/_context/UpdateCartContext";
+import { useAuth } from "@/app/_context/AuthContext";
 
 interface ProductItemDetailsProps {
   product: any;
@@ -18,23 +19,13 @@ const ProductItemDetails = ({ product }: ProductItemDetailsProps) => {
   const imageUrl = product.images?.[0]?.url;
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const [jwt, setJwt] = useState<string | null>(null);
-  const [user, setUser] = useState<any>(null);
-
-  const {updateCart, setUpdateCart} = useContext<any>(UpdateCartContext);
+  const { user } = useAuth();
+  const { updateCart, setUpdateCart } = useContext<any>(UpdateCartContext);
 
   const [productTotalPrice, setProductTotalPrice] = useState(
     product.sellingPrice ? product.sellingPrice : product.mrp
   );
   const [quantity, setQuantity] = useState(1);
-
-  useEffect(() => {
-    const storedToken = sessionStorage.getItem("authToken");
-    const storedUser = sessionStorage.getItem("user");
-
-    setJwt(storedToken);
-    setUser(storedUser ? JSON.parse(storedUser) : null);
-  }, []);
 
   const notifyCartAddedEmail = async () => {
     if (!user?.email) return;
@@ -62,7 +53,7 @@ const ProductItemDetails = ({ product }: ProductItemDetailsProps) => {
  
   const addToCart = () => {
     setLoading(true);
-    if (!jwt) {
+    if (!user) {
       setLoading(false);
       toast.error("Please sign in to add items to your cart");
       router.push("/sign-in");
@@ -71,16 +62,12 @@ const ProductItemDetails = ({ product }: ProductItemDetailsProps) => {
     }
 
     const data = {
-      data: {
-        quantity: quantity,
-        amount: (quantity * productTotalPrice).toFixed(2),
-        products: product.id,
-        userId: user.id,
-      },
+      quantity,
+      amount: (quantity * productTotalPrice).toFixed(2),
+      products: product.id,
     };
-    
 
-    GlobalApi.addToCart(data, jwt)
+    GlobalApi.addToCart(data)
       .then((resp) => {
         console.log("Add to cart response:", resp);
         toast.success(`${quantity} x ${product.name} added to cart`);

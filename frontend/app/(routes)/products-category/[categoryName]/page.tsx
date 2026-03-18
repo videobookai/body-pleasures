@@ -55,7 +55,7 @@ const ProductCategory = async ({
         <TopCategoryList categoryList={categoryList} />
         <div className="px-5 md:px-10 pt-6">
           {selectedCategory?.description && (
-            <p className="mx-auto max-w-3xl text-center text-muted-foreground text-base md:text-lg leading-relaxed tracking-wider font-serif">
+            <p className="mx-auto max-w-3xl text-center text-muted-foreground text-sm md:text-lg leading-relaxed tracking-wider font-serif">
               {selectedCategory.description}
             </p>
           )}
