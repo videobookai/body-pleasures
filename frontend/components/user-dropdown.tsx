@@ -29,7 +29,7 @@ export function UserDropdown() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="h-auto w-auto p-0">
-          <CircleUserRound className="w-4 h-4 md:w-5 md:h-5 cursor-pointer" />
+          <CircleUserRound className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 cursor-pointer" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>

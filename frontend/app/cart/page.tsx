@@ -20,6 +20,13 @@ import { set } from "date-fns";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
+const getSessionStorageItem = (key: string) => {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  return window.sessionStorage.getItem(key);
+};
 
 // Define the CartItem type
 type CartItem = {
@@ -35,13 +42,17 @@ type CartItem = {
 const useUserCart = () => {
   const [items, setItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
-  
 
   const fetchCartItems = async () => {
+    if (typeof window === "undefined") {
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
-      const user = JSON.parse(sessionStorage?.getItem("user") as string);
-      const jwt = sessionStorage?.getItem("authToken");
+      const user = JSON.parse((getSessionStorageItem("user") ?? "null") as string);
+      const jwt = getSessionStorageItem("authToken");
 
       if (!user || !jwt) {
         console.log("User or JWT not found. Aborting fetch.");
@@ -69,24 +80,28 @@ const useUserCart = () => {
 
 export default function CartPage() {
   const { items, setItems, loading, refetch } = useUserCart();
-  const jwt = sessionStorage.getItem("authToken");
+  const [jwt, setJwt] = useState<string | null>(null);
   const router = useRouter();
   const [loadingAction, setLoadingAction] = useState(false);
 
   const [subTotal, setSubTotal] = useState(0);
 
   useEffect(() => {
+    setJwt(getSessionStorageItem("authToken"));
+  }, []);
+
+  useEffect(() => {
     const total = items.reduce(
       (acc, item) => acc + item.price * item.quantity,
-      0
+      0,
     );
     setSubTotal(total);
   }, [items]);
 
   const removeItem = async (documentId: string | number) => {
     setLoadingAction(true);
-    const jwt = sessionStorage.getItem("authToken");
-    if (!jwt) {
+    const authToken = getSessionStorageItem("authToken");
+    if (!authToken) {
       setLoadingAction(false);
       return;
     }
@@ -99,7 +114,7 @@ export default function CartPage() {
 
     try {
       // Make the API call to delete the item from the backend
-      await GlobalApi.deleteCartItem(String(documentId), jwt);
+      await GlobalApi.deleteCartItem(String(documentId), authToken);
       toast.success("Item removed from cart");
     } catch (error) {
       console.error("Failed to remove item:", error);
@@ -112,13 +127,14 @@ export default function CartPage() {
   };
 
   const clearCart = async () => {
-    if (!jwt) return;
+    const authToken = getSessionStorageItem("authToken");
+    if (!authToken) return;
 
     try {
       await Promise.all(
         items.map((item) =>
-          GlobalApi.deleteCartItem(String(item.documentId), jwt)
-        )
+          GlobalApi.deleteCartItem(String(item.documentId), authToken),
+        ),
       );
       refetch(); // Refetch cart items after clearing
     } catch (error) {
@@ -148,87 +164,164 @@ export default function CartPage() {
           My Cart
         </h1>
         {items.length === 0 ? (
-          <p>Your cart is empty.</p>
+          <p className="text-base">Your cart is empty.</p>
         ) : (
-          <Table>
-            <TableCaption>Quality Guaranteed</TableCaption>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[150px]">Product</TableHead>
-                <TableHead>Details</TableHead>
-                <TableHead>Quantity</TableHead>
-                <TableHead>Price</TableHead>
-                <TableHead>Total</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody className="bg-white">
+          <>
+            <div className="hidden md:block">
+              <div className="overflow-x-auto rounded border border-slate-200 shadow-sm">
+                <Table>
+                  <TableCaption className="text-sm my-2">
+                    Quality Guaranteed
+                  </TableCaption>
+                  <TableHeader className="text-xs sm:text-sm">
+                    <TableRow>
+                      <TableHead className="w-[150px]">Product</TableHead>
+                      <TableHead>Details</TableHead>
+                      <TableHead>Quantity</TableHead>
+                      <TableHead>Price</TableHead>
+                      <TableHead>Total</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody className="bg-white text-sm">
+                    {items.map((item) => (
+                      <TableRow key={String(item.id)}>
+                        <TableCell>
+                          <Image
+                            src={item.image || "/placeholder.svg"}
+                            alt={item.name}
+                            width={100}
+                            height={100}
+                            className="object-contain rounded w-16 h-16"
+                          />
+                        </TableCell>
+                        <TableCell className="font-semibold  text-base">
+                          {item.name}
+                        </TableCell>
+                        <TableCell>
+                          <span className="text-base">{item.quantity}</span>
+                        </TableCell>
+                        <TableCell className="text-base">
+                          ${item.price.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="font-semibold text-base">
+                          ${(item.price * item.quantity).toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Button
+                            disabled={loadingAction}             
+                            className="underline border!"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => removeItem(item.documentId)}
+                          >
+                            Remove
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                  <TableFooter>
+                    <TableRow>
+                      <TableCell
+                        colSpan={4}
+                        className="text-lg font-bold text-slate-900"
+                      >
+                        Grand Total
+                      </TableCell>
+                      <TableCell className="text-xl font-bold">
+                        ${subTotal.toFixed(2)}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex gap-2 justify-end">
+                          <Button
+                            onClick={clearCart}
+                            variant={"outline"}
+                            className="hover:bg-white  hover:text-black"
+                          >
+                            Clear Cart
+                          </Button>
+                          <Button
+                            onClick={() =>
+                              router.push(jwt ? "/checkout" : "/sign-in")
+                            }
+                            className="bg-yellow-700 hover:bg-yellow-800"
+                          >
+                            Checkout
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  </TableFooter>
+                </Table>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-4 md:hidden">
               {items.map((item) => (
-                <TableRow key={String(item.id)}>
-                  <TableCell>
+                <div
+                  key={String(item.id)}
+                  className="bg-white shadow rounded-lg p-4 flex gap-4 text-sm"
+                >
+                  <div className="flex-shrink-0">
                     <Image
-                      src={
-                      item.image ||
-                        "/placeholder.svg"
-                      }
+                      src={item.image || "/placeholder.svg"}
                       alt={item.name}
-                      width={100}
-                      height={100}
-                      className="object-cover rounded w-10 h-10 md:w-16 md:h-16"
+                      width={80}
+                      height={80}
+                      className="object-contain rounded w-20 h-20"
                     />
-                  </TableCell>
-                  <TableCell className="font-bold">{item.name}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <span>{item.quantity}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>${item.price.toFixed(2)}</TableCell>
-                  <TableCell className="font-bold">
-                    ${(item.price * item.quantity).toFixed(2)}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Button
-                      disabled={loadingAction}
-                      variant="ghost"
-                      onClick={() => removeItem(item.documentId)}
-                    >
-                      Remove
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-            <TableFooter>
-              <TableRow>
-                <TableCell colSpan={4} className="text-lg font-bold">
-                  Grand Total
-                </TableCell>
-                <TableCell className="text-xl font-bold">
-                  ${subTotal.toFixed(2)}
-                </TableCell>
-                <TableCell className="text-right">
-                  <div className="flex gap-2 justify-end">
-                    <Button
-                      onClick={clearCart}
-                      variant={"outline"}
-                      className="hover:bg-white hover:text-black"
-                    >
-                      Clear Cart
-                    </Button>
-                    <Button
-                      onClick={() =>
-                        router.push(jwt ? "/checkout" : "/sign-in")
-                      }
-                      className="bg-yellow-700 hover:bg-yellow-800"
-                    >
-                      Checkout
-                    </Button>
                   </div>
-                </TableCell>
-              </TableRow>
-            </TableFooter>
-          </Table>
+                  <div className="flex flex-1 flex-col justify-between gap-2">
+                    <div>
+                      <p className="font-semibold text-base">{item.name}</p>
+                      <p className="text-slate-500 text-xs sm:text-sm">
+                        Quantity: {item.quantity}
+                      </p>
+                      <p className="text-slate-600 text-xs sm:text-sm">
+                        ${item.price.toFixed(2)} each
+                      </p>
+                    </div>
+                    <div className="flex items-center justify-between text-sm sm:text-base">
+                      <span className="font-semibold">
+                        ${(item.price * item.quantity).toFixed(2)}
+                      </span>
+                      <Button
+                        disabled={loadingAction}
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => removeItem(item.documentId)}
+                      >
+                        Remove
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              <div className="bg-white border border-slate-200 rounded-lg p-4 space-y-3">
+                <div className="flex items-center justify-between text-base font-semibold">
+                  <span>Grand Total</span>
+                  <span>${subTotal.toFixed(2)}</span>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <Button
+                    onClick={clearCart}
+                    variant={"outline"}
+                    className="hover:bg-white hover:text-black"
+                  >
+                    Clear Cart
+                  </Button>
+                  <Button
+                    onClick={() => router.push(jwt ? "/checkout" : "/sign-in")}
+                    className="bg-yellow-700 hover:bg-yellow-800"
+                  >
+                    Checkout
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </>
         )}
       </div>
       <Footer />

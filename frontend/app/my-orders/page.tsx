@@ -63,7 +63,7 @@ const MyOrderPage = () => {
         </h2>
 
         <div className="my-7 px-5 md:px-10 lg:px-20">
-          <h2 className="text-3xl font-bold text-primary">Order History</h2>
+          <h2 className="text-2xl md:text-3xl font-bold text-primary">Order History</h2>
           <div>
             {loading ? (
               <div>
@@ -108,8 +108,8 @@ const MyOrderPage = () => {
           </div>
         </div>
         {(orderList.length === 0 && !loading) && (
-          <div className="flex flex-row items-center md:px-10 gap-2 md:gap-4 lg:gap-6 my-10 mx-auto text-left px-4 justify-start lg:px-20">
-            <PackageSearch className="text-gray-400" size={50} />
+          <div className="flex flex-row items-center md:px-10 gap-2 md:gap-4 lg:gap-6 my-10 md:my-auto mx-auto text-left px-4 justify-center lg:px-20">
+            <PackageSearch className="text-gray-400 w-10 h-10 md:w-20 md:h-20"  />
             <h2 className="text-sm md:text-xl  text-gray-500 font-sans">
               You have not placed an order yet
             </h2>

@@ -159,7 +159,7 @@ useEffect(() => {
             <div className="flex gap-2 mx-1 items-center justify-center">
                  <Link href="/cart" className="relative">
               <Button size="sm" variant="ghost">
-                <ShoppingBag className="h-4 w-4" />
+                <ShoppingBag className="h-4 w-4 md:w-5 md:h-5 lg:w-6 lg:h-6" />
               </Button>
               {totalCartItems > 0 && (
                 <span className="absolute -top-1 -right-1 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
@@ -191,7 +191,7 @@ useEffect(() => {
 
         {/* Mobile Navigation */}
         {isOpen && (
-          <div className="md:hidden py-4 space-y-4">
+          <div className="md:hidden py-4 space-y-4 flex flex-col items-start justify-center">
             <a
               href="/shop"
               className="block text-sm text-foreground/80 hover:text-foreground transition-colors"
@@ -202,7 +202,7 @@ useEffect(() => {
               <DropdownMenuTrigger asChild>
                 <Button
                   variant={"ghost"}
-                  className="text-sm text-gray-600 font-bold underline flex items-center gap-1"
+                  className="px-0! py-0! text-left text-sm text-gray-600 font-bold underline flex items-center gap-1"
                 >
                   Collections
                 </Button>
@@ -238,7 +238,24 @@ useEffect(() => {
             >
               Contact
             </a>
-            <UserDropdown/>
+            <div className="flex gap-2 items-start flex-col justify-center">
+                 <Link href="/cart" className="relative">
+              <Button size="sm" variant="ghost" className="m-0! px-0! py-0!">
+                <ShoppingBag className="h-4 w-4 md:w-5 md:h-5 lg:w-6 lg:h-6" />
+              </Button>
+              {totalCartItems > 0 && (
+                <span className="absolute -top-1 -right-3 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
+                  {totalCartItems}
+                </span>
+              )}
+            </Link>
+            <span className="flex items-center gap-2 text-sm text-gray-600 hover:text-black transition-colors">
+                
+                <UserDropdown/>
+            </span>
+
+           
+            </div>
           </div>
         )}
       </div>

@@ -218,12 +218,12 @@ const CheckoutPage = () => {
     }
   };
 
-  const taxPercent = 0.9;
-  const deliveryCost = 5;
-  const taxAmount = subTotal - taxPercent * subTotal;
+  const taxPercent = 0.1;
+  // const deliveryCost = 5;
+  const taxAmount = subTotal * taxPercent;
 
   const calculateTotalAmount = () => {
-    const totalAmount = subTotal + taxAmount + deliveryCost;
+    const totalAmount = subTotal + taxAmount
     return totalAmount.toFixed(2);
   };
 
@@ -231,93 +231,115 @@ const CheckoutPage = () => {
     <div className="flex flex-col gap-2">
       <Navigation />
 
-      <div className="mt-20 min-h-screen ">
-        <h2 className="p-3 bg-primary text-xl md:text-2xl lg:text-3xl font-bold text-white text-center">
+      <div className="mt-20 min-h-screen">
+        <div className="p-3 bg-primary text-xl md:text-2xl lg:text-3xl font-bold text-white text-center">
           Checkout
-        </h2>
-        <div className="p-5 px-5 md:px-10 grid grid-cols-1 md:grid-cols-3 py-8">
-          <div className="col-span-2 mx-20">
-            <h2 className="font-bold text-3xl">Billing Details</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mt-3">
-              <Input
-                placeholder="Name"
-                onChange={(e) => setName(e.target.value)}
-              />
-              <div>
+        </div>
+        <div className="p-5 md:px-10 grid grid-cols-1 md:grid-cols-3 gap-6 py-8 max-w-5xl mx-auto">
+          <div className="col-span-2 space-y-6">
+            <h2 className="font-semibold text-2xl md:text-3xl text-center md:text-left">
+              Billing Details
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+              <div className="flex flex-col gap-1">
+                <label className="text-xs font-medium text-gray-600">Name</label>
+                <Input
+                  placeholder="Name"
+                  onChange={(e) => setName(e.target.value)}
+                  className="text-xs md:text-base"
+                />
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-xs font-medium text-gray-600">Email</label>
                 <Input
                   placeholder="Email"
                   onChange={(e) => {
                     setEmail(e.target.value);
                     validateEmail(e.target.value);
+                    
                   }}
+                  className="text-xs md:text-base"
                 />
-                {emailError && <p className="text-red-500 text-sm mt-1">{emailError}</p>}
+                {emailError && (
+                  <p className="text-red-500 text-xs mt-1">{emailError}</p>
+                )}
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-10 mt-3">
-              <Input
-                placeholder="Phone"
-                onChange={(e) => setPhone(e.target.value)}
-              />
-              <Input
-                placeholder="Zip"
-                onChange={(e) => setZip(e.target.value)}
-              />
+            <div className="grid grid-cols-2 gap-3 md:gap-6">
+              <div className="flex flex-col gap-1">
+                <label className="text-xs font-medium text-gray-600">Phone</label>
+                <Input
+                  placeholder="Phone"
+                  onChange={(e) => setPhone(e.target.value)}
+                  className="text-xs md:text-base"
+                />
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-xs font-medium text-gray-600">Zip</label>
+                <Input
+                  placeholder="Zip"
+                  onChange={(e) => setZip(e.target.value)}
+                  className="text-xs md:text-base"
+                />
+              </div>
             </div>
-            <div className="mt-3">
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-medium text-gray-600">Address</label>
               <Input
                 placeholder="Address"
                 onChange={(e) => setAddress(e.target.value)}
+                className="text-xs md:text-base"
               />
             </div>
           </div>
-          <div className="mx-10 border my-1 sm:my-8">
-            <h2 className="p-3 bg-gray-200 font-bold text-center">
+          <div className="mx-auto w-full max-w-lg border rounded-xl shadow-sm bg-white">
+            <h2 className="p-3 bg-gray-200 font-semibold text-center">
               Total Cart ({totalCartItems})
             </h2>
-            <div className="p-4 flex flex-col gap-4">
-              <h2 className="font-bold flex justify-between">
-                Subtotal: <span>${subTotal.toFixed(2)}</span>
-              </h2>
-              <hr></hr>
-              <h2 className="flex justify-between">
-                Delivery: <span>${deliveryCost}</span>
-              </h2>
-              <h2 className="flex justify-between">
-                Tax (9%): <span>${taxAmount.toFixed(2)}</span>
-              </h2>
-              <hr></hr>
-              <h2 className="font-bold flex justify-between">
-                Total: <span>{calculateTotalAmount()}</span>
-              </h2>
-
+            <div className="p-4 flex flex-col gap-3 text-sm">
+              <div className="flex justify-between">
+                <span>Subtotal</span>
+                <span>${subTotal.toFixed(2)}</span>
+              </div>
+              <div className="border-t" />
+              {/* <div className="flex justify-between">
+                <span>Delivery</span>
+                <span>${deliveryCost}</span>
+              </div> */}
+              <div className="flex justify-between">
+                <span>Tax (10%)</span>
+                <span>${taxAmount.toFixed(2)}</span>
+              </div>
+              <div className="border-t" />
+              <div className="flex justify-between font-semibold text-base">
+                <span>Total</span>
+                <span>{calculateTotalAmount()}</span>
+              </div>
               {isPending ? <div className="spinner" /> : null}
-
-             
-
-              <PayPalButtons style={{ layout: "horizontal" }}
-              disabled={!name || !email || !phone || !address || !zip || !!emailError}
-                onApprove={async (data, actions) => {
-                  const order = await actions.order?.capture();
-                  console.log("order", order);
-                  onApprove(data);
-                }}
-
-
-                createOrder={(data, actions) => {
-                  return actions.order.create({
-                    purchase_units: [
-                      {
-                        amount: {
-                          value: calculateTotalAmount(),
-                          currency_code: "USD"
-                        }
-                      }
-                    ],
-                    intent: "CAPTURE"
-                  })
-                }}
-              />
+              <div className="w-full">
+                <PayPalButtons
+                  style={{ layout: "horizontal" }}
+                  disabled={!name || !email || !phone || !address || !zip || !!emailError}
+                  onApprove={async (data, actions) => {
+                    const order = await actions.order?.capture();
+                    console.log("order", order);
+                    onApprove(data);
+                  }}
+                  createOrder={(data, actions) => {
+                    return actions.order.create({
+                      purchase_units: [
+                        {
+                          amount: {
+                            value: calculateTotalAmount(),
+                            currency_code: "USD",
+                          },
+                        },
+                      ],
+                      intent: "CAPTURE",
+                    });
+                  }}
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -325,6 +347,7 @@ const CheckoutPage = () => {
       <Footer />
     </div>
   );
+
 };
 
 export default CheckoutPage;
