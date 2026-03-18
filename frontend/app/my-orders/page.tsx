@@ -12,6 +12,8 @@ import {
 import MyOrderItem from "./_components/MyOrderItem";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Footer } from "@/components/footer";
+import { PackageSearch } from "lucide-react";
+import { useAuth } from "@/app/_context/AuthContext";
 
 interface Order {
   createdAt: string;
@@ -27,48 +29,47 @@ interface Order {
 }
 
 const MyOrderPage = () => {
-  const user = JSON.parse(sessionStorage?.getItem("user") as string);
-  const jwt = sessionStorage?.getItem("authToken") as string;
-  if (!user && !jwt) {
-    if (typeof window !== "undefined") {
-      window.location.href = "/";
-    }
-  }
+  const { user, loading: authLoading } = useAuth();
   const router = useRouter();
 
   const [orderList, setOrderList] = useState<Order[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!jwt) {
+    if (!authLoading && !user) {
       router.replace("/");
+      return;
     }
-    getMyOrder();
-  }, []);
+
+    if (user) {
+      void getMyOrder();
+    }
+  }, [authLoading, router, user]);
+
   const getMyOrder = async () => {
     setLoading(true);
-    const orderedList_ = await GlobalApi.getOrdersByUserId(user?.id, jwt);
+    const orderedList_ = await GlobalApi.getOrdersByUserId();
 
     setOrderList(orderedList_);
     setLoading(false);
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen ">
       <Navigation />
-      <div className="mt-20 grow">
+      <div className="mt-16 grow max-w-7xl mx-auto w-full">
         <h2 className="p-3 bg-primary text-xl md:text-2xl lg:text-3xl font-bold text-white text-center">
           My Orders
         </h2>
 
         <div className="my-7 px-5 md:px-10 lg:px-20">
-          <h2 className="text-3xl font-bold text-primary">Order History</h2>
+          <h2 className="text-2xl md:text-3xl font-bold text-primary">Order History</h2>
           <div>
             {loading ? (
               <div>
-                <Skeleton className="h-10 w-full my-5 max-w-[1400px] bg-primary/30" />
-                <Skeleton className="h-10 w-full my-5 max-w-[1400px] bg-primary/30" />
-                <Skeleton className="h-10 w-full my-5 max-w-[1400px] bg-primary/30" />
+                <Skeleton className="h-10 w-full my-5 max-w-350 bg-primary/30" />
+                <Skeleton className="h-10 w-full my-5 max-w-350 bg-primary/30" />
+                <Skeleton className="h-10 w-full my-5 max-w-350 bg-primary/30" />
                 <Skeleton className="h-10 w-full my-5 max-w-[1400px] bg-primary/30" />
               </div>
             ) : (
@@ -106,12 +107,21 @@ const MyOrderPage = () => {
             )}
           </div>
         </div>
+        {(orderList.length === 0 && !loading) && (
+          <div className="flex flex-row items-center md:px-10 gap-2 md:gap-4 lg:gap-6 my-10 md:my-auto mx-auto text-left px-4 justify-center lg:px-20">
+            <PackageSearch className="text-gray-400 w-10 h-10 md:w-20 md:h-20"  />
+            <h2 className="text-sm md:text-xl  text-gray-500 font-sans">
+              You have not placed an order yet
+            </h2>
+          </div>)
+        }
       </div>
-      <div className="flex justify-center mt-auto mb-10">
+
+      {orderList.length >= 1 && (<div className="flex justify-center mt-auto mb-10">
         <p className="font-light text-xs md:text-sm text-gray-500 font-sans text-center">
           *Total Amount contains the added tax and shipping fees
         </p>
-      </div>
+      </div>)}
       <Footer />
     </div>
   );

@@ -1,6 +1,7 @@
 "use client"
 import { Sparkles } from "lucide-react"
 import { Button } from "./ui/button"
+import Link from "next/link"
 
 export function HeroSection() {
   return (
@@ -31,12 +32,16 @@ export function HeroSection() {
 
             {/* CTA Buttons  */}
             <div className="flex flex-col sm:flex-row items-start justify-start gap-4">
-              <Button size="lg" className="min-w-[200px] rounded-full cursor-pointer">
-                Explore Collection
-              </Button>
+              <Link href="/shop">
+                <Button size="lg" className="min-w-[200px] rounded-full cursor-pointer">
+                  Explore Collection
+                </Button>
+              </Link> 
+              <Link href="/about">
               <Button size="lg" variant="outline" className="min-w-[200px] bg-transparent rounded-full cursor-pointer">
                 Learn Our Story
               </Button>
+              </Link>
             </div>
           </div>
 

@@ -21,7 +21,7 @@ const MyOrderItem = ({ orderItem }: { orderItem: OrderItem }) => {
   return (
     <div className="w-full grid grid-cols-5 mt-3 items-center">
       <Image
-        src={baseUrl + orderItem?.product?.images[0]?.url}
+        src={orderItem?.product?.images[0]?.url}
         alt={orderItem?.product?.images[0]?.alternativeText}
         width={80}
         height={50}

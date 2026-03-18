@@ -29,7 +29,7 @@ const TopCategoryList: React.FC<TopCategoryListProps> = ({ categoryList = [] }) 
       .join(' ')
 
   return (
-     <div className="mx-6 md:mx-15 mt-2 overflow-x-auto gap-4 my-4 lg:gap-10 justify-start flex items-center pl-6 lg:mx-20">
+     <div className="mx-2 md:mx-15 mt-2 overflow-x-auto gap-4 my-4 lg:gap-10 justify-start flex items-center pl-6 lg:mx-20">
       {categoryList?.map((category, index) => {
         const decodedName = decodeCategoryName(category.name)
         const displayName = toTitleCase(decodedName)
@@ -37,15 +37,15 @@ const TopCategoryList: React.FC<TopCategoryListProps> = ({ categoryList = [] }) 
 
         return (
         <Link href={`/products-category/${categoryParam}`} key={category.id ?? index}>
-           <div className="mb-3 p-1 border rounded-lg gap-2 w-[250px] min-w-[200px] shadow-sm hover:shadow-md cursor-pointer bg-secondary ">
+           <div className="mb-3 p-1 border rounded-lg gap-2 w-32 md:w-62.5 min-w-40 shadow-sm hover:shadow-md cursor-pointer bg-secondary ">
             <Image
-              src={category.icon?.[0]?.url?.startsWith('http') ? category.icon[0].url : `${process.env.NEXT_PUBLIC_BASE_URL ?? ''}${category.icon?.[0]?.url ?? ''}`}
+              src={category.icon?.[0]?.url!}
               width={300}
               height={280}
               alt={displayName || 'category-image'}
-              className="w-full h-[280px] lg:h-[300px] object-cover rounded-lg transition-transform duration-500 hover:scale-95"
+              className="w-full h-42 md:h-[280px] lg:h-[300px] object-cover rounded-lg transition-transform duration-500 hover:scale-95"
             />
-            <h3 className="text-xl font-serif font-semibold my-2 text-center">{displayName}</h3>
+            <h3 className="text-sm md:text-xl font-serif font-semibold my-2 text-center">{displayName}</h3>
           </div>
         </Link>
       )})}
