@@ -32,20 +32,19 @@ const Slider = ({ sliderList }: SliderProps) => {
     <>
       <style>{sliderStyles}</style>
       <div className="w-full my-6  py-6 bg-white">
-      <div className="mx-4 w-full lg:max-w-7xl  flex flex-col items-center  overflow-x-clip lg:mx-auto">
-        <Swiper
-          modules={[ Autoplay]}
-         
-          autoplay={{
-            delay: 5000,
-            disableOnInteraction: false,
-          }}
-          className="w-full"
-        >
-          {sliderList.map((slider, index) => {
-            // image from the array
-            const imageUrl = slider.image?.[0]?.url;
-            console.log("Slider image URL:", imageUrl);
+        <div className="mx-4 w-full lg:max-w-7xl  flex flex-col items-center  overflow-x-clip lg:mx-auto">
+          <Swiper
+            modules={[Autoplay]}
+            autoplay={{
+              delay: 5000,
+              disableOnInteraction: false,
+            }}
+            className="w-full"
+          >
+            {sliderList.map((slider, index) => {
+              // image from the array
+              const imageUrl = slider.image?.[0]?.url;
+              console.log("Slider image URL:", imageUrl);
 
             return (
               <SwiperSlide
@@ -70,7 +69,6 @@ const Slider = ({ sliderList }: SliderProps) => {
           })}
         </Swiper>
       </div>
-    </div>
     </>
   );
 };
