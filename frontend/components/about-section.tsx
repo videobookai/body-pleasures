@@ -39,12 +39,12 @@ export function AboutSection() {
             <h2 className="text-4xl sm:text-5xl font-serif font-medium mb-6 text-balance">
               {"Artisan wellness for body & soul"}
             </h2>
-            <p className="text-lg text-muted-foreground mb-8 leading-relaxed text-pretty font-serif-variant">
+            <p className="text-sm md:text-lg text-muted-foreground mb-8 leading-relaxed text-pretty font-serif-variant tracking-wider">
               {
                 "At Ms V's Body Pleasures, we believe that self-care should be an extraordinary experience. Our handcrafted artisan products are designed to transform your daily routine into a delightful wellness journey."
               }
             </p>
-            <p className="text-lg text-muted-foreground mb-12 leading-relaxed text-pretty font-serif-variant">
+            <p className="text-sm md:text-lg text-muted-foreground mb-12 leading-relaxed text-pretty font-serif-variant tracking-wider">
               {
                 "From our signature artisan soaps to our nourishing body care line, each product is made with premium natural ingredients and a commitment to quality that you can feel."
               }

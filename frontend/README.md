@@ -49,15 +49,17 @@ To get a local copy up and running, follow these simple steps.
     yarn install
     ```
 
-3.  **Set up environment variables:**
+3.  **Set up environment variables (Strapi Cloud):**
 
-    Create a file named `.env.local` in the root of your project and add the following environment variable:
+    Create a file named `.env.local` in the `frontend` directory and add:
 
     ```env
-    NEXT_PUBLIC_API_URL=http://localhost:1337/api
+    NEXT_PUBLIC_BASE_URL=https://your-project-name.strapiapp.com
+    NEXT_PUBLIC_API_URL=https://your-project-name.strapiapp.com/api
+    NEXT_PUBLIC_STRAPI_API_TOKEN=your_strapi_api_token
     ```
 
-    This variable should point to the URL of your Strapi backend.
+    Replace the values with your Strapi Cloud project URL and a Strapi API token from your Strapi Cloud admin.
 
 4.  **Run the development server:**
 
@@ -71,63 +73,16 @@ To get a local copy up and running, follow these simple steps.
 
     Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-### Backend Setup
+### Strapi Cloud Setup
 
-The backend is a Strapi application located in the `miss-v-admin` directory.
+This frontend is configured to consume a hosted Strapi Cloud backend instead of a local Strapi instance.
 
-1.  **Navigate to the backend directory:**
+1.  Create or open your Strapi Cloud project.
+2.  Ensure required content types (such as products and categories) are published.
+3.  Create an API token in Strapi (`Settings -> API Tokens`) with read permissions for the content used by this frontend.
+4.  Add your Strapi Cloud URL and token to `frontend/.env.local` using the variables above.
 
-    ```bash
-    cd miss-v-admin
-    ```
-
-2.  **Install dependencies:**
-
-    ```bash
-    npm install
-    # or
-    pnpm install
-    # or
-    yarn install
-    ```
-
-3.  **Set up environment variables:**
-
-    Create a file named `.env` in the `miss-v-admin` directory and add the following environment variables. You can use the `.env.example` file as a template.
-
-    ```env
-    HOST=0.0.0.0
-    PORT=1337
-    APP_KEYS="your_app_key_1,your_app_key_2"
-    API_TOKEN_SALT=your_api_token_salt
-    ADMIN_JWT_SECRET=your_admin_jwt_secret
-    TRANSFER_TOKEN_SALT=your_transfer_token_salt
-    JWT_SECRET=your_jwt_secret
-    ENCRYPTION_KEY=your_encryption_key
-
-    # Database configuration (example for PostgreSQL)
-    DATABASE_CLIENT=postgres
-    DATABASE_HOST=127.0.0.1
-    DATABASE_PORT=5432
-    DATABASE_NAME=strapi-db
-    DATABASE_USERNAME=strapi-user
-    DATABASE_PASSWORD=strapi-password
-    DATABASE_SSL=false
-    ```
-
-    **Note:** You need to replace the placeholder values with your own secret keys and database credentials. You can generate secret keys using a tool like `openssl rand -base64 32`.
-
-4.  **Run the development server:**
-
-    ```bash
-    npm run develop
-    # or
-    pnpm develop
-    # or
-    yarn develop
-    ```
-
-    The Strapi server will be running at [http://localhost:1337](http://localhost:1337). You can create an admin account and start adding content.
+If you still run a local Strapi project for content management, keep it independent from frontend runtime config and only point `NEXT_PUBLIC_API_URL` to Strapi Cloud in this README setup.
 
 
 

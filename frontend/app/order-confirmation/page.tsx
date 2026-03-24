@@ -1,15 +1,20 @@
-"use client"
+\"use client\"
 import { Navigation } from '@/components/navigation'
 import { Button } from '@/components/ui/button'
 import { CheckCircle2, HomeIcon, ListOrderedIcon } from 'lucide-react'
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { useAuth } from '@/app/_context/AuthContext'
 
 const OrderConfirmation = () => {
-    const user = sessionStorage?.getItem("user")
-    if (!user){
-        window.location.href="/"
-        return
-    }
+    const { user, loading: authLoading } = useAuth();
+    const router = useRouter();
+
+    useEffect(() => {
+        if (!authLoading && !user) {
+            router.replace("/");
+        }
+    }, [authLoading, router, user])
   return (
     <div className='flex flex-col justify-center items-center mt-20'>
         <Navigation/>

@@ -1,85 +1,166 @@
 import axios from "axios";
-import { sign } from "crypto";
-import { initialize } from "next/dist/server/lib/render-server";
 
 const axiosClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:1337/api",
+  baseURL:
+    process.env.NEXT_PUBLIC_API_URL ,
 });
 
-// Register interceptors only when running in the browser (avoid server-side localStorage)
-if (typeof window !== "undefined") {
-  // Add request interceptor
-  axiosClient.interceptors.request.use(
-    (config) => {
-      const token = localStorage.getItem("authToken");
-      if (token) {
-        // preserve existing headers and add Authorization
-        config.headers = {
-          ...(config.headers as any),
-          Authorization: `Bearer ${token}`,
-        };
-      }
-      return config;
+const strapiApiToken = process.env.NEXT_PUBLIC_STRAPI_API_TOKEN;
+const apiBase =  process.env.NEXT_PUBLIC_API_URL!;
+const assetBase = apiBase.replace(/\/api\/?$/, "");
+
+const toAbsoluteUrl = (url?: string) =>
+  url ? (url.startsWith("http") ? url : `${assetBase}${url}`) : undefined;
+
+const normalizeProduct = (item: any) => {
+  const product = item?.attributes ?? item;
+
+  const rawImages = product?.images?.data ?? product?.images ?? [];
+  const images = rawImages.map((img: any) => {
+    const attrs = img?.attributes ?? img;
+    return { ...attrs, id: img?.id ?? attrs?.id, url: toAbsoluteUrl(attrs?.url) };
+  });
+
+  const rawCategories = product?.categories?.data ?? product?.categories ?? [];
+  const categories = rawCategories.map((cat: any) => {
+    const attrs = cat?.attributes ?? cat;
+    return { ...attrs, id: cat?.id ?? attrs?.id };
+  });
+
+  return {
+    ...product,
+    id: item?.id ?? product?.id,
+    images,
+    categories,
+  };
+};
+
+const apiFetch = async (path: string, options: RequestInit = {}) => {
+  const resp = await fetch(path, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...(options.headers ?? {}),
     },
-    (error) => Promise.reject(error)
-  );
+  });
 
-  // Add response interceptor
-  axiosClient.interceptors.response.use(
-    (response) => response,
-    (error) => {
-      if (error.response?.status === 401) {
-        localStorage.removeItem("authToken");
-      }
-      return Promise.reject(error);
+  const data = await resp.json().catch(() => ({}));
+
+  if (!resp.ok) {
+    const errorPayload = data?.error ?? resp.statusText ?? "Request failed.";
+    const errorMessage =
+      typeof errorPayload === "string"
+        ? errorPayload
+        : errorPayload && typeof errorPayload === "object"
+        ? JSON.stringify(errorPayload)
+        : String(errorPayload);
+
+    throw new Error(errorMessage);
+  }
+
+  return data;
+};
+
+
+// Add request interceptor
+axiosClient.interceptors.request.use(
+  (config) => {
+    const isPublicRequest = (config as any)?.meta?.public === true;
+    const authToken = isPublicRequest ? undefined : strapiApiToken;
+
+    if (authToken) {
+      config.headers = {
+        ...(config.headers as any),
+        Authorization: `Bearer ${authToken}`,
+      };
     }
-  );
-}
 
-const getCategory = () => axiosClient.get("/categories");
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// Add response interceptor
+axiosClient.interceptors.response.use(
+  (response) => response,
+  (error) => Promise.reject(error)
+);
+
+const getCategory = () => axiosClient.get("/categories", { meta: { public: true } } as any);
 
 const getSliders = () =>
-  axiosClient
-    .get("/sliders?populate=*")
-    .then((resp) => {
-      return resp.data.data;
-    })
-    .catch((err) => {
-      console.error(
-        "[GlobalApi] getSliders error:",
-        err.message,
-        err.response?.status,
-        err.response?.data
-      );
-      throw err;
-    });
+  axiosClient.get("/sliders?populate=*").then((resp) => resp.data.data);
 
 const getCategoryList = () =>
   axiosClient
-    .get("/categories?populate=*")
+    .get("/categories?populate=*", { meta: { public: true } } as any)
+    .then((resp) => resp.data.data);
+
+const getCategoryListByNames = (names: string[]) => {
+  if (!Array.isArray(names) || names.length === 0) {
+    return Promise.resolve([]);
+  }
+
+  const params = new URLSearchParams();
+  names.forEach((name, index) => {
+    params.append(`filters[name][$in][${index}]`, name);
+  });
+  params.append("populate", "*");
+
+  return axiosClient
+    .get(`/categories?${params.toString()}`, { meta: { public: true } } as any)
     .then((resp) => {
       return resp.data.data;
     })
     .catch((err) => {
       console.error(
-        "[GlobalApi] getCategoryList error:",
+        "[GlobalApi] getCategoryListByNames error:",
         err.message,
         err.response?.status,
         err.response?.data
       );
       throw err;
     });
+};
 
 const getAllProducts = () =>
-  axiosClient.get("/products?populate=*").then((resp) => {
-    return resp.data.data;
-  });
+  axiosClient
+    .get("/products?populate=*")
+    .then((resp) => {
+      return resp.data.data.map(normalizeProduct);
+    })
+    .catch((err) => {
+      console.error(
+        "[GlobalApi] getAllProducts error:",
+        err.message,
+        err.response?.status,
+        err.response?.data,
+        err.config?.url
+      );
+      throw err;
+    });
 
 const getProductByCategory = (category: string) =>
   axiosClient
-    .get("/products?filters[categories][name][$in]=" + category + "&populate=*")
+    .get(
+      "/products?filters[categories][name][$in]=" +
+        encodeURIComponent(category) +
+        "&populate=*",
+      { meta: { public: true } } as any
+    )
     .then((resp) => {
-      return resp.data.data;
+      return resp.data.data.map(normalizeProduct);
+    })
+    .catch((err) => {
+      console.error(
+        "[GlobalApi] getProductByCategory error:",
+        err.message,
+        err.response?.status,
+        err.cause,
+        err.response?.data,
+        err.config?.url
+      );
+      throw err;
     });
 
 const registerUser = (username: string, email: string, password: string) =>
@@ -94,116 +175,121 @@ const signIn = (email: string, password: string) =>
     identifier: email,
     password: password,
   });
-const addToCart = (data: any, jwt: string) =>
-  axiosClient.post("/user-carts", data, {
-    headers: {
-      Authorization: "Bearer " + jwt,
-    },
+
+const checkUserExistsByEmail = async (email: string) => {
+  const resp = await axiosClient.get(
+    `/users?filters[email][$eq]=${encodeURIComponent(email)}&pagination[limit]=1`
+  );
+
+  // Strapi /users typically returns an array.
+  return Array.isArray(resp.data) && resp.data.length > 0;
+};
+
+const addToCart = (data: any) =>
+  apiFetch("/api/cart", {
+    method: "POST",
+    body: JSON.stringify({ data }),
   });
 
-const getUserCartItems = (userId: number, jwt: string) =>
-  axiosClient
-    .get(
-      `/user-carts?filters[userId][$eq]=${userId}&populate[products][populate]=*`,
-      {
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
+const getUserCartItems = () =>
+  apiFetch("/api/cart").then((resp) => {
+    const payload = resp?.data ?? resp;
+    
+
+    const resolveArray = (value: any) => {
+      if (Array.isArray(value)) {
+        return value;
       }
-    )
-    .then((resp) => {
-      const data = resp.data.data;
-      console.log("getUserCartItems response data:", data);
-      const cartItemList = data.map((item: any) => {
-        // Defensive check to ensure there's a product and it has an image
-        if (
-          !item.products ||
-          item.products.length === 0 ||
-          !item.products[0].images ||
-          item.products[0].images.length === 0
-        ) {
+      if (value?.data && Array.isArray(value.data)) {
+        return value.data;
+      }
+      return [];
+    };
+
+    const rawItems = resolveArray(payload?.data ?? payload);
+
+    const cartItemList = rawItems
+      .map((item: any) => {
+        const cartAttributes = item?.attributes ?? item;
+        const products = resolveArray(item?.products ?? cartAttributes?.products);
+        const productEntry = products[0];
+        const productAttributes = productEntry?.attributes ?? productEntry;
+        if (!productAttributes) {
           return null;
         }
 
-        const product = item.products[0];
+        const images = resolveArray(productAttributes?.images);
+        const firstImage = images[0];
+        const imageAttributes = firstImage?.attributes ?? firstImage;
+        const imageUrl = toAbsoluteUrl(imageAttributes?.url);
+
+        if (!imageUrl) {
+          return null;
+        }
 
         return {
-          id: item.id,
-          documentId: item.documentId,
-          name: product.name,
-          amount: item.amount,
-          initialPrice: product.mrp,
-          price: product.sellingPrice,
-          quantity: item.quantity,
-          image: product.images[0].url,
-          product: product.id,
+          id: item?.id ?? cartAttributes?.id,
+          documentId: cartAttributes?.documentId ?? item?.id,
+          name: productAttributes?.name,
+          amount: cartAttributes?.amount,
+          initialPrice: productAttributes?.mrp,
+          price: productAttributes?.sellingPrice,
+          quantity: cartAttributes?.quantity,
+          image: imageUrl,
+          product: productAttributes?.id,
         };
-      });
+      })
+      .filter(Boolean);
 
-      // Filter out any cart items that might be missing data
-      return cartItemList.filter((item: null) => item !== null);
-    });
-
-// Also add methods for cart management
-const deleteCartItem = (documentId: string, jwt: string) =>
-  axiosClient.delete(`/user-carts/${documentId}`, {
-    headers: {
-      Authorization: `Bearer ${jwt}`,
-    },
+    return cartItemList;
   });
 
-  const clearUserCart = async (userId: number, jwt: string) => {
-  try {
-    // First, get all cart items for the user
-    const resp = await getUserCartItems(userId, jwt);
-    
-    // Delete each cart item
-    const deletePromises = resp.map((item: any) => 
-      deleteCartItem(item.documentId, jwt)
-    );
-    
-    // Wait for all deletions to complete
-    await Promise.all(deletePromises);
-    
-    return { success: true };
-  } catch (error) {
-    console.error("Error clearing cart:", error);
-    throw error;
-  }
-};
+// Also add methods for cart management
+const deleteCartItem = (documentId: string) =>
+  apiFetch(`/api/cart/item/${documentId}`, {
+    method: "DELETE",
+  });
+
+const clearUserCart = () => apiFetch("/api/cart/clear", { method: "POST" });
 
 const createContactForm = (data: any) =>
   axiosClient.post("/contact-forms", { data });
 
-const createOrder = (data: any, jwt: string) =>
-  axiosClient.post("/orders", data, {
-    headers: {
-      Authorization: `Bearer ${jwt}`,
-    },
+const createOrder = (data: any) =>
+  apiFetch("/api/orders", {
+    method: "POST",
+    body: JSON.stringify({ data }),
   });
 
-const getOrdersByUserId = (userId: number, jwt: string) =>
-  axiosClient
-    .get(
-      `/orders?filters[userId][$eq]=${userId}&populate[order][populate][product][populate]=images`,
-      {
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-      }
-    )
-    .then((resp) => {
-      return resp.data.data;
-    });
+const getOrdersByUserId = () =>
+  apiFetch("/api/orders").then((resp) => resp?.data ?? resp ?? []);
+
+const forgotPassword = (email: string) =>
+  axiosClient.post("/auth/forgot-password", {
+    email,
+  });
+  
+const resetPassword = (
+  code: string,
+  password: string,
+  passwordConfirmation: string
+) =>
+  axiosClient.post("/auth/reset-password", {
+    code,
+    password,
+    passwordConfirmation,
+  });
 
 export default {
   getCategory,
   getSliders,
   getCategoryList,
+  getCategoryListByNames,
   getAllProducts,
   getProductByCategory,
   registerUser,
   signIn,
+  checkUserExistsByEmail,
   addToCart,
   getUserCartItems,
   deleteCartItem,
@@ -211,4 +297,6 @@ export default {
   createOrder,
   clearUserCart,
   getOrdersByUserId,
+  forgotPassword,
+  resetPassword,
 };
