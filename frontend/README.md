@@ -57,10 +57,11 @@ To get a local copy up and running, follow these simple steps.
     ```env
     NEXT_PUBLIC_BASE_URL=https://your-project-name.strapiapp.com
     NEXT_PUBLIC_API_URL=https://your-project-name.strapiapp.com/api
+    NEXT_PUBLIC_PAYPAL_CLIENT_ID=your_paypal_client_id
     NEXT_PUBLIC_STRAPI_API_TOKEN=your_strapi_api_token
     ```
 
-    Replace the values with your Strapi Cloud project URL and a Strapi API token from your Strapi Cloud admin.
+    Replace the values with your Strapi Cloud project URL, your Strapi API token, and your PayPal client ID.
 
 4.  **Run the development server:**
 

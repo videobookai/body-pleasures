@@ -258,7 +258,7 @@ const createContactForm = (data: any) =>
 const createOrder = (data: any) =>
   apiFetch("/api/orders", {
     method: "POST",
-    body: JSON.stringify({ data }),
+    body: JSON.stringify(data),
   });
 
 const getOrdersByUserId = () =>

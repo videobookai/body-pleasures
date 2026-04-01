@@ -1,4 +1,4 @@
-\"use client\"
+"use client"
 import { Navigation } from '@/components/navigation'
 import { Button } from '@/components/ui/button'
 import { CheckCircle2, HomeIcon, ListOrderedIcon } from 'lucide-react'
