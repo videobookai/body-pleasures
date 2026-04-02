@@ -55,28 +55,28 @@ const MyOrderPage = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen ">
+    <div className="flex min-h-screen flex-col overflow-x-hidden">
       <Navigation />
-      <div className="mt-16 grow max-w-7xl mx-auto w-full">
+      <div className="mx-auto mt-16 grow w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <h2 className="p-3 bg-primary text-xl md:text-2xl lg:text-3xl font-bold text-white text-center">
           My Orders
         </h2>
 
-        <div className="my-7 px-5 md:px-10 lg:px-20">
+        <div className="my-7 px-1 sm:px-3 md:px-6 lg:px-10">
           <h2 className="text-2xl md:text-3xl font-bold text-primary">Order History</h2>
           <div>
             {loading ? (
               <div>
-                <Skeleton className="h-10 w-full my-5 max-w-350 bg-primary/30" />
-                <Skeleton className="h-10 w-full my-5 max-w-350 bg-primary/30" />
-                <Skeleton className="h-10 w-full my-5 max-w-350 bg-primary/30" />
-                <Skeleton className="h-10 w-full my-5 max-w-[1400px] bg-primary/30" />
+                <Skeleton className="my-5 h-10 w-full bg-primary/30" />
+                <Skeleton className="my-5 h-10 w-full bg-primary/30" />
+                <Skeleton className="my-5 h-10 w-full bg-primary/30" />
+                <Skeleton className="my-5 h-10 w-full bg-primary/30" />
               </div>
             ) : (
               orderList.map((item, index) => (
                 <Collapsible key={index}>
                   <CollapsibleTrigger>
-                    <div className="bg-primary/20 p-3 my-5 cursor-pointer flex flex-row md:justify-between md:gap-20 gap-2 max-w-full w-[700px] lg:w-[1400px]">
+                    <div className="my-5 flex w-full flex-col gap-2 rounded-md bg-primary/20 p-3 text-left sm:p-4 md:flex-row md:items-center md:justify-between md:gap-6">
                       <h2>
                         <span className="font-bold mr-1"> Order Date:</span>
                         {moment(item?.createdAt).format("MM/DD/YYYY")}
@@ -108,7 +108,7 @@ const MyOrderPage = () => {
           </div>
         </div>
         {(orderList.length === 0 && !loading) && (
-          <div className="flex flex-row items-center md:px-10 gap-2 md:gap-4 lg:gap-6 my-10 md:my-auto mx-auto text-left px-4 justify-center lg:px-20">
+          <div className="mx-auto my-10 flex flex-col items-center justify-center gap-2 px-4 text-center sm:flex-row sm:text-left md:px-10 lg:gap-6 lg:px-20">
             <PackageSearch className="text-gray-400 w-10 h-10 md:w-20 md:h-20"  />
             <h2 className="text-sm md:text-xl  text-gray-500 font-sans">
               You have not placed an order yet
