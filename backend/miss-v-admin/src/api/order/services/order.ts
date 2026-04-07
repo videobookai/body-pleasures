@@ -1,20 +1,27 @@
-/**
- * order service
- */
 
 import { factories } from '@strapi/strapi';
+import { errors } from '@strapi/utils';
 import { validatePayment } from '../../../utils/paypal';
+
+const { ValidationError } = errors;
 
 export default factories.createCoreService('api::order.order', ({ strapi }) => ({
   async create(params: any) {
     const { data } = params;
+    const hasPaymentId = data?.paymentId !== undefined && data.paymentId !== null && data.paymentId !== '';
+    const hasTotalAmount =
+      data?.totalAmount !== undefined && data.totalAmount !== null && data.totalAmount !== '';
+
+    if (hasPaymentId !== hasTotalAmount) {
+      throw new ValidationError('paymentId and totalAmount are both required for PayPal payment verification');
+    }
 
     // Verify PayPal payment before creating order
-    if (data?.paymentId) {
+    if (hasPaymentId) {
       try {
         const paymentValidation = await validatePayment(
           data.paymentId,
-          data.totalAmount?.toString()
+          data.totalAmount.toString()
         );
 
         if (!paymentValidation.valid) {
@@ -28,7 +35,6 @@ export default factories.createCoreService('api::order.order', ({ strapi }) => (
         data.verificationStatus = 'verified';
         data.verifiedAt = new Date().toISOString();
       } catch (error) {
-        console.error('Payment verification error:', error);
         data.paymentVerified = false;
         data.verificationStatus = 'error';
         throw error;

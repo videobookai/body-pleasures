@@ -39,6 +39,16 @@ const PAYPAL_API_BASE = process.env.PAYPAL_MODE === 'live'
   ? 'https://api.paypal.com'
   : 'https://api.sandbox.paypal.com';
 
+function normalizeAmount(amount: string): string | null {
+  const parsedAmount = Number(amount);
+
+  if (!Number.isFinite(parsedAmount)) {
+    return null;
+  }
+
+  return parsedAmount.toFixed(2);
+}
+
 /**
  * Get PayPal access token for API calls
  */
@@ -64,7 +74,6 @@ async function getPayPalAccessToken(): Promise<string> {
     const data = (await response.json()) as PayPalAccessTokenResponse;
     return data.access_token;
   } catch (error) {
-    console.error('PayPal access token error:', error);
     throw new Error('Unable to authenticate with PayPal');
   }
 }
@@ -100,32 +109,49 @@ async function verifyPayPalOrder(
 
     const order = (await response.json()) as PayPalOrderDetails;
 
-    // Check if payment was captured
-    if (order.status !== 'COMPLETED' && order.status !== 'APPROVED') {
+    // Only treat captured/completed orders as verified.
+    if (order.status !== 'COMPLETED') {
       return {
         verified: false,
         paymentId: orderId,
         status: order.status,
         amount: order.purchase_units?.[0]?.amount?.value || '0',
         currency: order.purchase_units?.[0]?.amount?.currency_code || 'USD',
-        errorMessage: `Payment status is ${order.status}, expected COMPLETED or APPROVED`,
+        errorMessage: `Payment status is ${order.status}, expected COMPLETED`,
       };
     }
 
     const amount = order.purchase_units?.[0]?.amount?.value || '0';
     const currency = order.purchase_units?.[0]?.amount?.currency_code || 'USD';
 
-    // Validate amount if provided
-    if (expectedAmount && amount !== expectedAmount) {
-      return {
-        verified: false,
-        paymentId: orderId,
-        status: order.status,
-        amount,
-        currency,
-        buyerEmail: order.payer?.email_address,
-        errorMessage: `Amount mismatch: expected ${expectedAmount}, got ${amount}`,
-      };
+    // Normalize amount formatting before comparing values like 10.0 vs 10.00.
+    if (expectedAmount) {
+      const normalizedExpectedAmount = normalizeAmount(expectedAmount);
+      const normalizedAmount = normalizeAmount(amount);
+
+      if (!normalizedExpectedAmount || !normalizedAmount) {
+        return {
+          verified: false,
+          paymentId: orderId,
+          status: order.status,
+          amount,
+          currency,
+          buyerEmail: order.payer?.email_address,
+          errorMessage: `Invalid amount format: expected ${expectedAmount}, got ${amount}`,
+        };
+      }
+
+      if (normalizedAmount !== normalizedExpectedAmount) {
+        return {
+          verified: false,
+          paymentId: orderId,
+          status: order.status,
+          amount,
+          currency,
+          buyerEmail: order.payer?.email_address,
+          errorMessage: `Amount mismatch: expected ${expectedAmount}, got ${amount}`,
+        };
+      }
     }
 
     return {
@@ -137,7 +163,6 @@ async function verifyPayPalOrder(
       buyerEmail: order.payer?.email_address,
     };
   } catch (error) {
-    console.error('PayPal verification error:', error);
     return {
       verified: false,
       paymentId: orderId,
