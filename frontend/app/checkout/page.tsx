@@ -12,6 +12,7 @@ import {
 } from "@paypal/react-paypal-js";
 import { toast } from "sonner";
 import { useAuth } from "@/app/_context/AuthContext";
+import { Loader2 } from "lucide-react";
 
 const paypalClientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID?.trim() || "";
 
@@ -379,7 +380,7 @@ const CheckoutPage = () => {
               </div>
               {isProcessingOrder ? (
                 <div className="rounded-md border border-primary/20 bg-primary/5 px-4 py-3 text-sm text-primary">
-                  Processing your payment and creating your order. Please wait...
+                  Processing your payment and creating your order. Please wait... <Loader2 className="ml-2 animate-spin" />
                 </div>
               ) : null}
               {paypalClientId ? (
