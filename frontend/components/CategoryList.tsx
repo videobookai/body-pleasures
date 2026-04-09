@@ -23,7 +23,7 @@ const CategoryList = ({ categoryList, title = "Shop by Collections" }: CategoryL
             className="block h-full"
           >
           <div
-            className="mb-3 h-full p-1 border rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer bg-secondary flex flex-col"
+            className="mb-3 h-full p-1 border rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer bg-white flex flex-col"
           >
             <Image
               src={ category.icon?.[0]?.url}
