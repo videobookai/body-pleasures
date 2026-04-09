@@ -31,7 +31,7 @@ const ProductItem = ({ product }: ProductItemProps) => {
           className="w-full h-28 md:h-52 lg:h-64 object-contain md:object-fill rounded-lg mb-2"
         />
       ) : (
-        <div className="w-full h-48 bg-muted rounded-lg mb-4" />
+        <div className="w-full h-28 md:h-52 lg:h-64 bg-muted rounded-lg mb-2" />
       )}
 
       <div className="flex flex-col gap-2 px-1 md:px-4 mb-2">
