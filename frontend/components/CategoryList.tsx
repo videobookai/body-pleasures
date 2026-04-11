@@ -30,7 +30,7 @@ const CategoryList = ({ categoryList, title = "Shop by Collections" }: CategoryL
               width={800}
               height={800}
               alt="category-image"
-              className="w-full h-32 md:h-70 lg:h-80 object-fill rounded-lg hover:scale-95 hover:transition-all hover:duration-500"
+              className="w-full h-32 md:h-70 lg:h-80 object-cover rounded-lg hover:scale-95 hover:transition-all hover:duration-500"
             />
             <h3 className="flex flex-1 items-center justify-center px-1 text-center text-sm md:text-lg font-semibold my-2 capitalize text-primary min-h-10 md:min-h-14">
               {category.name}

@@ -43,9 +43,9 @@ const TopCategoryList: React.FC<TopCategoryListProps> = ({ categoryList = [] }) 
               width={300}
               height={280}
               alt={displayName || 'category-image'}
-              className="w-full h-42 md:h-[280px] lg:h-[300px] object-contain rounded-lg transition-transform duration-500 hover:scale-95"
+              className="w-full h-42 md:h-[280px] lg:h-[300px] object-cover rounded-lg transition-transform duration-500 hover:scale-95"
             />
-            <h3 className="text-sm md:text-xl font-serif font-semibold my-2 text-center">{displayName}</h3>
+            <h3 className="text-sm md:text-xl font-serif font-semibold my-2 text-center text-primary">{displayName}</h3>
           </div>
         </Link>
       )})}
