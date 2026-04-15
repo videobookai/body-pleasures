@@ -3,7 +3,6 @@ import { Playfair_Display, Inter } from "next/font/google"
 // import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 import { Providers } from "./_utils/Providers/provider"
-import {PayPalScriptProvider} from "@paypal/react-paypal-js"
 
 const playfair = Playfair_Display({
   subsets: ["latin"],

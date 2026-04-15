@@ -5,9 +5,60 @@ import { Input } from "@/components/ui/input";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import GlobalApi from "../_utils/GlobalApi";
-import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
+import {
+  PayPalButtons,
+  PayPalScriptProvider,
+  usePayPalScriptReducer,
+} from "@paypal/react-paypal-js";
 import { toast } from "sonner";
 import { useAuth } from "@/app/_context/AuthContext";
+import { Loader2 } from "lucide-react";
+
+const paypalClientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID?.trim() || "";
+
+type PayPalCheckoutButtonsProps = {
+  disabled: boolean;
+  totalAmount: string;
+  onApprove: (data: any, capturedOrder?: any) => void;
+};
+
+function PayPalCheckoutButtons({
+  disabled,
+  totalAmount,
+  onApprove,
+}: PayPalCheckoutButtonsProps) {
+  const [{ isPending }] = usePayPalScriptReducer();
+
+  return (
+    <>
+      {isPending ? <div className="spinner" /> : null}
+      <div className="w-full">
+        <PayPalButtons
+          style={{ layout: "horizontal" }}
+          disabled={disabled}
+          onApprove={async (data, actions) => {
+            const capturedOrder = await actions.order?.capture();
+            console.log("capturedOrder", capturedOrder);
+            onApprove(data, capturedOrder);
+          }}
+          createOrder={(data, actions) => {
+            return actions.order.create({
+              purchase_units: [
+                {
+                  amount: {
+                    value: totalAmount,
+                    currency_code: "USD",
+                  },
+                },
+              ],
+              intent: "CAPTURE",
+            });
+          }}
+        />
+      </div>
+    </>
+  );
+}
 
 const CheckoutPage = () => {
   const [totalCartItems, setTotalCartItems] = useState(0);
@@ -19,10 +70,10 @@ const CheckoutPage = () => {
   const [zip, setZip] = useState("");
   const [address, setAddress] = useState("");
   const [emailError, setEmailError] = useState("");
+  const [isProcessingOrder, setIsProcessingOrder] = useState(false);
 
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
-  const [{ isPending }] = usePayPalScriptReducer();
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -81,8 +132,9 @@ const CheckoutPage = () => {
     }
   };
 
-  const onApprove = (data: any) => {
-    console.log(data);
+  const onApprove = (data: any, capturedOrder?: any) => {
+    console.log("paypal approval data", data);
+    console.log("paypal captured order", capturedOrder);
 
     if (!user?.id) {
       toast.error("Please sign in to place an order.");
@@ -114,10 +166,24 @@ const CheckoutPage = () => {
       price: item.price,
       docId:item.documentId
     }));
+
+    const paypalOrderId =
+      data?.orderID?.toString() ||
+      capturedOrder?.id?.toString() ||
+      data?.paymentId?.toString();
+
+    if (!paypalOrderId) {
+      console.error("Missing PayPal order ID", { data, capturedOrder });
+      toast.error("Unable to verify PayPal payment. Please contact support.");
+      return;
+    }
+
+    setIsProcessingOrder(true);
+
     console.log("Order Items", orderItems);
     const payload = {
       data: {
-        paymentId: data.paymentId.toString(),
+        paymentId: paypalOrderId,
         userId: user?.id,
         username: name,
         address: address,
@@ -136,7 +202,7 @@ const CheckoutPage = () => {
         console.log(resp);
         const createdOrder = resp?.data?.data;
         const paymentId =
-          createdOrder?.paymentId?.toString() || data?.paymentId?.toString() || "N/A";
+          createdOrder?.paymentId?.toString() || paypalOrderId || "N/A";
 
         await GlobalApi.clearUserCart();
         setCartItemList([]);
@@ -174,6 +240,9 @@ const CheckoutPage = () => {
           createdAt: new Date().toISOString(),
         });
         toast.error("Failed to place order. Please try again.");
+      })
+      .finally(() => {
+        setIsProcessingOrder(false);
       });
   };
 
@@ -309,31 +378,46 @@ const CheckoutPage = () => {
                 <span>Total</span>
                 <span>{calculateTotalAmount()}</span>
               </div>
-              {isPending ? <div className="spinner" /> : null}
-              <div className="w-full">
-                <PayPalButtons
-                  style={{ layout: "horizontal" }}
-                  disabled={!name || !email || !phone || !address || !zip || !!emailError}
-                  onApprove={async (data, actions) => {
-                    const order = await actions.order?.capture();
-                    console.log("order", order);
-                    onApprove(data);
+              {isProcessingOrder ? (
+                <div className="rounded-md border border-primary/20 bg-primary/5 px-4 py-3 text-sm text-primary">
+                  Processing your payment and creating your order. Please wait... <Loader2 className="ml-2 animate-spin" />
+                </div>
+              ) : null}
+              {paypalClientId ? (
+                <PayPalScriptProvider
+                  options={{
+                    clientId: paypalClientId,
+                    currency: "USD",
+                    intent: "capture",
                   }}
-                  createOrder={(data, actions) => {
-                    return actions.order.create({
-                      purchase_units: [
-                        {
-                          amount: {
-                            value: calculateTotalAmount(),
-                            currency_code: "USD",
-                          },
-                        },
-                      ],
-                      intent: "CAPTURE",
-                    });
-                  }}
-                />
-              </div>
+                >
+                  <PayPalCheckoutButtons
+                    disabled={
+                      isProcessingOrder ||
+                      !name ||
+                      !email ||
+                      !phone ||
+                      !address ||
+                      !zip ||
+                      !!emailError
+                    }
+                    totalAmount={calculateTotalAmount()}
+                    onApprove={onApprove}
+                  />
+                </PayPalScriptProvider>
+              ) : (
+                <p className="text-sm text-red-600">
+                  PayPal checkout is unavailable. Set
+                  {" "}
+                  <code>NEXT_PUBLIC_PAYPAL_CLIENT_ID</code>
+                  {" "}
+                  in
+                  {" "}
+                  <code>frontend/.env.local</code>
+                  {" "}
+                  and restart the frontend.
+                </p>
+              )}
             </div>
           </div>
         </div>
