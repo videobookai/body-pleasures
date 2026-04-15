@@ -1,5 +1,6 @@
-import { Card } from "@/frontend/components/ui/card"
-import { Button } from "@/frontend/components/ui/button"
+import { Button } from "./ui/button";
+import { Card } from "./ui/card";
+
 
 export function FeaturedProducts() {
   return (

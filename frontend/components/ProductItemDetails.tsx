@@ -89,7 +89,7 @@ const ProductItemDetails = ({ product }: ProductItemDetailsProps) => {
         alt={product.name || "product-image"}
         width={300}
         height={300}
-        className="bg-secondary/10 object-contain md:object-fill rounded-lg h-38 md:h-96 w-full"
+        className="bg-secondary/10 object-cover rounded-lg h-38 md:h-96 w-full"
       />
       <div className="flex flex-col gap-2 justify-start overflow-y-auto px-1 md:px-4 ">
         <div className="h-30 md:h-full overflow-y-auto my-2">
