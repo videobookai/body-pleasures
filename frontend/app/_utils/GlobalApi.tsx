@@ -236,7 +236,7 @@ const getUserCartItems = () =>
           price: productAttributes?.sellingPrice,
           quantity: cartAttributes?.quantity,
           image: imageUrl,
-          product: productAttributes?.id,
+          product: productEntry?.id ?? productAttributes?.id,
         };
       })
       .filter(Boolean);
