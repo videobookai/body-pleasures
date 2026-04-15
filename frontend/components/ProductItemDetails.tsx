@@ -23,7 +23,7 @@ const ProductItemDetails = ({ product }: ProductItemDetailsProps) => {
   const { updateCart, setUpdateCart } = useContext<any>(UpdateCartContext);
 
   const [productTotalPrice, setProductTotalPrice] = useState(
-    product.sellingPrice ? product.sellingPrice : product.mrp
+    product.sellingPrice ? product.sellingPrice : product.mrp,
   );
   const [quantity, setQuantity] = useState(1);
 
@@ -97,7 +97,8 @@ const ProductItemDetails = ({ product }: ProductItemDetailsProps) => {
         <h2 className="text-black/50 
         text-xs
         md:text-sm
-         ">
+         "
+        >
           {product.description}
         </h2>
         </div>

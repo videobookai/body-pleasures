@@ -69,6 +69,10 @@ export default function CartPage() {
   const router = useRouter();
   const [loadingAction, setLoadingAction] = useState(false);
 
+  useEffect(() => {
+    setJwt(sessionStorage.getItem("authToken"));
+  }, []);
+
   const [subTotal, setSubTotal] = useState(0);
 
   useEffect(() => {

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React from "react";
 import { Card, CardFooter } from "./ui/card";
 import Image from "next/image";
@@ -6,7 +6,14 @@ import Image from "next/image";
 import { Button } from "./ui/button";
 
 import ProductItemDetails from "./ProductItemDetails";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog";
 
 interface ProductItemProps {
   product: any;
@@ -43,7 +50,7 @@ const ProductItem = ({ product }: ProductItemProps) => {
         </p>
         <div className="flex flex-row gap-2 items-center">
           <p className="text-xs md:text-base font-bold text-primary font-sans">
-         Price:   ${product.sellingPrice.toFixed(2)}
+            Price: ${product.sellingPrice.toFixed(2)}
           </p>
           <p>
             {product.mrp && (

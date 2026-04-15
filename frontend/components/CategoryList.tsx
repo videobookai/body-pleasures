@@ -39,7 +39,6 @@ const CategoryList = ({ categoryList, title = "Shop by Collections" }: CategoryL
           </Link>
         ))}
       </div>
-      
     </div>
   );
 };
