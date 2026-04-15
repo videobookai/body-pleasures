@@ -34,3 +34,5 @@ next-env.d.ts
 .build
 dist
 .log*
+/.claude/
+/backend/miss-v-admin/.tmp/data.db
