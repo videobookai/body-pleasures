@@ -42,22 +42,17 @@ const Slider = ({ sliderList }: SliderProps) => {
             className="w-full"
           >
             {sliderList.map((slider, index) => {
-              // image from the array
               const imageUrl = slider.image?.[0]?.url;
               console.log("Slider image URL:", imageUrl);
 
               return (
                 <SwiperSlide
                   key={slider.documentId || index}
-                  className="w-full h-64 md:h-96 lg:h-[800px] my-4 lg:my-10 flex items-center justify-center"
+                  className="w-full h-72 md:h-96 lg:h-[800px] my-4 lg:my-10 flex items-center justify-center mx-auto overflow-hidden"
                 >
                   {imageUrl ? (
                     <Image
-                      src={
-                        imageUrl.startsWith("http")
-                          ? imageUrl
-                          : process.env.NEXT_PUBLIC_BASE_URL + imageUrl
-                      }
+                      src={imageUrl}
                       alt={slider.name || "slider image"}
                       width={1000}
                       height={600}
