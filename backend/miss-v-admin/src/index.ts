@@ -26,7 +26,8 @@ export default {
   bootstrap({ strapi }: { strapi: Core.Strapi }) {
     strapi.db.lifecycles.subscribe({
       models: ['plugin::users-permissions.user'],
-      async afterCreate({ result }: { result: any }) {
+      async afterCreate(event: any) {
+        const { result } = event;
         const { username, email } = result;
         if (!email) return;
         try {
