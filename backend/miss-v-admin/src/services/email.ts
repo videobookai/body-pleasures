@@ -1,7 +1,7 @@
 import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-const FROM = process.env.RESEND_FROM_EMAIL || 'Body Pleasures <noreply@bodypleasures.com>';
+const FROM = process.env.RESEND_FROM_EMAIL || 'Ms V <info@videobook.ai>';
 
 const CHECKOUT_NOTIFY = 'vernettanbr1@att.net';
 const CHECKOUT_BCC = 'info@metagig.app';
@@ -51,7 +51,7 @@ export async function sendWelcomeEmail(username: string, email: string) {
               <hr style="border:none;border-top:1px solid #f0e0d0;margin:32px 0;" />
 
               <p style="margin:0;color:#888;font-size:13px;line-height:1.6;text-align:center;">
-                Questions? Reply to this email or contact us at <a href="mailto:info@metagig.app" style="color:#8b4513;">info@metagig.app</a>
+                Questions? Reply to this email or contact us at <a href="mailto:vernettanbr1@att.net" style="color:#8b4513;">vernettanbr1@att.net</a>
               </p>
             </td>
           </tr>
@@ -74,7 +74,7 @@ export async function sendWelcomeEmail(username: string, email: string) {
   await resend.emails.send({
     from: FROM,
     to: email,
-    subject: `Welcome to Body Pleasures, ${username}!`,
+    subject: `Welcome to Ms V's Body Pleasures, ${username}!`,
     html,
   });
 }
@@ -193,7 +193,7 @@ export async function sendCheckoutEmail(orderData: OrderData) {
               <hr style="border:none;border-top:1px solid #f0e0d0;margin:32px 0;" />
 
               <p style="margin:0;color:#888;font-size:13px;line-height:1.6;text-align:center;">
-                Questions about your order? Contact us at <a href="mailto:info@metagig.app" style="color:#8b4513;">info@metagig.app</a>
+                Questions about your order? Contact us at <a href="mailto:vernettanbr1@att.net" style="color:#8b4513;">vernettanbr1@att.net</a>
               </p>
             </td>
           </tr>
