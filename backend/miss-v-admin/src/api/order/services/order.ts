@@ -2,6 +2,7 @@
 import { factories } from '@strapi/strapi';
 import { errors } from '@strapi/utils';
 import { validatePayment } from '../../../utils/paypal';
+import { sendCheckoutEmail } from '../../../services/email';
 
 const { ValidationError } = errors;
 
@@ -41,8 +42,23 @@ export default factories.createCoreService('api::order.order', ({ strapi }) => (
       }
     }
 
-    // Call the default create method
-    return super.create(params);
+    const result = await super.create(params);
+
+    // Send checkout confirmation email (fire-and-forget, don't block order creation)
+    if (data.email) {
+      sendCheckoutEmail({
+        username: data.username,
+        email: data.email,
+        address: data.address,
+        zip: data.zip,
+        phone: data.phone,
+        totalAmount: data.totalAmount,
+        paymentId: data.paymentId,
+        order: data.order,
+      }).catch((err) => strapi.log.error('[email] Failed to send checkout email:', err));
+    }
+
+    return result;
   },
 }));
 
