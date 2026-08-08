@@ -83,13 +83,13 @@ const ProductItemDetails = ({ product }: ProductItemDetailsProps) => {
   };
 
   return (
-    <div className="grid grid-cols-1  gap-2 md:gap-4 md:grid-cols-2 p-4 md:p-7 text-primary ">
+    <div className="grid grid-cols-1  gap-2 md:gap-4 md:grid-cols-2 p-4 md:p-5 text-primary ">
       <Image
-        src={imageUrl}
+        src={imageUrl || "/placeholder.svg"}
         alt={product.name || "product-image"}
         width={300}
         height={300}
-        className="bg-secondary/10 object-cover rounded-lg h-38 md:h-96 w-full"
+        className="bg-secondary/10  object-cover rounded-lg h-52 md:h-96 w-[70%] md:w-full mx-auto"
       />
       <div className="flex flex-col gap-2 justify-start overflow-y-auto px-1 md:px-4 ">
         <div className="h-30 md:h-full overflow-y-auto my-2">

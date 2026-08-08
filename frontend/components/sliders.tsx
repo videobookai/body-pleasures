@@ -31,7 +31,7 @@ const Slider = ({ sliderList }: SliderProps) => {
   return (
     <>
       <style>{sliderStyles}</style>
-      <div className="w-full my-6  py-6 bg-white">
+      <div className="w-full my-3  py-3 bg-white">
       <div className="mx-4 w-full lg:max-w-7xl  flex flex-col items-center  overflow-x-clip lg:mx-auto">
         <Swiper
           modules={[ Autoplay]}
@@ -58,7 +58,7 @@ const Slider = ({ sliderList }: SliderProps) => {
                     alt={slider.name || "slider image"}
                     width={1000}
                     height={600}
-                    className="w-full object-cover  h-[200px] md:h-[400px] lg:h-[500px] transition-transform duration-500"
+                    className="w-full object-cover  h-[200px] md:h-[400px] lg:h-[600px] transition-transform duration-500"
                   />
                 ) : (
                   <div className="w-full h-full bg-gray-200 flex items-center justify-center">
