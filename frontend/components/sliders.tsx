@@ -67,7 +67,8 @@ const Slider = ({ sliderList }: SliderProps) => {
               </SwiperSlide>
             );
           })}
-        </Swiper>
+          </Swiper>
+        </div>
       </div>
     </>
   );
