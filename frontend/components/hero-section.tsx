@@ -19,8 +19,8 @@ export function HeroSection() {
 
             {/* Main heading */}
             <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-serif font-medium mb-2 leading-tight text-left">
-              {"Elevate your wellness"}
-              <span className="block text-primary">{"journey"}</span>
+              {"Elevate your Body"}
+              <span className="block text-primary">{"Pleasures"}</span>
             </h1>
 
             {/* Subheading */}
@@ -46,7 +46,7 @@ export function HeroSection() {
           </div>
 
           {/* Right column: Hero Image Grid */}
-          <div className="my-6 lg:mt-10 lg:grid grid-cols-2 gap-4 hidden">
+          {/* <div className="my-6 lg:mt-10 lg:grid grid-cols-2 gap-4 hidden">
             <div className="aspect-square rounded-2xl overflow-hidden">
               <img
                 src="/images/design-mode/asoap.jpeg"
@@ -75,9 +75,47 @@ export function HeroSection() {
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
               />
             </div>
+          </div> */}
+
+          <div className="lg:grid grid-cols-2 my-8 p-4 gap-2  hidden">
+            <div className="aspect-square rounded-2xl overflow-hidden bg-no-repeat"
+            style={{
+              backgroundImage: "url('/hero-image.png')",
+              backgroundSize: "200% 200%",
+              backgroundPosition: "0% 0%",
+            }}>
+
+            </div>
+            <div className="aspect-square rounded-2xl overflow-hidden bg-no-repeat"
+            style={{
+              backgroundImage: "url('/hero-image.png')",
+              backgroundSize: "200% 200%",
+              backgroundPosition: "100% 0%",
+            }}>
+
+            </div>
+            <div className="aspect-square rounded-2xl overflow-hidden bg-no-repeat"
+            style={{
+              backgroundImage: "url('/hero-image.png')",
+              backgroundSize: "200% 200%",
+              backgroundPosition: "0% 100%",
+            }}>
+
+            </div>
+            <div className="aspect-square rounded-2xl overflow-hidden bg-no-repeat"
+            style={{
+              backgroundImage: "url('/hero-image.png')",
+              backgroundSize: "200% 200%",
+              backgroundPosition: "100% 100%",
+            }}>
+
+            </div>
+            </div>
+
           </div>
+        
         </div>
-      </div>
+    
     </section>
   )
 }
