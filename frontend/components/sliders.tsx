@@ -56,7 +56,7 @@ const Slider = ({ sliderList }: SliderProps) => {
                       alt={slider.name || "slider image"}
                       width={1000}
                       height={600}
-                      className="w-full object-cover  h-[200px] md:h-[400px] lg:h-[500px] transition-transform duration-500"
+                      className="w-full object-cover  h-[200px] md:h-[400px] lg:h-[600px] transition-transform duration-500"
                     />
                   ) : (
                     <div className="w-full h-full bg-gray-200 flex items-center justify-center">

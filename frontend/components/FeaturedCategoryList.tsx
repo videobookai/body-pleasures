@@ -3,10 +3,11 @@ import GlobalApi from "../app/_utils/GlobalApi";
 import CategoryList from "./CategoryList";
 
 const FEATURED_CATEGORY_NAMES = [
-  "artisan soaps",
-  "Turmeric Oil",
+  "Turmeric Soap",
+  "Beard Conditioner",
   "Relief Products",
-  "african black soap",
+  "Beard Wash Bar",
+  "Body Cream"
 ];
 
 const FeaturedCategoryList = async () => {
