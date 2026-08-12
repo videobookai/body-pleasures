@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
 import Link from "next/link";
 import { Eye, EyeClosed, Loader2 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -9,7 +9,7 @@ import GlobalApi from "../../_utils/GlobalApi";
 import { Input } from "../../../components/ui/input";
 import { Button } from "../../../components/ui/button";
 
-const ResetPassword = () => {
+const ResetPasswordContent = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -150,6 +150,14 @@ const ResetPassword = () => {
         </div>
       </div>
     </div>
+  );
+};
+
+const ResetPassword = () => {
+  return (
+    <Suspense>
+      <ResetPasswordContent />
+    </Suspense>
   );
 };
 

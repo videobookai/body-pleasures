@@ -42,7 +42,6 @@ const Slider = ({ sliderList }: SliderProps) => {
             className="w-full"
           >
             {sliderList.map((slider, index) => {
-              // image from the array
               const imageUrl = slider.image?.[0]?.url;
               console.log("Slider image URL:", imageUrl);
 

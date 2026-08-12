@@ -1,4 +1,5 @@
 import type { Core } from '@strapi/strapi';
+import { sendWelcomeEmail } from './services/email';
 
 export default {
   register({ strapi }: { strapi: Core.Strapi }) {
@@ -22,5 +23,19 @@ export default {
     strapi.hook = patchedHook as any;
   },
 
-  bootstrap(/* { strapi }: { strapi: Core.Strapi } */) {},
+  bootstrap({ strapi }: { strapi: Core.Strapi }) {
+    strapi.db.lifecycles.subscribe({
+      models: ['plugin::users-permissions.user'],
+      async afterCreate(event: any) {
+        const { result } = event;
+        const { username, email } = result;
+        if (!email) return;
+        try {
+          await sendWelcomeEmail(username || email, email);
+        } catch (err) {
+          strapi.log.error('[email] Failed to send welcome email:', err);
+        }
+      },
+    });
+  },
 };
