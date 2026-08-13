@@ -43,6 +43,18 @@
     "orderStatus": {
       "type": "string",
       "default": "Pending"
+    },
+    "paymentVerified": {
+      "type": "boolean",
+      "default": false
+    },
+    "verificationStatus": {
+      "type": "string",
+      "default": "pending",
+      "enum": ["pending", "verified", "failed", "error"]
+    },
+    "verifiedAt": {
+      "type": "datetime"
     }
   }
 }

@@ -1,0 +1,25 @@
+import React from 'react'
+import ProductItem from './ProductItem';
+
+interface ProductListProps {
+    productList: any[];
+}
+
+const ProductList = ({productList}: ProductListProps) => {
+   
+  return (
+    <div className='mb-5 flex flex-col justify-center w-full lg:mx-auto px-2 py-4 rounded-lg max-w-3xl lg:max-w-7xl'>
+       
+        <div className="grid grid-cols-2 md:grid-cols-3 
+        lg:grid-cols-5
+        gap-2 md:gap-4 lg:gap-6 mx-auto w-full lg:max-w-7xl">
+            {productList.map((product, index) => (
+                <ProductItem product={product} key={product.id || index} />
+            ))}
+        </div>
+    
+    </div>
+  )
+}
+
+export default ProductList
