@@ -64,7 +64,7 @@ const ProductCategory = async ({
           </p>
         </div>
         
-        <div className="p-5 md:p-10">
+        <div className="p-2 md:p-5">
           <ProductList productList={productList} />
         </div>
         <h2 className="text-xl md:text-3xl font-bold text-primary lg:mb-10 text-start ml-4 md:ml-12 my-4 md:my-7">Other Collections:</h2>
