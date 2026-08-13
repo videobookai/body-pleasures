@@ -47,7 +47,7 @@ export function ContactSection() {
           {/* Left side - Contact Info */}
           <div>
             <h2 className="text-4xl sm:text-5xl font-serif font-medium mb-6 text-balance">{"Get in touch"}</h2>
-            <p className="text-lg text-muted-foreground mb-12 leading-relaxed text-pretty">
+            <p className="text-lg text-muted-foreground mb-12 leading-relaxed text-pretty font-serif-variant">
               {
                 "Have questions about our products? We'd love to hear from you. Reach out and let us help you find the perfect wellness products."
               }
@@ -86,7 +86,7 @@ export function ContactSection() {
                 </div>
                 <div>
                   <h3 className="font-medium mb-1">Visit Us</h3>
-                  <p className="text-sm text-muted-foreground">{"Find us at local markets and artisan fairs"}</p>
+                  <p className="text-sm text-muted-foreground font-serif-variant">{"Find us at local markets and artisan fairs"}</p>
                 </div>
               </div>
             </div>

@@ -1,4 +1,4 @@
-import { Flower2 } from "lucide-react"
+import { Flower2 } from "lucide-react";
 
 export function Footer() {
   return (
@@ -9,7 +9,9 @@ export function Footer() {
           <div className="md:col-span-2">
             <div className="flex items-center gap-2 mb-4">
               <Flower2 className="h-6 w-6" />
-              <h3 className="text-xl font-serif font-semibold">{"Ms V's Body Pleasures"}</h3>
+              <h3 className="text-xl font-serif font-semibold">
+                {"Ms V's Body Pleasures"}
+              </h3>
             </div>
             <p className="text-sm text-primary-foreground/80 leading-relaxed">
               {
@@ -23,22 +25,34 @@ export function Footer() {
             <h4 className="font-medium mb-4">Shop</h4>
             <ul className="space-y-2 text-sm text-primary-foreground/80">
               <li>
-                <a href="#" className="hover:text-primary-foreground transition-colors">
+                <a
+                  href="#"
+                  className="hover:text-primary-foreground transition-colors"
+                >
                   Artisan Soaps
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-primary-foreground transition-colors">
+                <a
+                  href="#"
+                  className="hover:text-primary-foreground transition-colors"
+                >
                   Beard Care
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-primary-foreground transition-colors">
+                <a
+                  href="#"
+                  className="hover:text-primary-foreground transition-colors"
+                >
                   Body Care
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-primary-foreground transition-colors">
+                <a
+                  href="#"
+                  className="hover:text-primary-foreground transition-colors"
+                >
                   Candles
                 </a>
               </li>
@@ -50,22 +64,34 @@ export function Footer() {
             <h4 className="font-medium mb-4">Company</h4>
             <ul className="space-y-2 text-sm text-primary-foreground/80">
               <li>
-                <a href="#about" className="hover:text-primary-foreground transition-colors">
+                <a
+                  href="#about"
+                  className="hover:text-primary-foreground transition-colors"
+                >
                   About Us
                 </a>
               </li>
               <li>
-                <a href="#contact" className="hover:text-primary-foreground transition-colors">
+                <a
+                  href="#contact"
+                  className="hover:text-primary-foreground transition-colors"
+                >
                   Contact
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-primary-foreground transition-colors">
+                <a
+                  href="#"
+                  className="hover:text-primary-foreground transition-colors"
+                >
                   Markets & Events
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-primary-foreground transition-colors">
+                <a
+                  href="#"
+                  className="hover:text-primary-foreground transition-colors"
+                >
                   Wholesale
                 </a>
               </li>
@@ -76,12 +102,18 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-primary-foreground/20">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-primary-foreground/80">
-            <p>{"© 2025 Ms V's Body Pleasures. All rights reserved."}</p>
+            <p>{"© 2026 Ms V's Body Pleasures. All rights reserved."}</p>
             <div className="flex gap-6">
-              <a href="#" className="hover:text-primary-foreground transition-colors">
+              <a
+                href="#"
+                className="hover:text-primary-foreground transition-colors"
+              >
                 Privacy Policy
               </a>
-              <a href="#" className="hover:text-primary-foreground transition-colors">
+              <a
+                href="#"
+                className="hover:text-primary-foreground transition-colors"
+              >
                 Terms of Service
               </a>
             </div>
@@ -89,5 +121,5 @@ export function Footer() {
         </div>
       </div>
     </footer>
-  )
+  );
 }

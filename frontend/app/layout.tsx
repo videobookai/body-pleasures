@@ -3,7 +3,6 @@ import { Playfair_Display, Inter } from "next/font/google"
 // import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 import { Providers } from "./_utils/Providers/provider"
-import {PayPalScriptProvider} from "@paypal/react-paypal-js"
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -48,8 +47,8 @@ export default function RootLayout({
 }>) {
   return (
       
-    <html lang="en">
-      <body className={`${inter.variable} ${playfair.variable} font-sans antialiased`} suppressHydrationWarning={true}>
+    <html lang="en" className="scroll-smooth" suppressHydrationWarning={true}>
+      <body className={`${inter.variable} ${playfair.variable} font-serif antialiased`} suppressHydrationWarning={true}>
         <Providers>
           {children}
         </Providers>

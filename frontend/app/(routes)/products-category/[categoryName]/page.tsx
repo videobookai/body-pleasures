@@ -14,23 +14,61 @@ const ProductCategory = async ({
 }) => {
   const { categoryName } = await params;
 
-  const productList = await GlobalApi.getProductByCategory(categoryName);
+  const decodeCategoryName = (name: string) => {
+    try {
+      return decodeURIComponent(name);
+    } catch {
+      return name;
+    }
+  };
+
+  const toTitleCase = (value: string) =>
+    value
+      .trim()
+      .split(/\s+/)
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(" ");
+
+  const normalizeCategoryName = (value: string) =>
+    decodeCategoryName(value).trim().toLowerCase();
+
+  const decodedCategoryName = decodeCategoryName(categoryName);
+  const displayCategoryName = toTitleCase(decodedCategoryName);
+
+  const productList = await GlobalApi.getProductByCategory(decodedCategoryName);
   const categoryList = await GlobalApi.getCategoryList();
-  console.log("Product List in Category Page:", productList);
-  console.log("Category Name:", categoryName);
+  const selectedCategory = categoryList.find(
+    (category: any) =>
+      normalizeCategoryName(category.name) ===
+      normalizeCategoryName(decodedCategoryName)
+  );
+
   return (
     <div className="mt-24 flex flex-col">
       <Navigation />
-      <div className="w-full">
+      <div className="w-full max-w-3xl md:max-w-4xl lg:max-w-7xl mx-auto">
         <div className="bg-primary w-full">
           <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold  mb-4  capitalize text-center text-white py-4">
-            {categoryName}
+            {displayCategoryName}
           </h2>
         </div>
-        <TopCategoryList categoryList={categoryList} />{" "}
+        
+        <div className="px-5 md:px-10 pt-6">
+          {selectedCategory?.description && (
+            <p className="mx-auto max-w-3xl text-center text-muted-foreground text-sm md:text-lg leading-relaxed tracking-wider font-serif">
+              {selectedCategory.description}
+            </p>
+          )}
+          <p className="mt-4 text-center text-sm md:text-base text-muted-foreground">
+            {productList.length} product(s) found
+          </p>
+        </div>
+        
         <div className="p-5 md:p-10">
           <ProductList productList={productList} />
         </div>
+        <h2 className="text-xl md:text-3xl font-bold text-primary lg:mb-10 text-start ml-4 md:ml-12 my-4 md:my-7">Other Collections:</h2>
+        <TopCategoryList categoryList={categoryList} />
       </div>
       <Footer />
     </div>

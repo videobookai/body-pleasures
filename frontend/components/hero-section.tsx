@@ -1,6 +1,7 @@
 "use client"
 import { Sparkles } from "lucide-react"
 import { Button } from "./ui/button"
+import Link from "next/link"
 
 export function HeroSection() {
   return (
@@ -18,12 +19,12 @@ export function HeroSection() {
 
             {/* Main heading */}
             <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-serif font-medium mb-2 leading-tight text-left">
-              {"Elevate your wellness"}
-              <span className="block text-primary">{"journey"}</span>
+              {"Elevate your Body"}
+              <span className="block text-primary">{"Pleasures"}</span>
             </h1>
 
             {/* Subheading */}
-            <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mb-12 leading-relaxed text-left">
+            <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mb-12 leading-relaxed text-left font-serif-variant">
               {
                 "Transform your daily routine into an extraordinary experience with our artisan soaps, body care products, and wellness essentials"
               }
@@ -31,17 +32,21 @@ export function HeroSection() {
 
             {/* CTA Buttons  */}
             <div className="flex flex-col sm:flex-row items-start justify-start gap-4">
-              <Button size="lg" className="min-w-[200px] rounded-full cursor-pointer">
-                Explore Collection
-              </Button>
+              <Link href="/shop">
+                <Button size="lg" className="min-w-[200px] rounded-full cursor-pointer">
+                  Explore Collection
+                </Button>
+              </Link> 
+              <Link href="/about">
               <Button size="lg" variant="outline" className="min-w-[200px] bg-transparent rounded-full cursor-pointer">
                 Learn Our Story
               </Button>
+              </Link>
             </div>
           </div>
 
           {/* Right column: Hero Image Grid */}
-          <div className="my-6 lg:mt-10 lg:grid grid-cols-2 gap-4 hidden">
+          {/* <div className="my-6 lg:mt-10 lg:grid grid-cols-2 gap-4 hidden">
             <div className="aspect-square rounded-2xl overflow-hidden">
               <img
                 src="/images/design-mode/asoap.jpeg"
@@ -70,9 +75,47 @@ export function HeroSection() {
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
               />
             </div>
+          </div> */}
+
+          <div className="lg:grid grid-cols-2 my-8 p-4 gap-2  hidden">
+            <div className="aspect-square rounded-2xl overflow-hidden bg-no-repeat"
+            style={{
+              backgroundImage: "url('/hero-image.png')",
+              backgroundSize: "200% 200%",
+              backgroundPosition: "0% 0%",
+            }}>
+
+            </div>
+            <div className="aspect-square rounded-2xl overflow-hidden bg-no-repeat"
+            style={{
+              backgroundImage: "url('/hero-image.png')",
+              backgroundSize: "200% 200%",
+              backgroundPosition: "100% 0%",
+            }}>
+
+            </div>
+            <div className="aspect-square rounded-2xl overflow-hidden bg-no-repeat"
+            style={{
+              backgroundImage: "url('/hero-image.png')",
+              backgroundSize: "200% 200%",
+              backgroundPosition: "0% 100%",
+            }}>
+
+            </div>
+            <div className="aspect-square rounded-2xl overflow-hidden bg-no-repeat"
+            style={{
+              backgroundImage: "url('/hero-image.png')",
+              backgroundSize: "200% 200%",
+              backgroundPosition: "100% 100%",
+            }}>
+
+            </div>
+            </div>
+
           </div>
+        
         </div>
-      </div>
+    
     </section>
   )
 }

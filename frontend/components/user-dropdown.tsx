@@ -1,34 +1,27 @@
 "use client";
 
-;
-import { CircleUserRound, User } from "lucide-react";
+import { CircleUserRound } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import { Button } from "./ui/button";
+import { useAuth } from "@/app/_context/AuthContext";
 
 export function UserDropdown() {
-  const [user, setUser] = useState(null);
   const router = useRouter();
+  const { user, signOut } = useAuth();
 
-  useEffect(() => {
-    const userString = sessionStorage.getItem("user");
-    if (userString) {
-      setUser(JSON.parse(userString));
-    }
-  }, []);
-
-  const handleLogout = () => {
-    sessionStorage.removeItem("user");
-    sessionStorage.removeItem("authToken");
-    setUser(null);
+  const handleLogout = async () => {
+    await signOut();
     router.push("/");
   };
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <CircleUserRound className="w-4 h-4 md:w-5 md:h-5 cursor-pointer" />
+        <Button variant="ghost" size="icon" className="h-auto w-auto p-0">
+          <CircleUserRound className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 cursor-pointer" />
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         {user ? (

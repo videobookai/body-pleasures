@@ -16,27 +16,26 @@ interface OrderItem {
   };
 }
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 const MyOrderItem = ({ orderItem }: { orderItem: OrderItem }) => {
   return (
-    <div className="w-full grid grid-cols-5 mt-3 items-center">
+    <div className="mt-3 grid w-full grid-cols-1 gap-3 rounded-md border border-primary/10 bg-white/70 p-3 sm:grid-cols-[96px_minmax(0,1fr)_auto] sm:items-center sm:gap-4">
       <Image
-        src={baseUrl + orderItem?.product?.images[0]?.url}
+        src={orderItem?.product?.images[0]?.url}
         alt={orderItem?.product?.images[0]?.alternativeText}
         width={80}
         height={50}
-        className="bg-gray-100 p-1 rounded-md border object-cover w-full h-20 md:h-32 lg:h-40 lg:w-52"
+        className="h-32 w-full rounded-md border bg-gray-100 object-contain  md:object-cover p-1 sm:h-24 sm:w-24"
       />
 
-      <div className="col-span-2 ml-24 lg:ml-36">
-        <h2>{orderItem.product.name}</h2>
+      <div className="min-w-0">
+        <h2 className="break-words font-medium">{orderItem.product.name}</h2>
         <h2 className="text-sm">
           Item Price: ${orderItem.product.sellingPrice}
         </h2>
       </div>
-      <h2>Quantity: {orderItem.quantity}</h2>
+      <h2 className="text-sm font-medium sm:text-base">Quantity: {orderItem.quantity}</h2>
 
-      <hr className="col-span-5 my-2 w-[90%]" />
+      <hr className="col-span-full my-1 w-full" />
     </div>
   );
 };
