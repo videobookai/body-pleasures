@@ -125,7 +125,7 @@ const getCategoryListByNames = (names: string[]) => {
 
 const getAllProducts = () =>
   axiosClient
-    .get("/products?populate=*")
+    .get("/products?populate=*&pagination[limit]=100")
     .then((resp) => {
       return resp.data.data.map(normalizeProduct);
     })
@@ -145,7 +145,7 @@ const getProductByCategory = (category: string) =>
     .get(
       "/products?filters[categories][name][$in]=" +
         encodeURIComponent(category) +
-        "&populate=*",
+        "&populate=*&pagination[limit]=100",
       { meta: { public: true } } as any
     )
     .then((resp) => {
