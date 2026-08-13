@@ -1,3 +1,0 @@
-{
-  "/(routes)/products-category/[categoryName]/page": "app/(routes)/products-category/[categoryName]/page.js"
-}

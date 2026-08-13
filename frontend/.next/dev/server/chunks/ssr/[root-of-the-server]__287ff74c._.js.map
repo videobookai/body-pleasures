@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 14, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/DELL/Documents/coding/body-pleasures/app/%28routes%29/products-category/%5BcategoryName%5D/page.tsx"],"sourcesContent":["import React from 'react'\r\n\r\nconst ProductCategory = () => {\r\n  return (\r\n    <div>\r\n        \r\n    </div>\r\n  )\r\n}\r\n\r\nexport default ProductCategory"],"names":[],"mappings":";;;;;;AAEA,MAAM,kBAAkB;IACtB,qBACE,6VAAC;;;;;AAIL;uCAEe","debugId":null}}]
-}
