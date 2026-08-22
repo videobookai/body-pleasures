@@ -494,8 +494,16 @@ export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
     > &
       Schema.Attribute.Private;
     name: Schema.Attribute.String;
+    parentCategory: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::category.category'
+    >;
     products: Schema.Attribute.Relation<'manyToMany', 'api::product.product'>;
     publishedAt: Schema.Attribute.DateTime;
+    subcategories: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::category.category'
+    >;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -556,6 +564,8 @@ export interface ApiOrderOrder extends Struct.CollectionTypeSchema {
     orderStatus: Schema.Attribute.String &
       Schema.Attribute.DefaultTo<'Pending'>;
     paymentId: Schema.Attribute.String;
+    paymentVerified: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
     phone: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
     totalAmount: Schema.Attribute.Decimal;
@@ -564,6 +574,9 @@ export interface ApiOrderOrder extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     userId: Schema.Attribute.Integer;
     username: Schema.Attribute.String;
+    verificationStatus: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'pending'>;
+    verifiedAt: Schema.Attribute.DateTime;
     zip: Schema.Attribute.String;
   };
 }
