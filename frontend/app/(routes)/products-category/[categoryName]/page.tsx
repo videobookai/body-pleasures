@@ -5,6 +5,7 @@ import GlobalApi from "../../../_utils/GlobalApi";
 import { Navigation } from "../../../../components/navigation";
 import ProductList from "../../../../components/ProductList";
 import { Footer } from "../../../../components/footer";
+import NewCategoryList from "@/components/NewCategoryList";
 
 
 const ProductCategory = async ({
@@ -55,7 +56,7 @@ const ProductCategory = async ({
         
         <div className="px-5 md:px-10 pt-6">
           {selectedCategory?.description && (
-            <p className="mx-auto max-w-3xl text-center text-muted-foreground text-sm md:text-lg leading-relaxed tracking-wider font-serif">
+            <p className="mx-auto max-w-3xl text-center text-black text-sm md:text-lg leading-relaxed tracking-wider font-serif">
               {selectedCategory.description}
             </p>
           )}
@@ -67,8 +68,8 @@ const ProductCategory = async ({
         <div className="p-2 md:p-5">
           <ProductList productList={productList} />
         </div>
-        <h2 className="text-xl md:text-3xl font-bold text-primary lg:mb-10 text-start ml-4 md:ml-12 my-4 md:my-7">Other Collections:</h2>
-        <TopCategoryList categoryList={categoryList} />
+        
+        <NewCategoryList title="Other Collections" categoryList={categoryList} />
       </div>
       <Footer />
     </div>
