@@ -50,7 +50,7 @@ const ProductItem = ({ product }: ProductItemProps) => {
         </p> */}
         <div className="flex flex-row gap-2 items-center">
           <p className="text-xs md:text-base font-bold text-black font-sans">
-            Price: ${product.sellingPrice.toFixed(2)}
+            Price: ${typeof product.sellingPrice === "number" ? product.sellingPrice.toFixed(2) : "N/A"}
           </p>
           <p>
             {product.mrp && (
