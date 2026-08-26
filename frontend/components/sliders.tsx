@@ -52,7 +52,7 @@ const Slider = ({ sliderList }: SliderProps) => {
                 >
                   {imageUrl ? (
                     <Image
-                      src={`${baseUrl}${imageUrl}`}
+                      src={imageUrl}
                       alt={slider.name || "slider image"}
                       width={1000}
                       height={600}
