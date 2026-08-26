@@ -7,6 +7,7 @@ import GlobalApi from "./_utils/GlobalApi";
 import PaginatedProductList from "@/components/PaginatedProductList";
 import FeaturedCategoryList from "@/components/FeaturedCategoryList";
 import PaginatedCategoryList from "@/components/PaginatedCategoryList";
+import NewCategoryList from "@/components/NewCategoryList";
 
 export default async function Home() {
   const sliderList = await GlobalApi.getSliders();
@@ -21,8 +22,10 @@ export default async function Home() {
       >
         <HeroSection />
         <Slider sliderList={sliderList} />
-        <FeaturedCategoryList />
-        <PaginatedCategoryList categoryList={categoryList} />
+        {/* <FeaturedCategoryList /> */}
+
+        <NewCategoryList categoryList={categoryList} title="Featured Categories" />
+        {/* <PaginatedCategoryList categoryList={categoryList} /> */}
 
         <div className="w-full text-left">
           <h2 className="text-xl md:text-3xl font-bold text-primary  ml-2  md:ml-10 lg:ml-70 font-serif">

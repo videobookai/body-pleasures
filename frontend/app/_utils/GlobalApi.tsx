@@ -86,14 +86,14 @@ axiosClient.interceptors.response.use(
   (error) => Promise.reject(error)
 );
 
-const getCategory = () => axiosClient.get("/categories", { meta: { public: true } } as any);
+const getCategory = () => axiosClient.get("/categories?populate=*&pagination[limit]=100", { meta: { public: true } } as any);
 
 const getSliders = () =>
   axiosClient.get("/sliders?populate=*").then((resp) => resp.data.data);
 
 const getCategoryList = () =>
   axiosClient
-    .get("/categories?populate=*", { meta: { public: true } } as any)
+    .get("/categories?populate[0]=icon&populate[1]=subcategories.icon&populate[2]=parentCategory&pagination[limit]=100", { meta: { public: true } } as any)
     .then((resp) => resp.data.data);
 
 const getCategoryListByNames = (names: string[]) => {
