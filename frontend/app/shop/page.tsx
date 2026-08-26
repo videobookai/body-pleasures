@@ -4,6 +4,7 @@ import PaginatedProductList from "@/components/PaginatedProductList";
 import React from "react";
 import GlobalApi from "../_utils/GlobalApi";
 import TopCategoryList from "../(routes)/products-category/_components/TopCategoryList";
+import NewCategoryList from "@/components/NewCategoryList";
 
 const ShopPage = async () => {
   const productList = await GlobalApi.getAllProducts();
@@ -18,10 +19,8 @@ const ShopPage = async () => {
             Shop
           </h2>
         </div>
-        <h2 className="text-xl md:text-3xl lg:text-4xl font-bold text-primary mt-6 mb-4 ml-2 md:ml-8 font-serif">
-          Categories:
-        </h2>
-        <TopCategoryList categoryList={categoryList} />
+        
+       <NewCategoryList title="Our Collections" categoryList={categoryList} />
         <div className="flex ml-2 md:ml-8  mt-4 md:mt-6 lg:mt-8">
         <h2 className='text-xl md:text-3xl lg:text-4xl font-bold text-primary  font-serif'>
           Top Products

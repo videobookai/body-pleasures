@@ -1,8 +1,7 @@
 "use client";
 
-import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Autoplay } from "swiper/modules";
+import { Autoplay } from "swiper/modules";
 import Image from "next/image";
 import "swiper/css";
 import "swiper/css/navigation";
@@ -44,6 +43,7 @@ const Slider = ({ sliderList }: SliderProps) => {
             {sliderList.map((slider, index) => {
               const imageUrl = slider.image?.[0]?.url;
               console.log("Slider image URL:", imageUrl);
+              const baseUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL || "http://localhost:1337";
 
               return (
                 <SwiperSlide
@@ -52,7 +52,7 @@ const Slider = ({ sliderList }: SliderProps) => {
                 >
                   {imageUrl ? (
                     <Image
-                      src={imageUrl}
+                      src={`${baseUrl}${imageUrl}`}
                       alt={slider.name || "slider image"}
                       width={1000}
                       height={600}

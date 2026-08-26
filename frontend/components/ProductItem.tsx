@@ -45,12 +45,12 @@ const ProductItem = ({ product }: ProductItemProps) => {
         <h3 className="text-sm md:text-lg font-bold text-primary mb-2 font-serif" >
           {product.name}
         </h3>
-        <p className="text-xs md:text-sm text-muted-foreground mb-2 truncate ">
+        {/* <p className="text-xs md:text-sm text-muted-foreground mb-2 truncate ">
           {product.description}
-        </p>
+        </p> */}
         <div className="flex flex-row gap-2 items-center">
-          <p className="text-xs md:text-base font-bold text-primary font-sans">
-            Price: ${product.sellingPrice.toFixed(2)}
+          <p className="text-xs md:text-base font-bold text-black font-sans">
+            Price: ${typeof product.sellingPrice === "number" ? product.sellingPrice.toFixed(2) : "N/A"}
           </p>
           <p>
             {product.mrp && (

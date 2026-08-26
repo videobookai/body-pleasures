@@ -100,7 +100,7 @@ useEffect(() => {
             >
               Shop
             </a>
-            <DropdownMenu>
+            {/* <DropdownMenu>
               <DropdownMenuTrigger asChild className="cursor-pointer">
                 <Button
                   variant="ghost"
@@ -129,7 +129,7 @@ useEffect(() => {
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
-            </DropdownMenu>
+            </DropdownMenu> */}
             <a
               href="/about"
               className="text-lg text-gray-600 hover:text-black transition-colors font-bold"

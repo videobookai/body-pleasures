@@ -94,9 +94,9 @@ const ProductItemDetails = ({ product }: ProductItemDetailsProps) => {
       <div className="flex flex-col gap-2 justify-start overflow-y-auto px-1 md:px-4 ">
         <div className="h-30 md:h-full overflow-y-auto my-2">
         <h2 className="text-xl md:text-3xl lg:text-4xl font-bold font-serif">{product.name}</h2>
-        <h2 className="text-black/50 
+        <h2 className="text-gray-800 
         text-xs
-        md:text-sm
+        md:text-sm mt-2
          "
         >
           {product.description}
