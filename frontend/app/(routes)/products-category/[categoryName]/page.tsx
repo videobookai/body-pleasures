@@ -1,6 +1,4 @@
 
-import React from "react";
-import TopCategoryList from "../_components/TopCategoryList";
 import GlobalApi from "../../../_utils/GlobalApi";
 import { Navigation } from "../../../../components/navigation";
 import ProductList from "../../../../components/ProductList";
@@ -36,13 +34,23 @@ const ProductCategory = async ({
   const decodedCategoryName = decodeCategoryName(categoryName);
   const displayCategoryName = toTitleCase(decodedCategoryName);
 
-  const productList = await GlobalApi.getProductByCategory(decodedCategoryName);
   const categoryList = await GlobalApi.getCategoryList();
   const selectedCategory = categoryList.find(
     (category: any) =>
       normalizeCategoryName(category.name) ===
       normalizeCategoryName(decodedCategoryName)
   );
+
+  const categoryNamesToFetch = [decodedCategoryName];
+  if (selectedCategory && selectedCategory.subcategories) {
+    selectedCategory.subcategories.forEach((sub: any) => {
+      if (sub.name) {
+        categoryNamesToFetch.push(sub.name);
+      }
+    });
+  }
+
+  const productList = await GlobalApi.getProductsByCategories(categoryNamesToFetch);
 
   return (
     <div className="mt-24 flex flex-col">
