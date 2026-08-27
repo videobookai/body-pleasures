@@ -15,9 +15,9 @@ const ProductCategory = async ({
 
   const decodeCategoryName = (name: string) => {
     try {
-      return decodeURIComponent(name);
+      return decodeURIComponent(name).replace(/%20/g, " ");
     } catch {
-      return name;
+      return name.replace(/%20/g, " ");
     }
   };
 
@@ -63,9 +63,15 @@ const ProductCategory = async ({
         </div>
         
         <div className="px-5 md:px-10 pt-6">
-          {selectedCategory?.description && (
+          {selectedCategory?.description ? (
             <p className="mx-auto max-w-3xl text-center text-black text-sm md:text-lg leading-relaxed tracking-wider font-serif">
               {selectedCategory.description}
+            </p>
+          ) : (
+            <p className="mx-auto max-w-3xl text-center text-black text-sm md:text-lg leading-relaxed tracking-wider font-serif mt-2">
+              View all products in the <span className=" text-primary font-extrabold">
+              {displayCategoryName} 
+                </span> category and its subcategories.
             </p>
           )}
           <p className="mt-4 text-center text-sm md:text-base text-muted-foreground">
