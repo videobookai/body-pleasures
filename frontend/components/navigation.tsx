@@ -184,7 +184,7 @@ useEffect(() => {
             >
               Shop
             </a>
-            <DropdownMenu>
+            {/* <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant={"ghost"}
@@ -211,7 +211,7 @@ useEffect(() => {
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
-            </DropdownMenu>
+            </DropdownMenu> */}
             <a
               href="/about"
               className="block text-sm text-foreground/80 hover:text-foreground transition-colors"
@@ -228,6 +228,7 @@ useEffect(() => {
                  <Link href="/cart" className="relative">
               <Button size="sm" variant="ghost" className="m-0! px-0! py-0!">
                 <ShoppingBag className="h-4 w-4 md:w-5 md:h-5 lg:w-6 lg:h-6" />
+                Cart
               </Button>
               {totalCartItems > 0 && (
                 <span className="absolute -top-1 -right-3 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
@@ -237,7 +238,7 @@ useEffect(() => {
             </Link>
             <span className="flex items-center gap-2 text-sm text-gray-600 hover:text-black transition-colors">
                 
-                <UserDropdown/>
+                <UserDropdown/> Profile
             </span>
 
            
