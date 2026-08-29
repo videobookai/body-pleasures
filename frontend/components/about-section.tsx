@@ -39,18 +39,18 @@ export function AboutSection() {
             <h2 className="text-4xl sm:text-5xl font-serif font-medium mb-6 text-balance">
               {"Artisan wellness for body & soul"}
             </h2>
-            <p className="text-sm md:text-lg text-muted-foreground mb-8 leading-relaxed text-pretty font-serif-variant tracking-wider">
+            <p className="text-sm md:text-lg text-gray-700 mb-8 leading-relaxed text-pretty font-serif-variant tracking-wider">
               {
                 "At Ms V's Body Pleasures, we believe that self-care should be an extraordinary experience. Our handcrafted artisan products are designed to transform your daily routine into a delightful wellness journey."
               }
             </p>
-            <p className="text-sm md:text-lg text-muted-foreground mb-12 leading-relaxed text-pretty font-serif-variant tracking-wider">
+            <p className="text-sm md:text-lg text-gray-700 mb-12 leading-relaxed text-pretty font-serif-variant tracking-wider">
               {
                 "From our signature artisan soaps to our nourishing body care line, each product is made with premium natural ingredients and a commitment to quality that you can feel."
               }
             </p>
 
-            <div className="space-y-6">
+            <div className="space-y-6 my-4">
               {values.map((value) => (
                 <div key={value.title} className="flex gap-4">
                   <div className="flex-shrink-0">
@@ -60,7 +60,7 @@ export function AboutSection() {
                   </div>
                   <div>
                     <h3 className="text-lg font-medium mb-1">{value.title}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed font-serif-variant">{value.description}</p>
+                    <p className="text-sm text-gray-700 leading-relaxed font-serif-variant">{value.description}</p>
                   </div>
                 </div>
               ))}
