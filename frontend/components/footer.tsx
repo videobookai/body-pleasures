@@ -1,4 +1,5 @@
 import { Flower2 } from "lucide-react";
+import Link from "next/link";
 
 export function Footer() {
   return (
@@ -22,41 +23,8 @@ export function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-medium mb-4">Shop</h4>
-            <ul className="space-y-2 text-sm text-primary-foreground/80">
-              <li>
-                <a
-                  href="#"
-                  className="hover:text-primary-foreground transition-colors"
-                >
-                  Artisan Soaps
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="hover:text-primary-foreground transition-colors"
-                >
-                  Beard Care
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="hover:text-primary-foreground transition-colors"
-                >
-                  Body Care
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="hover:text-primary-foreground transition-colors"
-                >
-                  Candles
-                </a>
-              </li>
-            </ul>
+            <Link href="/shop" className="font-medium mb-4">Shop</Link>
+            
           </div>
 
           {/* Company */}
@@ -80,7 +48,7 @@ export function Footer() {
                 </a>
               </li>
               <li>
-                <a
+                {/* <a
                   href="#"
                   className="hover:text-primary-foreground transition-colors"
                 >
@@ -93,8 +61,8 @@ export function Footer() {
                   className="hover:text-primary-foreground transition-colors"
                 >
                   Wholesale
-                </a>
-              </li>
+                </a>*/}
+              </li> 
             </ul>
           </div>
         </div>

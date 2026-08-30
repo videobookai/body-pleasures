@@ -31,7 +31,7 @@ const Slider = ({ sliderList }: SliderProps) => {
     <>
       <style>{sliderStyles}</style>
       <div className="w-full my-6  py-6 bg-white">
-        <div className="mx-4 w-full lg:max-w-7xl  flex flex-col items-center  overflow-x-clip lg:mx-auto">
+        <div className="w-full lg:max-w-7xl  flex flex-col items-center  overflow-x-clip mx-auto">
           <Swiper
             modules={[Autoplay]}
             autoplay={{

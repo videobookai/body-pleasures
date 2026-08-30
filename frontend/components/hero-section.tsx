@@ -5,7 +5,7 @@ import Link from "next/link"
 
 export function HeroSection() {
   return (
-    <section className="relative my-4 mt-12 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+    <section className="relative my-4 mt-12 flex items-center justify-center px-2 mx-auto lg:px-8">
       <div className="w-full mx-auto lg:max-w-7xl">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
 

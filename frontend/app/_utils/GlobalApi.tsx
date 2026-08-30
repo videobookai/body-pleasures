@@ -163,6 +163,36 @@ const getProductByCategory = (category: string) =>
       throw err;
     });
 
+const getProductsByCategories = (categories: string[]) => {
+  if (!Array.isArray(categories) || categories.length === 0) {
+    return Promise.resolve([]);
+  }
+  const params = new URLSearchParams();
+  categories.forEach((cat, index) => {
+    params.append(`filters[categories][name][$in][${index}]`, cat);
+  });
+  params.append("populate", "*");
+  params.append("pagination[limit]", "100");
+
+  return axiosClient
+    .get(`/products?${params.toString()}`, { meta: { public: true } } as any)
+    .then((resp) => {
+      return resp.data.data.map(normalizeProduct);
+    })
+    .catch((err) => {
+      console.error(
+        "[GlobalApi] getProductsByCategories error:",
+        err.message,
+        err.response?.status,
+        err.cause,
+        err.response?.data
+      );
+      throw err;
+    });
+};
+
+
+
 const registerUser = (username: string, email: string, password: string) =>
   axiosClient.post("/auth/local/register", {
     username: username,
@@ -287,6 +317,7 @@ export default {
   getCategoryListByNames,
   getAllProducts,
   getProductByCategory,
+  getProductsByCategories,
   registerUser,
   signIn,
   checkUserExistsByEmail,
