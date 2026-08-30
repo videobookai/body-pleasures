@@ -1,6 +1,4 @@
 
-import React from "react";
-import TopCategoryList from "../_components/TopCategoryList";
 import GlobalApi from "../../../_utils/GlobalApi";
 import { Navigation } from "../../../../components/navigation";
 import ProductList from "../../../../components/ProductList";
@@ -17,9 +15,9 @@ const ProductCategory = async ({
 
   const decodeCategoryName = (name: string) => {
     try {
-      return decodeURIComponent(name);
+      return decodeURIComponent(name).replace(/%20/g, " ");
     } catch {
-      return name;
+      return name.replace(/%20/g, " ");
     }
   };
 
@@ -36,13 +34,23 @@ const ProductCategory = async ({
   const decodedCategoryName = decodeCategoryName(categoryName);
   const displayCategoryName = toTitleCase(decodedCategoryName);
 
-  const productList = await GlobalApi.getProductByCategory(decodedCategoryName);
   const categoryList = await GlobalApi.getCategoryList();
   const selectedCategory = categoryList.find(
     (category: any) =>
       normalizeCategoryName(category.name) ===
       normalizeCategoryName(decodedCategoryName)
   );
+
+  const categoryNamesToFetch = [decodedCategoryName];
+  if (selectedCategory && selectedCategory.subcategories) {
+    selectedCategory.subcategories.forEach((sub: any) => {
+      if (sub.name) {
+        categoryNamesToFetch.push(sub.name);
+      }
+    });
+  }
+
+  const productList = await GlobalApi.getProductsByCategories(categoryNamesToFetch);
 
   return (
     <div className="mt-24 flex flex-col">
@@ -55,9 +63,15 @@ const ProductCategory = async ({
         </div>
         
         <div className="px-5 md:px-10 pt-6">
-          {selectedCategory?.description && (
+          {selectedCategory?.description ? (
             <p className="mx-auto max-w-3xl text-center text-black text-sm md:text-lg leading-relaxed tracking-wider font-serif">
               {selectedCategory.description}
+            </p>
+          ) : (
+            <p className="mx-auto max-w-3xl text-center text-black text-sm md:text-lg leading-relaxed tracking-wider font-serif mt-2">
+              View all products in the <span className=" text-primary font-extrabold">
+              {displayCategoryName} 
+                </span> category and its subcategories.
             </p>
           )}
           <p className="mt-4 text-center text-sm md:text-base text-muted-foreground">
