@@ -49,7 +49,7 @@ export function Footer() {
               </li>
               <li>
                 <a
-                  href="/markets"
+                  href="#"
                   className="hover:text-primary-foreground transition-colors"
                 >
                   Markets & Events

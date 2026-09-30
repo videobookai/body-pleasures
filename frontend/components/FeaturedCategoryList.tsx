@@ -1,4 +1,3 @@
-import React from "react";
 import GlobalApi from "../app/_utils/GlobalApi";
 import CategoryList from "./CategoryList";
 
