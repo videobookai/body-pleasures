@@ -24,7 +24,7 @@ export default async function Home() {
         <Slider sliderList={sliderList} />
         {/* <FeaturedCategoryList /> */}
 
-        <NewCategoryList categoryList={categoryList} title="Featured Categories" />
+        <NewCategoryList categoryList={categoryList} title="Our Product Categories" />
         {/* <PaginatedCategoryList categoryList={categoryList} /> */}
 
         <div className="w-full text-left">

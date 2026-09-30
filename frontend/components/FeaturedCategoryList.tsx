@@ -28,7 +28,7 @@ const FeaturedCategoryList = async () => {
   return (
     <CategoryList
       categoryList={sortedCategoryList}
-      title="Featured Categories"
+      title="Our Product Categories"
     />
   );
 };

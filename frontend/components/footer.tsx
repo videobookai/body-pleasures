@@ -48,21 +48,21 @@ export function Footer() {
                 </a>
               </li>
               <li>
-                {/* <a
-                  href="#"
+                <a
+                  href="/markets"
                   className="hover:text-primary-foreground transition-colors"
                 >
                   Markets & Events
                 </a>
               </li>
-              <li>
+              {/* <li>
                 <a
                   href="#"
                   className="hover:text-primary-foreground transition-colors"
                 >
                   Wholesale
-                </a>*/}
-              </li> 
+                </a>
+              </li>  */}
             </ul>
           </div>
         </div>
