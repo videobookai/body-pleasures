@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Maximize2 } from "lucide-react";
 import React from "react";
 import {
   Dialog,
@@ -60,6 +60,15 @@ const CategoryList = ({
             <div
               className="group relative h-full flex flex-col overflow-hidden rounded-2xl bg-white border border-gray-200 transition-all duration-300 hover:border-primary/50 hover:shadow-lg"
             >
+                 {hasSubcategories && (
+                <div className="absolute top-2 right-2 z-10 flex items-center justify-center m-1 transition-transform duration-300 group-hover:translate-x-1">
+                     <Maximize2
+                    aria-hidden="true"
+                    className="w-5 h-5 shrink-0 text-gray-500 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-primary"
+                  />
+                </div>
+                 
+                )}
               <div className="relative aspect-square overflow-hidden bg-gray-50">
                 <Image
                   src={getImageUrl(category.icon?.[0]?.url)}
@@ -69,16 +78,11 @@ const CategoryList = ({
                   className="object-contain transition-transform duration-500 group-hover:scale-105"
                 />
               </div>
-              <div className="flex flex-1 items-center justify-between p-4">
+              <div className="flex flex-1 items-center text-center justify-center p-4">
                 <h3 className="font-semibold text-sm md:text-base capitalize text-primary line-clamp-1">
                   {category.name}
                 </h3>
-                {hasSubcategories && (
-                  <ArrowRight
-                    aria-hidden="true"
-                    className="w-5 h-5 shrink-0 text-gray-500 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-primary"
-                  />
-                )}
+             
               </div>
             </div>
           );
@@ -101,7 +105,7 @@ const CategoryList = ({
                         {category.name}
                       </DialogTitle>
                       <DialogDescription>
-                        Choose a subcategory to explore.
+                        Subcategories
                       </DialogDescription>
                     </DialogHeader>
                     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 md:gap-5">
