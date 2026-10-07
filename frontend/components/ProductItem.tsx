@@ -35,7 +35,7 @@ const ProductItem = ({ product }: ProductItemProps) => {
           alt={product.name || "product-image"}
           width={500}
           height={200}
-          className="w-full h-36 md:h-52 lg:h-64 object-cover rounded-lg mb-2"
+          className="w-full h-36 md:h-52 lg:h-64 object-contain rounded-lg mb-2"
         />
       ) : (
         <div className="w-full h-36 md:h-52 lg:h-64 bg-muted rounded-lg mb-2" />

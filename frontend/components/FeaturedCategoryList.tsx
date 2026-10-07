@@ -1,4 +1,3 @@
-import React from "react";
 import GlobalApi from "../app/_utils/GlobalApi";
 import CategoryList from "./CategoryList";
 
@@ -28,7 +27,7 @@ const FeaturedCategoryList = async () => {
   return (
     <CategoryList
       categoryList={sortedCategoryList}
-      title="Featured Categories"
+      title="Our Product Categories"
     />
   );
 };
