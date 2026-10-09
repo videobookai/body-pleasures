@@ -62,19 +62,21 @@ export function ContactSection() {
                 </div>
                 <div>
                   <h3 className="font-medium mb-1">Email</h3>
-                  <p className="text-sm text-muted-foreground">vernetreubio@att.net</p>
+                  <a href="mailto:msvsbdypleasures@gmail.com"className="text-sm text-primary/75 hover:text-primary font-semibold tracking-wide leading-1">Msvsbdypleasures@gmail.com</a>
                 </div>
               </div>
 
               <div className="flex items-start gap-4">
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
                     <Phone className="h-5 w-5 text-primary" />
                   </div>
                 </div>
                 <div>
                   <h3 className="font-medium mb-1">Phone</h3>
-                  <p className="text-sm text-muted-foreground">404.567.9426</p>
+                  <a href="tel:+14042340029" className="text-sm text-primary/75 hover:text-primary font-semibold transition-colors">
+                    404-234-0029
+                  </a>
                 </div>
               </div>
 

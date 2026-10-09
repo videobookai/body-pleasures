@@ -1,7 +1,7 @@
 
 # Body Pleasures
 
-Body Pleasures is a full-stack e-commerce application built with Next.js, TypeScript, and Tailwind CSS for the frontend, and Strapi for the backend. It provides a platform for selling artisan soaps, body care products, and wellness essentials.
+Body Pleasures is a full-stack e-commerce application built with Next.js, TypeScript, and Tailwind CSS for the frontend, and Strapi cloud for the backend. It provides a platform for selling artisan soaps, body care products, and wellness essentials.
 
 ## Features
 *   **Product Catalog:** Browse products by category, view product details, and add items to the cart.
