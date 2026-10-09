@@ -2,8 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ArrowRight, Maximize2 } from "lucide-react";
-import React from "react";
+import  { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -26,6 +27,9 @@ interface CategoryListProps {
   title?: string;
 }
 
+const OPEN_CATEGORY_NAME_STORAGE_KEY = "new-category-list:open-category";
+const OPEN_CATEGORY_PATH_STORAGE_KEY = "new-category-list:open-category-path";
+
 // Helper to convert relative Strapi image URLs to absolute ones
 const getImageUrl = (url?: string) => {
   if (!url) return "/placeholder.svg";
@@ -40,10 +44,31 @@ const CategoryList = ({
   categoryList,
   title = "Shop by Category",
 }: CategoryListProps) => {
+  const pathname = usePathname();
   // Only render categories that do NOT have a parent (i.e. they are main categories)
   const parentCategories = categoryList
     .filter((cat) => !cat.parentCategory)
     .sort((a, b) => a.name.localeCompare(b.name));
+
+  const [openCategory, setOpenCategory] = useState<string | null>(null);
+
+  useEffect(() => {
+    const sourcePath = window.sessionStorage.getItem(
+      OPEN_CATEGORY_PATH_STORAGE_KEY
+    );
+    if (sourcePath !== pathname) return;
+
+    const categoryName = window.sessionStorage.getItem(
+      OPEN_CATEGORY_NAME_STORAGE_KEY
+    );
+    window.sessionStorage.removeItem(OPEN_CATEGORY_PATH_STORAGE_KEY);
+    window.sessionStorage.removeItem(OPEN_CATEGORY_NAME_STORAGE_KEY);
+    if (!categoryName) return;
+
+    if (parentCategories.some((category) => category.name === categoryName)) {
+      setOpenCategory(categoryName);
+    }
+  }, [pathname, parentCategories]);
 
   return (
     <div className="my-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex flex-col">
@@ -90,7 +115,12 @@ const CategoryList = ({
           return (
             <div key={id} className="flex h-full flex-col">
               {hasSubcategories ? (
-                <Dialog>
+                <Dialog
+                  open={openCategory === category.name}
+                  onOpenChange={(open) =>
+                    setOpenCategory(open ? category.name : null)
+                  }
+                >
                   <DialogTrigger asChild>
                     <button
                       type="button"
@@ -117,6 +147,16 @@ const CategoryList = ({
                             href={`/products-category/${encodeURIComponent(
                               category.name
                             )}/${encodeURIComponent(sub.name)}`}
+                            onClick={() => {
+                              window.sessionStorage.setItem(
+                                OPEN_CATEGORY_NAME_STORAGE_KEY,
+                                category.name
+                              );
+                              window.sessionStorage.setItem(
+                                OPEN_CATEGORY_PATH_STORAGE_KEY,
+                                pathname
+                              );
+                            }}
                             className="group flex flex-col overflow-hidden rounded-xl border border-gray-100 bg-white transition-all duration-300 hover:border-primary/30 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                           >
                             <div className="relative aspect-square overflow-hidden bg-white">
