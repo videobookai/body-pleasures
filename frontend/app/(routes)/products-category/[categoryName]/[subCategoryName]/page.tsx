@@ -83,7 +83,7 @@ const SubCategoryPage = async ({
         <div className="p-2 md:p-5 my-4">
           <ProductList productList={productList} />
         </div>
-        <NewCategoryList title="Other Collections" categoryList={categoryList} />
+        {/* <NewCategoryList title="Other Collections" categoryList={categoryList} /> */}
       </div>
       <Footer />
     </div>

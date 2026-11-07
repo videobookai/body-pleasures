@@ -83,7 +83,7 @@ const ProductCategory = async ({
           <ProductList productList={productList} />
         </div>
         
-        <NewCategoryList title="Other Collections" categoryList={categoryList} />
+        {/* <NewCategoryList title="Other Collections" categoryList={categoryList} /> */}
       </div>
       <Footer />
     </div>
